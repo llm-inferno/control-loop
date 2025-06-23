@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: load-emulator
+  namespace: inferno
+spec:
+  serviceAccountName: inferno
+  containers:
+  - name: loademulator
+    image: quay.io/atantawi/inferno-loop:latest
+    imagePullPolicy: IfNotPresent
+    command: ["loademulator"]
+    args: ["60", "0.2"]
+    resources:
+      requests:
+        memory: "512Mi"
+        cpu: "100m"
+      limits:
+        memory: "1Gi"
+        cpu: "500"

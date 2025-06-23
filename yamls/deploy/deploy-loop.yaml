@@ -1,0 +1,158 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: inferno
+  namespace: inferno
+---  
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: inferno
+rules:
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["pods", "configmaps"]
+    verbs: ["get", "list", "watch", "patch", "update"]
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch", "patch", "update"]
+  - apiGroups: ["rbac.authorization.k8s.io"]
+    resources: ["clusterrole"]
+    verbs: ["view"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: inferno
+subjects:
+  - kind: ServiceAccount
+    name: inferno
+    namespace: inferno
+roleRef:
+  kind: ClusterRole
+  name: inferno
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inferno
+  namespace: inferno
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: inferno
+  template:
+    metadata:
+      labels:
+        app: inferno
+    spec:
+      serviceAccountName: inferno
+      volumes:
+      - name: all-data
+        projected:
+          sources:
+          - configMap:
+              name: inferno-static-data
+          - configMap:
+              name: inferno-dynamic-data
+      containers:
+      - name: controller
+        image: quay.io/atantawi/inferno-loop:latest
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+          - name: all-data
+            mountPath: /etc/data
+        env:
+          - name: CONTROLLER_PORT
+            value: "3300"
+          - name: INFERNO_CONTROL_PERIOD
+            value: "30"
+          - name: INFERNO_CONTROL_DYNAMIC
+            value: "false"
+          - name: INFERNO_DATA_PATH
+            value: "/etc/data/"
+          - name: COLLECTOR_PORT
+            value: "3301"
+          - name: INFERNO_PORT
+            value: "3302"
+          - name: ACTUATOR_PORT
+            value: "3303"
+        ports:
+        - containerPort: 3300
+        command: ["controller"]
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1"
+      - name: collector
+        image: quay.io/atantawi/inferno-loop:latest
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: COLLECTOR_PORT
+            value: "3301"
+          - name: KUBECONFIG
+            value: ""
+        ports:
+        - containerPort: 3301
+        command: ["collector"]
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1"
+      - name: optimizer
+        image: quay.io/atantawi/inferno-optimizer:latest
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: INFERNO_PORT
+            value: "3302"
+        ports:
+        - containerPort: 3302
+        command: ["optimizer"]
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1"
+      - name: actuator
+        image: quay.io/atantawi/inferno-loop:latest
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: ACTUATOR_PORT
+            value: "3303"
+          - name: KUBECONFIG
+            value: ""
+        ports:
+        - containerPort: 3303
+        command: ["actuator"]
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1"  
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: inferno
+  namespace: inferno
+spec:
+  selector:
+    app: inferno
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3300

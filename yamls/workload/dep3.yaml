@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: free-mixtral-8-7b
+  namespace: infer
+  labels:
+    inferno.server.managed: "true"
+    inferno.server.name: vllm-003
+    inferno.server.model: mixtral_8_7b
+    inferno.server.class: Free
+    inferno.server.allocation.accelerator: MI300X
+    inferno.server.allocation.maxbatchsize: "64"
+    inferno.server.load.rpm: "90"
+    inferno.server.load.numtokens: "512"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: example
+  template:
+    metadata:
+      labels:
+        app: example
+    spec:
+      containers:
+      - name: main
+        image: nginx
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80

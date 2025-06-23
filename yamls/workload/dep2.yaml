@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bronze-granite-13b
+  namespace: infer
+  labels:
+    inferno.server.managed: "true"
+    inferno.server.name: vllm-002
+    inferno.server.model: granite_13b
+    inferno.server.class: Bronze
+    inferno.server.allocation.accelerator: H100
+    inferno.server.allocation.maxbatchsize: "16"
+    inferno.server.load.rpm: "60"
+    inferno.server.load.numtokens: "1024"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: example
+  template:
+    metadata:
+      labels:
+        app: example
+    spec:
+      containers:
+      - name: main
+        image: nginx
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80

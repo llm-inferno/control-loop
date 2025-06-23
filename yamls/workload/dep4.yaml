@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: batch2k-llama-13b
+  namespace: infer
+  labels:
+    inferno.server.managed: "true"
+    inferno.server.name: vllm-004
+    inferno.server.model: llama_13b
+    inferno.server.class: Batch2K
+    inferno.server.allocation.accelerator: A100
+    inferno.server.allocation.maxbatchsize: "16"
+    inferno.server.load.rpm: "240"
+    inferno.server.load.numtokens: "500"
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: example
+  template:
+    metadata:
+      labels:
+        app: example
+    spec:
+      containers:
+      - name: main
+        image: nginx
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
