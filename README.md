@@ -10,18 +10,9 @@ The control loop comprises (1) a Collector to get data about the inference serve
 
 Following are the steps to run the optimization control loop external to a cluster.
 
-### Prerequisites
-
-- lp_solve Mixed Integer Linear Programming (MILP) solver
-
-  Installation instructions and code in [lpsolve repository](https://github.com/llm-inferno/lpsolve)
-
-- IBM CPLEX (optional)
-
-  Information and instructions [IBM CPLEX as a solver](https://github.com/llm-inferno/lpsolve/tree/main/cplex)
-
 ### Steps
 
+- [Install prerequisites](https://github.com/llm-inferno/README.md#prerequisites).
 - Create a Kubernetes cluster and make sure `$HOME/.kube/config` points to it.
 - Run script to create terminals for the various components. You may need to install [term](https://github.com/liyanage/macosx-shell-scripts/blob/master/term) and add terminal coloring support. (Hint: [Change OSX Terminal Settings from Command Line](https://ict4g.net/adolfo/notes/admin/change-osx-terminal-settings-from-command-line.html))
 
