@@ -12,7 +12,7 @@ Following are the steps to run the optimization control loop external to a clust
 
 ### Steps
 
-- [Install prerequisites](https://github.com/llm-inferno/inferno/blob/main/README.md#prerequisites).
+- [Install prerequisites](https://github.com/llm-inferno/optimizer/blob/main/README.md#prerequisites).
 - Create a Kubernetes cluster and make sure `$HOME/.kube/config` points to it.
 - Run script to create terminals for the various components. You may need to install [term](https://github.com/liyanage/macosx-shell-scripts/blob/master/term) and add terminal coloring support. (Hint: [Change OSX Terminal Settings from Command Line](https://ict4g.net/adolfo/notes/admin/change-osx-terminal-settings-from-command-line.html))
 
@@ -110,7 +110,7 @@ Following are the steps to run the optimization control loop external to a clust
 
 ### Building
 
-To create a docker image for the control loop (excluding the Optimizer). Instructions for the Optimizer are in the [optimizer repository](https://github.com/llm-inferno/inferno).
+To create a docker image for the control loop (excluding the Optimizer). Instructions for the Optimizer are in the [optimizer repository](https://github.com/llm-inferno/optimizer).
 
 ```bash
 docker build -t  inferno-loop . --load

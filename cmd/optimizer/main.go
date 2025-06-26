@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	rest "github.com/llm-inferno/inferno/rest-server"
+	rest "github.com/llm-inferno/optimizer/rest-server"
 )
 
 // create and run a REST API Optimizer server

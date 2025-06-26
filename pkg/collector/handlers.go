@@ -9,7 +9,7 @@ import (
 
 	ctrl "github.com/llm-inferno/control-loop/pkg/controller"
 
-	"github.com/llm-inferno/inferno/pkg/config"
+	"github.com/llm-inferno/optimizer/pkg/config"
 
 	"github.com/gin-gonic/gin"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"

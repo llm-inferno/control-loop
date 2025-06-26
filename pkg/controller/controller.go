@@ -6,9 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/llm-inferno/inferno/pkg/config"
-
-	"github.com/llm-inferno/inferno/pkg/utils"
+	"github.com/llm-inferno/optimizer/pkg/config"
+	"github.com/llm-inferno/optimizer/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 )
