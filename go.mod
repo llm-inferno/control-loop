@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	github.com/gin-gonic/gin v1.10.1
-	github.com/llm-inferno/optimizer v0.1.0
+	github.com/llm-inferno/optimizer v0.4.0
 	github.com/prometheus/client_golang v1.22.0
 	github.com/prometheus/common v0.64.0
 	k8s.io/api v0.33.1
