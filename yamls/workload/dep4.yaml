@@ -11,7 +11,8 @@ metadata:
     inferno.server.allocation.accelerator: A100
     inferno.server.allocation.maxbatchsize: "16"
     inferno.server.load.rpm: "240"
-    inferno.server.load.numtokens: "500"
+    inferno.server.load.intokens: "2000"
+    inferno.server.load.outtokens: "500"
 spec:
   replicas: 5
   selector:

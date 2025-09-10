@@ -64,7 +64,8 @@ const (
 	KeyMaxBatchSize = KeyAllocationPrefix + "maxbatchsize"
 
 	KeyArrivalRate = KeyLoadPrefix + "rpm"
-	KeyNumTokens   = KeyLoadPrefix + "numtokens"
+	KeyInTokens    = KeyLoadPrefix + "intokens"
+	KeyOutTokens   = KeyLoadPrefix + "outtokens"
 )
 
 var (

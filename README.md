@@ -194,7 +194,8 @@ Following are the steps to run the optimization control loop within a cluster.
     labels:
         inferno.server.allocation.maxbatchsize: "8"
         inferno.server.load.rpm: "30"
-        inferno.server.load.numtokens: "2048"
+        inferno.server.load.intokens: "128"
+        inferno.server.load.outtokens: "2048"
     ```
 
 - Observe changes in the number of pods (replicas) for all inference servers (deployments).

@@ -50,10 +50,12 @@ func collect(c *gin.Context) {
 		maxBatchSize, _ := strconv.Atoi(d.ObjectMeta.Labels[ctrl.KeyMaxBatchSize])
 
 		var arrvRate float64 = 0.0
-		var avglength float64 = 0.0
+		var inTokens float64 = 0.0
+		var outTokens float64 = 0.0
 
 		// Query Prometheus for the arrival rate (requests/minute)
-		arrivalQuery := fmt.Sprintf(`sum(rate(vllm:requests_count_total{job="%s"}[1m]))*60`, d.ObjectMeta.Name)
+		// note: substituting missing metric arrrival rate with completion rate
+		arrivalQuery := fmt.Sprintf(`sum(rate(vllm:request_success_total{job="%s"}[1m]))*60`, d.ObjectMeta.Name)
 		if arrvRate, err = PrometheusQuery(arrivalQuery); err != nil {
 			fmt.Println(err.Error())
 			// check if label exists as a backup
@@ -62,28 +64,44 @@ func collect(c *gin.Context) {
 		}
 		fmt.Printf("Average arrival rate %f \n", arrvRate)
 
-		// Query Prometheus for the token rate
-		tokenQuery := fmt.Sprintf(`delta(vllm:tokens_count_total{job="%s"}[1m])/delta(vllm:requests_count_total{job="%s"}[1m])`,
+		// Query Prometheus for the input token rate
+		inTokenQuery := fmt.Sprintf(`delta(vllm:prompt_tokens_total{job="%s"}[1m])/delta(vllm:request_success_total{job="%s"}[1m])`,
 			d.ObjectMeta.Name, d.ObjectMeta.Name)
-		if avglength, err = PrometheusQuery(tokenQuery); err != nil {
+		if inTokens, err = PrometheusQuery(inTokenQuery); err != nil {
 			fmt.Println(err.Error())
 			// check if label exists as a backup
-			fmt.Println("checking if label exists ...")
-			avglengthInt, _ := strconv.Atoi(d.ObjectMeta.Labels[ctrl.KeyNumTokens])
-			avglength = float64(avglengthInt)
+			fmt.Printf("checking if label %s exists ...\n", ctrl.KeyInTokens)
+			avgInTokensInt, _ := strconv.Atoi(d.ObjectMeta.Labels[ctrl.KeyInTokens])
+			inTokens = float64(avgInTokensInt)
 		}
-		if math.IsNaN(avglength) || math.IsInf(avglength, 0) {
-			avglength = 0.0
+		if math.IsNaN(inTokens) || math.IsInf(inTokens, 0) {
+			inTokens = 0.0
 		}
-		fmt.Printf("Average token length per request %f \n", avglength)
+		fmt.Printf("Average input tokens per request %f \n", inTokens)
+
+		// Query Prometheus for the output token rate
+		outTokenQuery := fmt.Sprintf(`delta(vllm:generation_tokens_total{job="%s"}[1m])/delta(vllm:request_success_total{job="%s"}[1m])`,
+			d.ObjectMeta.Name, d.ObjectMeta.Name)
+		if outTokens, err = PrometheusQuery(outTokenQuery); err != nil {
+			fmt.Println(err.Error())
+			// check if label exists as a backup
+			fmt.Printf("checking if label %s exists ...\n", ctrl.KeyOutTokens)
+			avgOutTokensInt, _ := strconv.Atoi(d.ObjectMeta.Labels[ctrl.KeyOutTokens])
+			outTokens = float64(avgOutTokensInt)
+		}
+		if math.IsNaN(outTokens) || math.IsInf(outTokens, 0) {
+			outTokens = 0.0
+		}
+		fmt.Printf("Average output tokens per request %f \n", outTokens)
 
 		curAlloc := config.AllocationData{
 			Accelerator: d.ObjectMeta.Labels[ctrl.KeyAccelerator],
 			NumReplicas: int(numReplicas),
 			MaxBatch:    maxBatchSize,
 			Load: config.ServerLoadSpec{
-				ArrivalRate: float32(arrvRate),
-				AvgLength:   int(avglength),
+				ArrivalRate:  float32(arrvRate),
+				AvgInTokens:  int(inTokens),
+				AvgOutTokens: int(outTokens),
 			},
 		}
 

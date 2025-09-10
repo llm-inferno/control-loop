@@ -11,7 +11,8 @@ metadata:
     inferno.server.allocation.accelerator: MI300X
     inferno.server.allocation.maxbatchsize: "64"
     inferno.server.load.rpm: "90"
-    inferno.server.load.numtokens: "512"
+    inferno.server.load.intokens: "256"
+    inferno.server.load.outtokens: "2048"
 spec:
   replicas: 3
   selector:

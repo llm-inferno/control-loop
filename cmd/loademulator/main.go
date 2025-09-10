@@ -10,7 +10,7 @@ import (
 
 var (
 	DefaultIntervalSec int     = 60
-	DefaultAlpha       float32 = 0.5
+	DefaultAlpha       float64 = 0.5
 )
 
 func main() {
@@ -35,14 +35,12 @@ func main() {
 			fmt.Println(err)
 			return
 		}
-		if alpha64, err := strconv.ParseFloat(os.Args[2], 32); err != nil {
+		if alpha, err = strconv.ParseFloat(os.Args[2], 64); err != nil {
 			fmt.Println(err)
 			return
-		} else {
-			alpha = float32(alpha64)
 		}
 	}
-	fmt.Println("Running with interval=" + strconv.Itoa(interval) + "(sec) and alpha=" + strconv.FormatFloat(float64(alpha), 'f', 3, 32))
+	fmt.Println("Running with interval=" + strconv.Itoa(interval) + "(sec) and alpha=" + strconv.FormatFloat(alpha, 'f', 3, 64))
 
 	// run emulator
 	lg, err := loademulator.NewLoadEmulator(interval, alpha)

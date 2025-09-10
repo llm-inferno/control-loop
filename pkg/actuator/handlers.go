@@ -80,8 +80,9 @@ func update(c *gin.Context) {
 			NumReplicas: 0,
 			MaxBatch:    0,
 			Load: config.ServerLoadSpec{
-				ArrivalRate: 0,
-				AvgLength:   0,
+				ArrivalRate:  0,
+				AvgInTokens:  0,
+				AvgOutTokens: 0,
 			},
 		}
 
@@ -109,10 +110,11 @@ func patchDeployment(d v1.Deployment, serverName, deployName, nameSpace string, 
 	// print change - for testing
 	curMaxBatchSize, _ := strconv.Atoi(d.Labels[ctrl.KeyMaxBatchSize])
 	curRPM := allocData.Load.ArrivalRate
-	curNumTokens := allocData.Load.AvgLength
-	fmt.Printf("srv=[%s/%s/%s]: rpm=%.2f; tok=%d; acc=%s->%s; num=%d->%d; batch=%d->%d \n",
+	curInTokens := allocData.Load.AvgInTokens
+	curOutTokens := allocData.Load.AvgOutTokens
+	fmt.Printf("srv=[%s/%s/%s]: rpm=%.2f; inTok=%d; outTok=%d; acc=%s->%s; num=%d->%d; batch=%d->%d \n",
 		serverName, d.Labels[ctrl.KeyServerClass], d.Labels[ctrl.KeyServerModel],
-		curRPM, curNumTokens,
+		curRPM, curInTokens, curOutTokens,
 		d.Labels[ctrl.KeyAccelerator], acceleratorName,
 		*d.Spec.Replicas, numReplicas, curMaxBatchSize, maxBatchSize)
 
