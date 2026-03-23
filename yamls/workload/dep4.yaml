@@ -10,7 +10,7 @@ metadata:
     inferno.server.class: Batch2K
     inferno.server.allocation.accelerator: A100
     inferno.server.allocation.maxbatchsize: "16"
-    inferno.server.load.rpm: "240"
+    inferno.server.load.rpm: "120"
     inferno.server.load.intokens: "2000"
     inferno.server.load.outtokens: "500"
 spec:

@@ -12,7 +12,7 @@ metadata:
     inferno.server.allocation.maxbatchsize: "8"
     inferno.server.load.rpm: "30"
     inferno.server.load.intokens: "128"
-    inferno.server.load.outtokens: "2048"
+    inferno.server.load.outtokens: "1024"
 spec:
   replicas: 4
   selector:
