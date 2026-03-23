@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/llm-inferno/optimizer/pkg/config"
-	"github.com/llm-inferno/optimizer/pkg/utils"
+	"github.com/llm-inferno/optimizer-light/pkg/config"
+	"github.com/llm-inferno/optimizer-light/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -166,7 +166,7 @@ func (a *Controller) Run(controlPeriod int) {
 		if p := os.Getenv(ControllerPortEnvName); p != "" {
 			port = p
 		}
-		a.router.Run(host + ":" + port)
+		_ = a.router.Run(host + ":" + port)
 	}()
 
 	// start periodic process

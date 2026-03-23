@@ -9,7 +9,7 @@ import (
 
 	ctrl "github.com/llm-inferno/control-loop/pkg/controller"
 
-	"github.com/llm-inferno/optimizer/pkg/config"
+	"github.com/llm-inferno/optimizer-light/pkg/config"
 
 	"github.com/gin-gonic/gin"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -34,44 +34,44 @@ func collect(c *gin.Context) {
 	// collect data from deployments
 	for _, d := range deps.Items {
 
-		if d.ObjectMeta.Labels == nil || d.ObjectMeta.Labels[ctrl.KeyServerName] == "" {
+		if d.Labels == nil || d.Labels[ctrl.KeyServerName] == "" {
 			continue
 		}
-		serverName := d.ObjectMeta.Labels[ctrl.KeyServerName]
+		serverName := d.Labels[ctrl.KeyServerName]
 
 		depUID := string(d.UID)
 		serverMap[serverName] = ctrl.ServerKubeInfo{
 			UID:   depUID,
-			Name:  d.ObjectMeta.Name,
-			Space: d.ObjectMeta.Namespace,
+			Name:  d.Name,
+			Space: d.Namespace,
 		}
 
 		numReplicas := *d.Spec.Replicas
-		maxBatchSize, _ := strconv.Atoi(d.ObjectMeta.Labels[ctrl.KeyMaxBatchSize])
+		maxBatchSize, _ := strconv.Atoi(d.Labels[ctrl.KeyMaxBatchSize])
 
-		var arrvRate float64 = 0.0
-		var inTokens float64 = 0.0
-		var outTokens float64 = 0.0
+		var arrvRate float64
+		var inTokens float64
+		var outTokens float64
 
 		// Query Prometheus for the arrival rate (requests/minute)
 		// note: substituting missing metric arrrival rate with completion rate
-		arrivalQuery := fmt.Sprintf(`sum(rate(vllm:request_success_total{job="%s"}[1m]))*60`, d.ObjectMeta.Name)
+		arrivalQuery := fmt.Sprintf(`sum(rate(vllm:request_success_total{job="%s"}[1m]))*60`, d.Name)
 		if arrvRate, err = PrometheusQuery(arrivalQuery); err != nil {
 			fmt.Println(err.Error())
 			// check if label exists as a backup
 			fmt.Println("checking if label exists ...")
-			arrvRate, _ = strconv.ParseFloat(d.ObjectMeta.Labels[ctrl.KeyArrivalRate], 32)
+			arrvRate, _ = strconv.ParseFloat(d.Labels[ctrl.KeyArrivalRate], 32)
 		}
 		fmt.Printf("Average arrival rate %f \n", arrvRate)
 
 		// Query Prometheus for the input token rate
 		inTokenQuery := fmt.Sprintf(`delta(vllm:prompt_tokens_total{job="%s"}[1m])/delta(vllm:request_success_total{job="%s"}[1m])`,
-			d.ObjectMeta.Name, d.ObjectMeta.Name)
+			d.Name, d.Name)
 		if inTokens, err = PrometheusQuery(inTokenQuery); err != nil {
 			fmt.Println(err.Error())
 			// check if label exists as a backup
 			fmt.Printf("checking if label %s exists ...\n", ctrl.KeyInTokens)
-			avgInTokensInt, _ := strconv.Atoi(d.ObjectMeta.Labels[ctrl.KeyInTokens])
+			avgInTokensInt, _ := strconv.Atoi(d.Labels[ctrl.KeyInTokens])
 			inTokens = float64(avgInTokensInt)
 		}
 		if math.IsNaN(inTokens) || math.IsInf(inTokens, 0) {
@@ -81,12 +81,12 @@ func collect(c *gin.Context) {
 
 		// Query Prometheus for the output token rate
 		outTokenQuery := fmt.Sprintf(`delta(vllm:generation_tokens_total{job="%s"}[1m])/delta(vllm:request_success_total{job="%s"}[1m])`,
-			d.ObjectMeta.Name, d.ObjectMeta.Name)
+			d.Name, d.Name)
 		if outTokens, err = PrometheusQuery(outTokenQuery); err != nil {
 			fmt.Println(err.Error())
 			// check if label exists as a backup
 			fmt.Printf("checking if label %s exists ...\n", ctrl.KeyOutTokens)
-			avgOutTokensInt, _ := strconv.Atoi(d.ObjectMeta.Labels[ctrl.KeyOutTokens])
+			avgOutTokensInt, _ := strconv.Atoi(d.Labels[ctrl.KeyOutTokens])
 			outTokens = float64(avgOutTokensInt)
 		}
 		if math.IsNaN(outTokens) || math.IsInf(outTokens, 0) {
@@ -95,7 +95,7 @@ func collect(c *gin.Context) {
 		fmt.Printf("Average output tokens per request %f \n", outTokens)
 
 		curAlloc := config.AllocationData{
-			Accelerator: d.ObjectMeta.Labels[ctrl.KeyAccelerator],
+			Accelerator: d.Labels[ctrl.KeyAccelerator],
 			NumReplicas: int(numReplicas),
 			MaxBatch:    maxBatchSize,
 			Load: config.ServerLoadSpec{
@@ -107,8 +107,8 @@ func collect(c *gin.Context) {
 
 		serverSpec := config.ServerSpec{
 			Name:         serverName,
-			Class:        d.ObjectMeta.Labels[ctrl.KeyServerClass],
-			Model:        d.ObjectMeta.Labels[ctrl.KeyServerModel],
+			Class:        d.Labels[ctrl.KeyServerClass],
+			Model:        d.Labels[ctrl.KeyServerModel],
 			CurrentAlloc: curAlloc,
 		}
 		serverSpecs = append(serverSpecs, serverSpec)

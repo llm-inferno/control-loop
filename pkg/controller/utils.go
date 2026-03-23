@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/llm-inferno/optimizer/pkg/config"
+	"github.com/llm-inferno/optimizer-light/pkg/config"
 
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
@@ -87,7 +87,7 @@ func POSTOptimize(systemData *config.SystemData) (*config.AllocationSolution, er
 		if err != nil {
 			return nil, err
 		}
-		defer res.Body.Close()
+		defer func() { _ = res.Body.Close() }()
 		if res.StatusCode != http.StatusOK {
 			return nil, fmt.Errorf("%s", "optimize failed to find solution: "+res.Status)
 		}
@@ -135,7 +135,7 @@ func POSTActuator(actuatorInfo *ServerActuatorInfo) error {
 		if err != nil {
 			return err
 		}
-		defer res.Body.Close()
+		defer func() { _ = res.Body.Close() }()
 		if res.StatusCode != http.StatusOK {
 			return fmt.Errorf("%s", "actuator failed: "+res.Status)
 		}

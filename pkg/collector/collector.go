@@ -39,5 +39,5 @@ func (server *Collector) Run() {
 	if p := os.Getenv(ctrl.CollectorPortEnvName); p != "" {
 		port = p
 	}
-	server.router.Run(host + ":" + port)
+	_ = server.router.Run(host + ":" + port)
 }

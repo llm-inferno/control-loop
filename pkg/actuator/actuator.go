@@ -39,5 +39,5 @@ func (server *Actuator) Run() {
 	if p := os.Getenv(ctrl.ActuatorPortEnvName); p != "" {
 		port = p
 	}
-	server.router.Run(host + ":" + port)
+	_ = server.router.Run(host + ":" + port)
 }

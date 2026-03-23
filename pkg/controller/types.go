@@ -1,6 +1,6 @@
 package controller
 
-import "github.com/llm-inferno/optimizer/pkg/config"
+import "github.com/llm-inferno/optimizer-light/pkg/config"
 
 // Inference server information related to Kubernetes
 type ServerKubeInfo struct {

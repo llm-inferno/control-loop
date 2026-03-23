@@ -1,0 +1,76 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Commands
+
+```bash
+# Build all binaries
+go build ./...
+
+# Run a specific component
+go run cmd/controller/main.go [controlPeriodInSec] [isDynamicMode]
+go run cmd/collector/main.go
+go run cmd/actuator/main.go
+go run cmd/optimizer/main.go
+go run cmd/loademulator/main.go [intervalInSec] [alpha]
+
+# Build Docker image
+docker build -t inferno-loop . --load
+
+# Set environment variables for local development
+. scripts/setparms.sh
+```
+
+There are no automated tests in this repository.
+
+## Architecture
+
+The system is a **closed-loop inference optimizer** for Kubernetes. It runs as four cooperating REST microservices:
+
+```
+Controller → Collector → (Prometheus + k8s)
+           → Optimizer (external: github.com/llm-inferno/optimizer)
+           → Actuator  → (k8s deployments)
+```
+
+Data/config types (`config.SystemData`, `config.AllocationData`, etc.) and `utils.FromDataToSpec` come from `github.com/llm-inferno/optimizer-light/pkg/config` and `…/pkg/utils`. The `optimizer` module depends on `optimizer-light` and re-exports its REST server; the control-loop imports `optimizer-light` directly.
+
+**Control flow** (in `pkg/controller/controller.go:Optimize()`):
+1. Controller calls `GET /collect` on the Collector to read current server state from k8s labels and Prometheus
+2. Controller calls `POST /optimizeOne` on the Optimizer with full `SystemData`
+3. Controller calls `POST /update` on the Actuator with allocation decisions + k8s references
+4. Actuator scales k8s deployment replicas to match the optimizer's allocation
+
+**Data model** — `pkg/controller/`:
+- `State.SystemData` (`config.SystemData` from `optimizer-light/pkg/config`): holds static files (accelerators, models, service classes, optimizer params) and dynamic server data
+- `State.ServerMap`: maps server names to k8s `{uid, name, namespace}` for the Actuator to resolve deployments
+- Static data is read once at startup from `INFERNO_DATA_PATH`; in dynamic mode (`isDynamicMode=true`) it is re-read each cycle
+- `capacity-data.json` is always re-read each cycle (represents current accelerator availability)
+
+**Managed deployments** are discovered by k8s label `inferno.server.managed: "true"`. Required labels: `inferno.server.name`, `inferno.server.model`, `inferno.server.class`, `inferno.server.allocation.accelerator`. Load metrics come from Prometheus or fallback labels (`inferno.server.load.*`).
+
+**Controller** also exposes `GET /invoke` for on-demand (aperiodic) control cycles. Both periodic and aperiodic modes run simultaneously; the mutex in `Optimize()` serializes concurrent calls.
+
+## Environment Variables
+
+| Variable | Default | Description |
+|---|---|---|
+| `CONTROLLER_HOST/PORT` | `localhost:3300` | Controller REST address |
+| `COLLECTOR_HOST/PORT` | `localhost:3301` | Collector REST address |
+| `INFERNO_HOST/PORT` | `localhost:3302` | Optimizer REST address |
+| `ACTUATOR_HOST/PORT` | `localhost:3303` | Actuator REST address |
+| `INFERNO_DATA_PATH` | `./` | Path to JSON data files (must end with `/`) |
+| `INFERNO_CONTROL_PERIOD` | `60` | Control loop period in seconds (0 = aperiodic only) |
+| `INFERNO_CONTROL_DYNAMIC` | `false` | Re-read static data each cycle |
+| `KUBECONFIG` | `$HOME/.kube/config` | Kubernetes config path |
+
+## Data Files (in `INFERNO_DATA_PATH`)
+
+- `accelerator-data.json` — accelerator hardware specs (static)
+- `model-data.json` — LLM model profiles (static)
+- `serviceclass-data.json` — SLA/service class definitions (static)
+- `optimizer-data.json` — optimizer parameters (static)
+- `capacity-data.json` — current accelerator capacity counts (re-read each cycle)
+
+Sample data is in the `sample-data/` git submodule (`sample-data/large/` has realistic-scale data).
