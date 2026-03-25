@@ -13,6 +13,9 @@ metadata:
     inferno.server.load.rpm: "90"
     inferno.server.load.intokens: "256"
     inferno.server.load.outtokens: "512"
+    inferno.server.load.nominal.rpm: "90"
+    inferno.server.load.nominal.intokens: "256"
+    inferno.server.load.nominal.outtokens: "512"
 spec:
   replicas: 3
   selector:

@@ -10,7 +10,9 @@ import (
 
 	ctrl "github.com/llm-inferno/control-loop/pkg/controller"
 
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/client-go/kubernetes"
 )
 
@@ -21,29 +23,29 @@ var (
 
 // Load emulator
 type LoadEmulator struct {
-	kubeClient     *kubernetes.Clientset
-	interval       time.Duration
-	alpha          float64
-	arvRateSigma   map[string]float64
-	inTokensSigma  map[string]float64
-	outTokensSigma map[string]float64
+	kubeClient *kubernetes.Clientset
+	interval   time.Duration
+	alpha      float64
+	theta      float64
+	skew       float64
 }
 
 // create a new load emulator
-func NewLoadEmulator(intervalSec int, alpha float64) (loadEmulator *LoadEmulator, err error) {
-	if intervalSec <= 0 || alpha < 0 || alpha > 1 {
+func NewLoadEmulator(intervalSec int, alpha, theta, skew float64) (loadEmulator *LoadEmulator, err error) {
+	if intervalSec <= 0 || alpha < 0 || alpha > 1 || theta < 0 || theta > 1 || skew < 0 || skew > 1 {
 		return nil, fmt.Errorf("%s", "invalid input: interval="+strconv.Itoa(intervalSec)+
-			", alpha="+strconv.FormatFloat(alpha, 'f', 3, 64))
+			", alpha="+strconv.FormatFloat(alpha, 'f', 3, 64)+
+			", theta="+strconv.FormatFloat(theta, 'f', 3, 64)+
+			", skew="+strconv.FormatFloat(skew, 'f', 3, 64))
 	}
 	var kubeClient *kubernetes.Clientset
 	if kubeClient, err = ctrl.GetKubeClient(); err == nil {
 		return &LoadEmulator{
-			kubeClient:     kubeClient,
-			interval:       time.Duration(intervalSec) * time.Second,
-			alpha:          alpha,
-			arvRateSigma:   map[string]float64{},
-			inTokensSigma:  map[string]float64{},
-			outTokensSigma: map[string]float64{},
+			kubeClient: kubeClient,
+			interval:   time.Duration(intervalSec) * time.Second,
+			alpha:      alpha,
+			theta:      theta,
+			skew:       skew,
 		}, nil
 	}
 	return nil, err
@@ -70,10 +72,14 @@ func (lg *LoadEmulator) Run() {
 			curInTokens, _ := strconv.Atoi(d.Labels[ctrl.KeyInTokens])
 			curOutTokens, _ := strconv.Atoi(d.Labels[ctrl.KeyOutTokens])
 
-			// perturb arrival rates and number of tokens randomly
-			lg.perturbLoad(string(d.GetUID()), &curRPM, &curInTokens, &curOutTokens)
+			nomRPM, _ := strconv.ParseFloat(d.Labels[ctrl.KeyNominalArrivalRate], 64)
+			nomInTokens, _ := strconv.Atoi(d.Labels[ctrl.KeyNominalInTokens])
+			nomOutTokens, _ := strconv.Atoi(d.Labels[ctrl.KeyNominalOutTokens])
 
-			// update labels
+			// perturb arrival rates and number of tokens randomly
+			lg.perturbLoad(&curRPM, &curInTokens, &curOutTokens, nomRPM, nomInTokens, nomOutTokens)
+
+			// update deployment labels
 			d.Labels[ctrl.KeyArrivalRate] = fmt.Sprintf("%.4f", curRPM)
 			d.Labels[ctrl.KeyInTokens] = fmt.Sprintf("%d", curInTokens)
 			d.Labels[ctrl.KeyOutTokens] = fmt.Sprintf("%d", curOutTokens)
@@ -81,44 +87,76 @@ func (lg *LoadEmulator) Run() {
 				fmt.Println(err)
 				continue
 			}
+
+			// update pod labels
+			selectorStr := labels.Set(d.Spec.Selector.MatchLabels).String()
+			if err := lg.updatePodLabels(d.Namespace, selectorStr, curRPM, curInTokens, curOutTokens); err != nil {
+				fmt.Println(err)
+			}
 		}
 		fmt.Printf("%d deployment(s) updated\n", len(deps.Items))
 	}
+}
+
+// update pod labels: split totalRPM across pods using skew, broadcast token counts
+func (lg *LoadEmulator) updatePodLabels(namespace, selectorStr string, totalRPM float64, inTokens, outTokens int) error {
+	pods, err := lg.kubeClient.CoreV1().Pods(namespace).List(context.TODO(), metav1.ListOptions{
+		LabelSelector: selectorStr})
+	if err != nil {
+		return err
+	}
+	// filter to running pods only
+	running := make([]int, 0, len(pods.Items))
+	for i, p := range pods.Items {
+		if p.Status.Phase == corev1.PodRunning {
+			running = append(running, i)
+		}
+	}
+	if len(running) == 0 {
+		return nil
+	}
+	podRPMs := lg.splitLoad(totalRPM, len(running))
+	for j, i := range running {
+		p := pods.Items[i]
+		p.Labels[ctrl.KeyArrivalRate] = fmt.Sprintf("%.4f", podRPMs[j])
+		p.Labels[ctrl.KeyInTokens] = fmt.Sprintf("%d", inTokens)
+		p.Labels[ctrl.KeyOutTokens] = fmt.Sprintf("%d", outTokens)
+		if _, err := lg.kubeClient.CoreV1().Pods(p.Namespace).Update(context.TODO(), &p, metav1.UpdateOptions{}); err != nil {
+			fmt.Println(err)
+		}
+	}
+	return nil
 }
 
 /*
  * randomly modify dynamic server data (testing only)
  */
 
-// generate: nextValue = currentValue + normal(0, sigma),
-// where sigma = alpha * originalValue and 0 <= alpha <= 1
-func (lg *LoadEmulator) perturbLoad(uid string, rpm *float64, inTok *int, outTok *int) {
-	// store original values if new entry
-	if _, exists := lg.arvRateSigma[uid]; !exists {
-		lg.arvRateSigma[uid] = (*rpm) * lg.alpha
+// generate: nextValue = currentValue + theta*(nominal - currentValue) + Normal(0, alpha*nominal)
+// mean-reverting random walk: time average converges to nominal
+func (lg *LoadEmulator) perturbLoad(rpm *float64, inTok *int, outTok *int, nomRPM float64, nomInTok, nomOutTok int) {
+	newArv := *rpm + lg.theta*(nomRPM-*rpm) + rand.NormFloat64()*lg.alpha*nomRPM
+	*rpm = min(max(newArv, ArvRateRange[0]), ArvRateRange[1])
+
+	newInTok := float64(*inTok) + lg.theta*(float64(nomInTok)-float64(*inTok)) + rand.NormFloat64()*lg.alpha*float64(nomInTok)
+	*inTok = min(max(int(math.Ceil(newInTok)), NumTokensRange[0]), NumTokensRange[1])
+
+	newOutTok := float64(*outTok) + lg.theta*(float64(nomOutTok)-float64(*outTok)) + rand.NormFloat64()*lg.alpha*float64(nomOutTok)
+	*outTok = min(max(int(math.Ceil(newOutTok)), NumTokensRange[0]), NumTokensRange[1])
+}
+
+// split totalRPM across n pods using skew factor
+// skew=0: equal split; skew=1: fully random split
+func (lg *LoadEmulator) splitLoad(totalRPM float64, n int) []float64 {
+	weights := make([]float64, n)
+	sum := 0.0
+	for i := range weights {
+		weights[i] = (1-lg.skew)/float64(n) + lg.skew*rand.Float64()
+		sum += weights[i]
 	}
-	if _, exists := lg.inTokensSigma[uid]; !exists {
-		lg.inTokensSigma[uid] = float64(*inTok) * lg.alpha
+	rpms := make([]float64, n)
+	for i := range rpms {
+		rpms[i] = totalRPM * weights[i] / sum
 	}
-	if _, exists := lg.outTokensSigma[uid]; !exists {
-		lg.outTokensSigma[uid] = float64(*outTok) * lg.alpha
-	}
-
-	// generate a random number from a standard normal distribution
-	// TODO: should use two random number generators
-	sampleRPM := rand.NormFloat64()
-	sampleInTok := rand.NormFloat64()
-	sampleOutTok := rand.NormFloat64()
-
-	newArv := sampleRPM*lg.arvRateSigma[uid] + *rpm
-	newArv = min(max(newArv, ArvRateRange[0]), ArvRateRange[1])
-	*rpm = newArv
-
-	newInTok := int(math.Ceil(sampleInTok*lg.inTokensSigma[uid] + float64(*inTok)))
-	newInTok = min(max(newInTok, NumTokensRange[0]), NumTokensRange[1])
-	*inTok = newInTok
-
-	newOutTok := int(math.Ceil(sampleOutTok*lg.outTokensSigma[uid] + float64(*outTok)))
-	newOutTok = min(max(newOutTok, NumTokensRange[0]), NumTokensRange[1])
-	*outTok = newOutTok
+	return rpms
 }

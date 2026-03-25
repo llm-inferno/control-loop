@@ -10,7 +10,15 @@ spec:
     image: quay.io/atantawi/inferno-loop:latest
     imagePullPolicy: IfNotPresent
     command: ["loademulator"]
-    args: ["60", "0.2"]
+    env:
+    - name: INFERNO_LOAD_INTERVAL
+      value: "60"
+    - name: INFERNO_LOAD_ALPHA
+      value: "0.1"
+    - name: INFERNO_LOAD_THETA
+      value: "0.2"
+    - name: INFERNO_LOAD_SKEW
+      value: "0.3"
     resources:
       requests:
         memory: "512Mi"

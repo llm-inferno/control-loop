@@ -17,6 +17,11 @@ const (
 	DataPathEnvName       = "INFERNO_DATA_PATH"
 	ControlPeriodEnvName  = "INFERNO_CONTROL_PERIOD"
 	ControlDynamicEnvName = "INFERNO_CONTROL_DYNAMIC"
+
+	LoadIntervalEnvName = "INFERNO_LOAD_INTERVAL"
+	LoadAlphaEnvName    = "INFERNO_LOAD_ALPHA"
+	LoadThetaEnvName    = "INFERNO_LOAD_THETA"
+	LoadSkewEnvName     = "INFERNO_LOAD_SKEW"
 )
 
 const (
@@ -66,6 +71,11 @@ const (
 	KeyArrivalRate = KeyLoadPrefix + "rpm"
 	KeyInTokens    = KeyLoadPrefix + "intokens"
 	KeyOutTokens   = KeyLoadPrefix + "outtokens"
+
+	KeyNominalPrefix      = KeyLoadPrefix + "nominal."
+	KeyNominalArrivalRate = KeyNominalPrefix + "rpm"
+	KeyNominalInTokens    = KeyNominalPrefix + "intokens"
+	KeyNominalOutTokens   = KeyNominalPrefix + "outtokens"
 )
 
 var (

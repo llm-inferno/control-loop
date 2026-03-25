@@ -87,13 +87,23 @@ Following are the steps to run the optimization control loop external to a clust
     The command line arguments override the values of the environment variables.
 
   - Load Emulator (orange)
-  
+
     ```bash
-    go run main.go <intervalInSec> <alpha (0,1)>
+    go run main.go
     ```
 
-    The Load Emulator periodically, given by the argument `intervalInSec`, pertubs the values of request rate and average number of tokens per request for all inference servers (deployments) in the cluster. The disturbance amount is normally distributed with zero mean and `sigma` standard deviation, where `sigma = alpha * originalUndisturbedValue`.
-    (Default arguments are 60 and 0.5, respectively.)
+    The Load Emulator periodically updates the request rate and average number of tokens per request for all managed inference server deployments and their running pods.
+    Each metric follows a mean-reverting random walk: `next = current + theta*(nominal - current) + Normal(0, alpha*nominal)`, keeping the time average near the nominal value set in the deployment labels.
+    The total deployment request rate is split across running pods using a skew factor (0 = equal split, 1 = fully random split).
+
+    Configuration is via environment variables (all optional, defaults shown):
+
+    | Variable | Default | Description |
+    |---|---|---|
+    | `INFERNO_LOAD_INTERVAL` | `60` | Update interval in seconds |
+    | `INFERNO_LOAD_ALPHA` | `0.1` | Noise magnitude relative to nominal |
+    | `INFERNO_LOAD_THETA` | `0.2` | Mean-reversion strength (0=no reversion, 1=snap to nominal) |
+    | `INFERNO_LOAD_SKEW` | `0.3` | Load skew across pods (0=equal, 1=fully random) |
 
 - Cleanup
 
@@ -188,7 +198,7 @@ Following are the steps to run the optimization control loop within a cluster.
         inferno.server.allocation.accelerator: MI250
     ```
 
-    and some optional labels (if metrics are not available from  Pometheus).
+    and some optional labels (if metrics are not available from Prometheus).
 
     ```bash
     labels:
@@ -196,6 +206,15 @@ Following are the steps to run the optimization control loop within a cluster.
         inferno.server.load.rpm: "30"
         inferno.server.load.intokens: "128"
         inferno.server.load.outtokens: "2048"
+    ```
+
+    If using the Load Emulator, also set nominal load labels (used as the mean-reversion target):
+
+    ```bash
+    labels:
+        inferno.server.load.nominal.rpm: "30"
+        inferno.server.load.nominal.intokens: "128"
+        inferno.server.load.nominal.outtokens: "2048"
     ```
 
 - Observe changes in the number of pods (replicas) for all inference servers (deployments).

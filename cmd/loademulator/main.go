@@ -5,45 +5,73 @@ import (
 	"os"
 	"strconv"
 
+	ctrl "github.com/llm-inferno/control-loop/pkg/controller"
 	"github.com/llm-inferno/control-loop/pkg/loademulator"
 )
 
 var (
 	DefaultIntervalSec int     = 60
-	DefaultAlpha       float64 = 0.5
+	DefaultAlpha       float64 = 0.1
+	DefaultTheta       float64 = 0.2
+	DefaultSkew        float64 = 0.3
 )
 
 func main() {
 	// provide help
 	if len(os.Args) > 1 && (os.Args[1] == "-h" || os.Args[1] == "--help") {
-		fmt.Println("Args: " + " <intervalInSec>" + " <alpha (0,1)>")
+		fmt.Println("Env vars: " +
+			ctrl.LoadIntervalEnvName + " " +
+			ctrl.LoadAlphaEnvName + " " +
+			ctrl.LoadThetaEnvName + " " +
+			ctrl.LoadSkewEnvName)
 		return
 	}
 
-	// get args
+	// get config from env vars (fall back to defaults)
 	interval := DefaultIntervalSec
 	alpha := DefaultAlpha
-	var err error
-	switch len(os.Args) {
-	case 2:
-		if interval, err = strconv.Atoi(os.Args[1]); err != nil {
-			fmt.Println(err)
+	theta := DefaultTheta
+	skew := DefaultSkew
+
+	if s := os.Getenv(ctrl.LoadIntervalEnvName); s != "" {
+		v, err := strconv.Atoi(s)
+		if err != nil {
+			fmt.Println("bad env variable " + ctrl.LoadIntervalEnvName + ": " + s)
 			return
 		}
-	case 3:
-		if interval, err = strconv.Atoi(os.Args[1]); err != nil {
-			fmt.Println(err)
-			return
-		}
-		if alpha, err = strconv.ParseFloat(os.Args[2], 64); err != nil {
-			fmt.Println(err)
-			return
-		}
+		interval = v
 	}
-	fmt.Println("Running with interval=" + strconv.Itoa(interval) + "(sec) and alpha=" + strconv.FormatFloat(alpha, 'f', 3, 64))
+	if s := os.Getenv(ctrl.LoadAlphaEnvName); s != "" {
+		v, err := strconv.ParseFloat(s, 64)
+		if err != nil {
+			fmt.Println("bad env variable " + ctrl.LoadAlphaEnvName + ": " + s)
+			return
+		}
+		alpha = v
+	}
+	if s := os.Getenv(ctrl.LoadThetaEnvName); s != "" {
+		v, err := strconv.ParseFloat(s, 64)
+		if err != nil {
+			fmt.Println("bad env variable " + ctrl.LoadThetaEnvName + ": " + s)
+			return
+		}
+		theta = v
+	}
+	if s := os.Getenv(ctrl.LoadSkewEnvName); s != "" {
+		v, err := strconv.ParseFloat(s, 64)
+		if err != nil {
+			fmt.Println("bad env variable " + ctrl.LoadSkewEnvName + ": " + s)
+			return
+		}
+		skew = v
+	}
+
+	fmt.Println("Running with interval=" + strconv.Itoa(interval) + "(sec), alpha=" + strconv.FormatFloat(alpha, 'f', 3, 64) +
+		", theta=" + strconv.FormatFloat(theta, 'f', 3, 64) +
+		", skew=" + strconv.FormatFloat(skew, 'f', 3, 64))
 
 	// run emulator
-	lg, err := loademulator.NewLoadEmulator(interval, alpha)
+	lg, err := loademulator.NewLoadEmulator(interval, alpha, theta, skew)
 	if err != nil {
 		fmt.Println(err)
 		return
