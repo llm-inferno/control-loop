@@ -20,15 +20,48 @@ spec:
   replicas: 3
   selector:
     matchLabels:
-      app: example
+      app: vllm-002
   template:
     metadata:
       labels:
-        app: example
+        app: vllm-002
     spec:
       containers:
-      - name: main
-        image: nginx
+      - name: server-sim
+        image: quay.io/atantawi/inferno-server-sim:latest
         imagePullPolicy: IfNotPresent
         ports:
-        - containerPort: 80
+        - containerPort: 8080
+        env:
+        - name: EVALUATOR_URL
+          value: "http://localhost:8081"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+      - name: evaluator
+        image: quay.io/atantawi/inferno-evaluator:latest
+        imagePullPolicy: IfNotPresent
+        args: ["queue-analysis"]
+        ports:
+        - containerPort: 8081
+        env:
+        - name: MODEL_DATA_FILE
+          value: "/etc/config/model-data.json"
+        volumeMounts:
+        - name: model-data
+          mountPath: /etc/config
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+      volumes:
+      - name: model-data
+        configMap:
+          name: server-sim-model-data

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: server-sim-model-data
+  namespace: infer
+data:
+  model-data.json: |
+    # Populated at deploy time via:
+    # kubectl create configmap server-sim-model-data -n infer \
+    #   --from-file=model-data.json=$REPO_BASE/sample-data/large/model-data.json \
+    #   --dry-run=client -o yaml | kubectl apply -f -

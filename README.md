@@ -179,12 +179,25 @@ Following are the steps to run the optimization control loop within a cluster.
     kubectl logs -f $POD -n inferno -c actuator
     ```
 
+- Build and push server-sim container images.
+
+    ```bash
+    cd $REPO_BASE/../server-sim
+    docker build -f Dockerfile.server-sim -t quay.io/atantawi/inferno-server-sim:latest .
+    docker build -f Dockerfile.evaluator  -t quay.io/atantawi/inferno-evaluator:latest .
+    docker push quay.io/atantawi/inferno-server-sim:latest
+    docker push quay.io/atantawi/inferno-evaluator:latest
+    ```
+
 - Create deployments representing inference servers in namespace *infer*.
 
     ```bash
     cd $REPO_BASE/yamls/workload
     kubectl apply -f ns.yaml
-    kubectl apply -f dep1.yaml,dep2.yaml,dep3.yaml
+    kubectl create configmap server-sim-model-data -n infer \
+      --from-file=model-data.json=$REPO_BASE/sample-data/large/model-data.json \
+      --dry-run=client -o yaml | kubectl apply -f -
+    kubectl apply -f dep1.yaml,dep2.yaml,dep3.yaml,dep4.yaml
     ```
 
     Note that the deployment should have the following labels set (a missing service class name defaults to *Free*)
@@ -248,6 +261,7 @@ Following are the steps to run the optimization control loop within a cluster.
     kubectl delete -f ns.yaml
 
     cd $REPO_BASE/yamls/workload
-    kubectl delete -f dep1.yaml,dep2.yaml,dep3.yaml
+    kubectl delete -f dep1.yaml,dep2.yaml,dep3.yaml,dep4.yaml
+    kubectl delete configmap server-sim-model-data -n infer
     kubectl delete -f ns.yaml
     ```
