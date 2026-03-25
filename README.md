@@ -214,7 +214,7 @@ Following are the steps to run the optimization control loop within a cluster.
     Each pod must run two sidecars: **server-sim** (port 8080) and **evaluator** (port 8081, `queue-analysis` mode).
     The Collector calls `server-sim /simulate` on each running pod to obtain ITL and TTFT latency estimates.
 
-    Optional static fallback labels (used only if Prometheus metrics and server-sim are unavailable):
+    Optional static fallback labels for load metrics (used only if Prometheus is unavailable; ITL/TTFT always come from server-sim):
 
     ```bash
     labels:

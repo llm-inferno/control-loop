@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	simPollInterval = 500 * time.Millisecond
-	simTimeout      = 30 * time.Second
+	simPollInitial = 100 * time.Millisecond
+	simTimeout     = 30 * time.Second
 )
 
 type simRequest struct {
@@ -44,6 +44,9 @@ type simJobResponse struct {
 // server proxy (works from inside and outside the cluster), then polls
 // GET /simulate/:id until the job completes or times out.
 func simulatePod(kubeClient *kubernetes.Clientset, namespace, podName string, port int, req simRequest) (*simResult, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), simTimeout)
+	defer cancel()
+
 	body, err := json.Marshal(req)
 	if err != nil {
 		return nil, err
@@ -57,7 +60,7 @@ func simulatePod(kubeClient *kubernetes.Clientset, namespace, podName string, po
 		SubResource("proxy").
 		Suffix("/simulate").
 		Body(bytes.NewReader(body)).
-		DoRaw(context.TODO())
+		DoRaw(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("POST /simulate: %w", err)
 	}
@@ -70,17 +73,23 @@ func simulatePod(kubeClient *kubernetes.Clientset, namespace, podName string, po
 	}
 	fmt.Printf("simulation job %s submitted\n", jobResp.JobID)
 
-	// Poll GET /simulate/:id via k8s API proxy
-	deadline := time.Now().Add(simTimeout)
-	for time.Now().Before(deadline) {
-		time.Sleep(simPollInterval)
+	// Poll GET /simulate/:id via k8s API proxy with exponential backoff
+	deadline, _ := ctx.Deadline()
+	interval := simPollInitial
+	for ctx.Err() == nil {
+		remaining := time.Until(deadline)
+		if interval > remaining {
+			interval = remaining
+		}
+		time.Sleep(interval)
+		interval *= 2
 		data, err := kubeClient.CoreV1().RESTClient().Get().
 			Namespace(namespace).
 			Resource("pods").
 			Name(fmt.Sprintf("%s:%d", podName, port)).
 			SubResource("proxy").
 			Suffix("/simulate/" + jobResp.JobID).
-			DoRaw(context.TODO())
+			DoRaw(ctx)
 		if err != nil {
 			return nil, fmt.Errorf("GET /simulate/%s: %w", jobResp.JobID, err)
 		}

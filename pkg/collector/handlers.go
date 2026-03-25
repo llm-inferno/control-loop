@@ -6,6 +6,7 @@ import (
 	"math"
 	"net/http"
 	"strconv"
+	"sync"
 
 	ctrl "github.com/llm-inferno/control-loop/pkg/controller"
 
@@ -122,7 +123,14 @@ func collect(c *gin.Context) {
 			if err != nil {
 				fmt.Printf("error listing pods for %s: %v\n", serverName, err)
 			} else {
-				var weightedITL, weightedTTFT, totalRPM float64
+				// collect running pods owned by this deployment
+				type podEntry struct {
+					pod    corev1.Pod
+					rpm    float64
+					inTok  int
+					outTok int
+				}
+				var runningPods []podEntry
 				for _, p := range pods.Items {
 					if p.Status.Phase != corev1.PodRunning {
 						continue
@@ -137,36 +145,50 @@ func collect(c *gin.Context) {
 					if !owned {
 						continue
 					}
-					numReplicas++
-
 					rpm, _ := strconv.ParseFloat(p.Labels[ctrl.KeyArrivalRate], 32)
 					inTok, _ := strconv.Atoi(p.Labels[ctrl.KeyInTokens])
 					outTok, _ := strconv.Atoi(p.Labels[ctrl.KeyOutTokens])
+					runningPods = append(runningPods, podEntry{p, rpm, inTok, outTok})
+				}
+				numReplicas = len(runningPods)
 
-					req := simRequest{
-						RPS:             float32(rpm / 60.0),
-						MaxConcurrency:  maxBatchSize,
-						AvgInputTokens:  float32(inTok),
-						AvgOutputTokens: float32(outTok),
-						Accelerator:     d.Labels[ctrl.KeyAccelerator],
-						Model:           d.Labels[ctrl.KeyServerModel],
-					}
-					var podITL, podTTFT float32
-					result, err := simulatePod(KubeClient, p.Namespace, p.Name, ctrl.ServerSimPort, req)
-					if err != nil {
-						fmt.Printf("pod %s simulation error: %v\n", p.Name, err)
-					} else {
-						podITL = result.AvgITL
-						podTTFT = result.AvgTTFT
-						fmt.Printf("pod %s: TTFT=%.1fms ITL=%.1fms throughput=%.2freq/s maxRPS=%.2f\n",
-							p.Name, result.AvgTTFT, result.AvgITL, result.Throughput, result.MaxRPS)
-						weightedITL += float64(result.AvgITL) * rpm
-						weightedTTFT += float64(result.AvgTTFT) * rpm
-						totalRPM += rpm
-					}
+				// fan-out: simulate all pods in parallel
+				simResults := make([]*simResult, len(runningPods))
+				simErrors := make([]error, len(runningPods))
+				var wg sync.WaitGroup
+				for i, pe := range runningPods {
+					wg.Add(1)
+					go func(i int, pe podEntry) {
+						defer wg.Done()
+						req := simRequest{
+							RPS:             float32(pe.rpm / 60.0),
+							MaxConcurrency:  maxBatchSize,
+							AvgInputTokens:  float32(pe.inTok),
+							AvgOutputTokens: float32(pe.outTok),
+							Accelerator:     d.Labels[ctrl.KeyAccelerator],
+							Model:           d.Labels[ctrl.KeyServerModel],
+						}
+						simResults[i], simErrors[i] = simulatePod(KubeClient, pe.pod.Namespace, pe.pod.Name, ctrl.ServerSimPort, req)
+					}(i, pe)
+				}
+				wg.Wait()
 
+				// aggregate results
+				var weightedITL, weightedTTFT, totalRPM float64
+				for i, pe := range runningPods {
+					if simErrors[i] != nil {
+						fmt.Printf("pod %s simulation error: %v\n", pe.pod.Name, simErrors[i])
+						continue
+					}
+					podITL := simResults[i].AvgITL
+					podTTFT := simResults[i].AvgTTFT
+					fmt.Printf("pod %s: TTFT=%.1fms ITL=%.1fms throughput=%.2freq/s maxRPS=%.2f\n",
+						pe.pod.Name, podTTFT, podITL, simResults[i].Throughput, simResults[i].MaxRPS)
+					weightedITL += float64(podITL) * pe.rpm
+					weightedTTFT += float64(podTTFT) * pe.rpm
+					totalRPM += pe.rpm
 					replicaSpecs = append(replicaSpecs, config.ServerSpec{
-						Name:  serverName + ctrl.ReplicaNameSeparator + p.Name,
+						Name:  serverName + ctrl.ReplicaNameSeparator + pe.pod.Name,
 						Class: d.Labels[ctrl.KeyServerClass],
 						Model: d.Labels[ctrl.KeyServerModel],
 						CurrentAlloc: config.AllocationData{
@@ -176,9 +198,9 @@ func collect(c *gin.Context) {
 							ITLAverage:  podITL,
 							TTFTAverage: podTTFT,
 							Load: config.ServerLoadSpec{
-								ArrivalRate:  float32(rpm),
-								AvgInTokens:  inTok,
-								AvgOutTokens: outTok,
+								ArrivalRate:  float32(pe.rpm),
+								AvgInTokens:  pe.inTok,
+								AvgOutTokens: pe.outTok,
 							},
 						},
 					})

@@ -49,7 +49,7 @@ Data/config types (`config.SystemData`, `config.AllocationData`, etc.) and `util
 - `State.SystemData` (`config.SystemData` from `optimizer-light/pkg/config`): holds static files (accelerators, models, service classes, optimizer params) and dynamic server data
 - `State.ServerMap`: maps server names to k8s `{uid, name, namespace}` for the Actuator to resolve deployments
 - `ServerCollectorInfo.Spec`: one `config.ServerSpec` per managed deployment (aggregated ITL/TTFT/load)
-- `ServerCollectorInfo.ReplicaSpecs`: one `config.ServerSpec` per running pod, named `<server>/<podName>`, with per-pod ITL/TTFT/load
+- `ServerCollectorInfo.ReplicaSpecs`: one `config.ServerSpec` per running pod whose simulation succeeded, named `<server>/<podName>`, with per-pod ITL/TTFT/load
 - Static data is read once at startup from `INFERNO_DATA_PATH`; in dynamic mode (`isDynamicMode=true`) it is re-read each cycle
 - `capacity-data.json` is always re-read each cycle (represents current accelerator availability)
 - `numReplicas` in `curAlloc` is the count of currently running pods (not `Spec.Replicas`)
