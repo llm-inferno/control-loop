@@ -2,10 +2,12 @@ package collector
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"time"
+
+	"k8s.io/client-go/kubernetes"
 )
 
 const (
@@ -38,42 +40,52 @@ type simJobResponse struct {
 	Error  string     `json:"error,omitempty"`
 }
 
-// simulatePod calls POST /simulate on the server-sim sidecar running in the pod,
-// then polls GET /simulate/:id until the job completes or times out.
-func simulatePod(podIP string, port int, req simRequest) (*simResult, error) {
-	baseURL := fmt.Sprintf("http://%s:%d", podIP, port)
-
-	// POST /simulate
+// simulatePod calls POST /simulate on the server-sim sidecar via the k8s API
+// server proxy (works from inside and outside the cluster), then polls
+// GET /simulate/:id until the job completes or times out.
+func simulatePod(kubeClient *kubernetes.Clientset, namespace, podName string, port int, req simRequest) (*simResult, error) {
 	body, err := json.Marshal(req)
 	if err != nil {
 		return nil, err
 	}
-	resp, err := http.Post(baseURL+"/simulate", "application/json", bytes.NewReader(body))
+
+	// POST /simulate via k8s API proxy
+	data, err := kubeClient.CoreV1().RESTClient().Post().
+		Namespace(namespace).
+		Resource("pods").
+		Name(fmt.Sprintf("%s:%d", podName, port)).
+		SubResource("proxy").
+		Suffix("/simulate").
+		Body(bytes.NewReader(body)).
+		DoRaw(context.TODO())
 	if err != nil {
 		return nil, fmt.Errorf("POST /simulate: %w", err)
 	}
-	defer func() { _ = resp.Body.Close() }()
 
 	var jobResp struct {
 		JobID string `json:"jobID"`
 	}
-	if err := json.NewDecoder(resp.Body).Decode(&jobResp); err != nil {
+	if err := json.Unmarshal(data, &jobResp); err != nil {
 		return nil, fmt.Errorf("decode jobID: %w", err)
 	}
 	fmt.Printf("simulation job %s submitted\n", jobResp.JobID)
 
-	// Poll GET /simulate/:id
+	// Poll GET /simulate/:id via k8s API proxy
 	deadline := time.Now().Add(simTimeout)
 	for time.Now().Before(deadline) {
 		time.Sleep(simPollInterval)
-		r, err := http.Get(baseURL + "/simulate/" + jobResp.JobID)
+		data, err := kubeClient.CoreV1().RESTClient().Get().
+			Namespace(namespace).
+			Resource("pods").
+			Name(fmt.Sprintf("%s:%d", podName, port)).
+			SubResource("proxy").
+			Suffix("/simulate/" + jobResp.JobID).
+			DoRaw(context.TODO())
 		if err != nil {
 			return nil, fmt.Errorf("GET /simulate/%s: %w", jobResp.JobID, err)
 		}
 		var jr simJobResponse
-		err = json.NewDecoder(r.Body).Decode(&jr)
-		_ = r.Body.Close()
-		if err != nil {
+		if err := json.Unmarshal(data, &jr); err != nil {
 			return nil, fmt.Errorf("decode job response: %w", err)
 		}
 		switch jr.Status {

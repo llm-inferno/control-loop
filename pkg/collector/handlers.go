@@ -170,7 +170,7 @@ func collect(c *gin.Context) {
 				Accelerator:     d.Labels[ctrl.KeyAccelerator],
 				Model:           d.Labels[ctrl.KeyServerModel],
 			}
-			result, err := simulatePod(p.Status.PodIP, ctrl.ServerSimPort, req)
+			result, err := simulatePod(KubeClient, p.Namespace, p.Name, ctrl.ServerSimPort, req)
 			if err != nil {
 				fmt.Printf("pod %s simulation error: %v\n", p.Name, err)
 				continue
