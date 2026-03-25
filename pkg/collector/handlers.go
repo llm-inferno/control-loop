@@ -12,7 +12,10 @@ import (
 	"github.com/llm-inferno/optimizer-light/pkg/config"
 
 	"github.com/gin-gonic/gin"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/apimachinery/pkg/types"
 )
 
 // Handlers for REST API calls
@@ -112,6 +115,69 @@ func collect(c *gin.Context) {
 			CurrentAlloc: curAlloc,
 		}
 		serverSpecs = append(serverSpecs, serverSpec)
+
+		// simulate each running pod via server-sim sidecar
+		selectorStr := labels.Set(d.Spec.Selector.MatchLabels).String()
+
+		// find ReplicaSets owned by this deployment
+		rsList, err := KubeClient.AppsV1().ReplicaSets(d.Namespace).List(context.TODO(), metav1.ListOptions{
+			LabelSelector: selectorStr})
+		if err != nil {
+			fmt.Printf("error listing ReplicaSets for %s: %v\n", serverName, err)
+			continue
+		}
+		rsUIDs := make(map[types.UID]struct{})
+		for _, rs := range rsList.Items {
+			for _, owner := range rs.OwnerReferences {
+				if owner.UID == d.UID {
+					rsUIDs[rs.UID] = struct{}{}
+					break
+				}
+			}
+		}
+
+		// find running pods owned by those ReplicaSets
+		pods, err := KubeClient.CoreV1().Pods(d.Namespace).List(context.TODO(), metav1.ListOptions{
+			LabelSelector: selectorStr})
+		if err != nil {
+			fmt.Printf("error listing pods for %s: %v\n", serverName, err)
+			continue
+		}
+		for _, p := range pods.Items {
+			if p.Status.Phase != corev1.PodRunning {
+				continue
+			}
+			owned := false
+			for _, owner := range p.OwnerReferences {
+				if _, ok := rsUIDs[owner.UID]; ok {
+					owned = true
+					break
+				}
+			}
+			if !owned {
+				continue
+			}
+
+			rpm, _ := strconv.ParseFloat(p.Labels[ctrl.KeyArrivalRate], 32)
+			inTok, _ := strconv.Atoi(p.Labels[ctrl.KeyInTokens])
+			outTok, _ := strconv.Atoi(p.Labels[ctrl.KeyOutTokens])
+
+			req := simRequest{
+				RPS:             float32(rpm / 60.0),
+				MaxConcurrency:  maxBatchSize,
+				AvgInputTokens:  float32(inTok),
+				AvgOutputTokens: float32(outTok),
+				Accelerator:     d.Labels[ctrl.KeyAccelerator],
+				Model:           d.Labels[ctrl.KeyServerModel],
+			}
+			result, err := simulatePod(p.Status.PodIP, ctrl.ServerSimPort, req)
+			if err != nil {
+				fmt.Printf("pod %s simulation error: %v\n", p.Name, err)
+				continue
+			}
+			fmt.Printf("pod %s: TTFT=%.1fms ITL=%.1fms throughput=%.2freq/s maxRPS=%.2f\n",
+				p.Name, result.AvgTTFT, result.AvgITL, result.Throughput, result.MaxRPS)
+		}
 	}
 
 	serverCollectorInfo := ctrl.ServerCollectorInfo{

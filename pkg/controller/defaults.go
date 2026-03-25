@@ -44,6 +44,8 @@ const (
 	// others
 	DefaultControlPeriodSeconds int  = 60 // periodicity of control (zero means aperiodic)
 	DefaultControlDynamicMode   bool = false
+
+	ServerSimPort = 8080 // server-sim sidecar listen port
 )
 
 // Kube config
