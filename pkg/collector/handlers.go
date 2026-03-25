@@ -100,6 +100,7 @@ func collect(c *gin.Context) {
 
 		// simulate running pods and compute weighted average ITL/TTFT
 		var itlAvg, ttftAvg float32
+		var totalRPM float64
 		var numReplicas int
 		selectorStr := labels.Set(d.Spec.Selector.MatchLabels).String()
 
@@ -174,7 +175,7 @@ func collect(c *gin.Context) {
 				wg.Wait()
 
 				// aggregate results
-				var weightedITL, weightedTTFT, totalRPM float64
+				var weightedITL, weightedTTFT float64
 				for i, pe := range runningPods {
 					if simErrors[i] != nil {
 						fmt.Printf("pod %s simulation error: %v\n", pe.pod.Name, simErrors[i])
@@ -220,7 +221,7 @@ func collect(c *gin.Context) {
 			ITLAverage:  itlAvg,
 			TTFTAverage: ttftAvg,
 			Load: config.ServerLoadSpec{
-				ArrivalRate:  float32(arrvRate),
+				ArrivalRate:  float32(totalRPM),
 				AvgInTokens:  int(inTokens),
 				AvgOutTokens: int(outTokens),
 			},

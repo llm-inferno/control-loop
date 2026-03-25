@@ -35,7 +35,7 @@ Controller    → Collector → (Prometheus + k8s labels + server-sim /simulate 
 LoadEmulator  → (k8s deployment + pod labels: load metrics)
 ```
 
-Each managed workload pod runs two sidecars: **server-sim** (port 8080) and **evaluator** (port 8081, `queue-analysis` mode). The Collector calls `server-sim /simulate` on each running pod via the k8s API server proxy to obtain ITL, TTFT, and throughput; ITL/TTFT are aggregated (weighted by per-pod throughput in RPM) into the deployment-level `curAlloc`. Per-pod `LoadSpec.ArrivalRate` is set to the simulated throughput (goodput), not the offered arrival rate.
+Each managed workload pod runs two sidecars: **server-sim** (port 8080) and **evaluator** (port 8081, `queue-analysis` mode). The Collector calls `server-sim /simulate` on each running pod via the k8s API server proxy to obtain ITL, TTFT, and throughput; ITL/TTFT are aggregated (weighted by per-pod throughput in RPM) into the deployment-level `curAlloc`. Both per-pod and deployment-level `LoadSpec.ArrivalRate` are set to the simulated throughput (goodput) — per-pod from `simResult.Throughput * 60`, deployment-level from `totalRPM` (sum of per-pod goodput) — not the offered arrival rate.
 
 Data/config types (`config.SystemData`, `config.AllocationData`, etc.) and `utils.FromDataToSpec` come from `github.com/llm-inferno/optimizer-light/pkg/config` and `…/pkg/utils`. The `optimizer` module depends on `optimizer-light` and re-exports its REST server; the control-loop imports `optimizer-light` directly.
 
