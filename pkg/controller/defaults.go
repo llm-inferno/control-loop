@@ -46,6 +46,8 @@ const (
 	DefaultControlDynamicMode   bool = false
 
 	ServerSimPort = 8080 // server-sim sidecar listen port
+
+	ReplicaNameSeparator = "/" // separator between server name and pod name in replica specs
 )
 
 // Kube config

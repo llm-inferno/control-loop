@@ -32,6 +32,7 @@ func collect(c *gin.Context) {
 
 	// initialize collector info
 	serverSpecs := make([]config.ServerSpec, 0)
+	replicaSpecs := make([]config.ServerSpec, 0)
 	serverMap := make(map[string]ctrl.ServerKubeInfo)
 
 	// collect data from deployments
@@ -49,7 +50,6 @@ func collect(c *gin.Context) {
 			Space: d.Namespace,
 		}
 
-		numReplicas := *d.Spec.Replicas
 		maxBatchSize, _ := strconv.Atoi(d.Labels[ctrl.KeyMaxBatchSize])
 
 		var arrvRate float64
@@ -97,16 +97,116 @@ func collect(c *gin.Context) {
 		}
 		fmt.Printf("Average output tokens per request %f \n", outTokens)
 
+		// simulate running pods and compute weighted average ITL/TTFT
+		var itlAvg, ttftAvg float32
+		var numReplicas int
+		selectorStr := labels.Set(d.Spec.Selector.MatchLabels).String()
+
+		rsList, err := KubeClient.AppsV1().ReplicaSets(d.Namespace).List(context.TODO(), metav1.ListOptions{
+			LabelSelector: selectorStr})
+		if err != nil {
+			fmt.Printf("error listing ReplicaSets for %s: %v\n", serverName, err)
+		} else {
+			rsUIDs := make(map[types.UID]struct{})
+			for _, rs := range rsList.Items {
+				for _, owner := range rs.OwnerReferences {
+					if owner.UID == d.UID {
+						rsUIDs[rs.UID] = struct{}{}
+						break
+					}
+				}
+			}
+
+			pods, err := KubeClient.CoreV1().Pods(d.Namespace).List(context.TODO(), metav1.ListOptions{
+				LabelSelector: selectorStr})
+			if err != nil {
+				fmt.Printf("error listing pods for %s: %v\n", serverName, err)
+			} else {
+				var weightedITL, weightedTTFT, totalRPM float64
+				for _, p := range pods.Items {
+					if p.Status.Phase != corev1.PodRunning {
+						continue
+					}
+					owned := false
+					for _, owner := range p.OwnerReferences {
+						if _, ok := rsUIDs[owner.UID]; ok {
+							owned = true
+							break
+						}
+					}
+					if !owned {
+						continue
+					}
+					numReplicas++
+
+					rpm, _ := strconv.ParseFloat(p.Labels[ctrl.KeyArrivalRate], 32)
+					inTok, _ := strconv.Atoi(p.Labels[ctrl.KeyInTokens])
+					outTok, _ := strconv.Atoi(p.Labels[ctrl.KeyOutTokens])
+
+					req := simRequest{
+						RPS:             float32(rpm / 60.0),
+						MaxConcurrency:  maxBatchSize,
+						AvgInputTokens:  float32(inTok),
+						AvgOutputTokens: float32(outTok),
+						Accelerator:     d.Labels[ctrl.KeyAccelerator],
+						Model:           d.Labels[ctrl.KeyServerModel],
+					}
+					var podITL, podTTFT float32
+					result, err := simulatePod(KubeClient, p.Namespace, p.Name, ctrl.ServerSimPort, req)
+					if err != nil {
+						fmt.Printf("pod %s simulation error: %v\n", p.Name, err)
+					} else {
+						podITL = result.AvgITL
+						podTTFT = result.AvgTTFT
+						fmt.Printf("pod %s: TTFT=%.1fms ITL=%.1fms throughput=%.2freq/s maxRPS=%.2f\n",
+							p.Name, result.AvgTTFT, result.AvgITL, result.Throughput, result.MaxRPS)
+						weightedITL += float64(result.AvgITL) * rpm
+						weightedTTFT += float64(result.AvgTTFT) * rpm
+						totalRPM += rpm
+					}
+
+					replicaSpecs = append(replicaSpecs, config.ServerSpec{
+						Name:  serverName + ctrl.ReplicaNameSeparator + p.Name,
+						Class: d.Labels[ctrl.KeyServerClass],
+						Model: d.Labels[ctrl.KeyServerModel],
+						CurrentAlloc: config.AllocationData{
+							Accelerator: d.Labels[ctrl.KeyAccelerator],
+							MaxBatch:    maxBatchSize,
+							NumReplicas: 1,
+							ITLAverage:  podITL,
+							TTFTAverage: podTTFT,
+							Load: config.ServerLoadSpec{
+								ArrivalRate:  float32(rpm),
+								AvgInTokens:  inTok,
+								AvgOutTokens: outTok,
+							},
+						},
+					})
+				}
+				if totalRPM > 0 {
+					itlAvg = float32(weightedITL / totalRPM)
+					ttftAvg = float32(weightedTTFT / totalRPM)
+				}
+			}
+		}
+
 		curAlloc := config.AllocationData{
 			Accelerator: d.Labels[ctrl.KeyAccelerator],
 			NumReplicas: int(numReplicas),
 			MaxBatch:    maxBatchSize,
+			ITLAverage:  itlAvg,
+			TTFTAverage: ttftAvg,
 			Load: config.ServerLoadSpec{
 				ArrivalRate:  float32(arrvRate),
 				AvgInTokens:  int(inTokens),
 				AvgOutTokens: int(outTokens),
 			},
 		}
+
+		fmt.Printf("curAlloc[%s]: replicas=%d acc=%s maxBatch=%d ITL=%.1fms TTFT=%.1fms rpm=%.2f inTok=%d outTok=%d\n",
+			serverName, curAlloc.NumReplicas, curAlloc.Accelerator, curAlloc.MaxBatch,
+			curAlloc.ITLAverage, curAlloc.TTFTAverage,
+			curAlloc.Load.ArrivalRate, curAlloc.Load.AvgInTokens, curAlloc.Load.AvgOutTokens)
 
 		serverSpec := config.ServerSpec{
 			Name:         serverName,
@@ -115,73 +215,18 @@ func collect(c *gin.Context) {
 			CurrentAlloc: curAlloc,
 		}
 		serverSpecs = append(serverSpecs, serverSpec)
+	}
 
-		// simulate each running pod via server-sim sidecar
-		selectorStr := labels.Set(d.Spec.Selector.MatchLabels).String()
-
-		// find ReplicaSets owned by this deployment
-		rsList, err := KubeClient.AppsV1().ReplicaSets(d.Namespace).List(context.TODO(), metav1.ListOptions{
-			LabelSelector: selectorStr})
-		if err != nil {
-			fmt.Printf("error listing ReplicaSets for %s: %v\n", serverName, err)
-			continue
-		}
-		rsUIDs := make(map[types.UID]struct{})
-		for _, rs := range rsList.Items {
-			for _, owner := range rs.OwnerReferences {
-				if owner.UID == d.UID {
-					rsUIDs[rs.UID] = struct{}{}
-					break
-				}
-			}
-		}
-
-		// find running pods owned by those ReplicaSets
-		pods, err := KubeClient.CoreV1().Pods(d.Namespace).List(context.TODO(), metav1.ListOptions{
-			LabelSelector: selectorStr})
-		if err != nil {
-			fmt.Printf("error listing pods for %s: %v\n", serverName, err)
-			continue
-		}
-		for _, p := range pods.Items {
-			if p.Status.Phase != corev1.PodRunning {
-				continue
-			}
-			owned := false
-			for _, owner := range p.OwnerReferences {
-				if _, ok := rsUIDs[owner.UID]; ok {
-					owned = true
-					break
-				}
-			}
-			if !owned {
-				continue
-			}
-
-			rpm, _ := strconv.ParseFloat(p.Labels[ctrl.KeyArrivalRate], 32)
-			inTok, _ := strconv.Atoi(p.Labels[ctrl.KeyInTokens])
-			outTok, _ := strconv.Atoi(p.Labels[ctrl.KeyOutTokens])
-
-			req := simRequest{
-				RPS:             float32(rpm / 60.0),
-				MaxConcurrency:  maxBatchSize,
-				AvgInputTokens:  float32(inTok),
-				AvgOutputTokens: float32(outTok),
-				Accelerator:     d.Labels[ctrl.KeyAccelerator],
-				Model:           d.Labels[ctrl.KeyServerModel],
-			}
-			result, err := simulatePod(KubeClient, p.Namespace, p.Name, ctrl.ServerSimPort, req)
-			if err != nil {
-				fmt.Printf("pod %s simulation error: %v\n", p.Name, err)
-				continue
-			}
-			fmt.Printf("pod %s: TTFT=%.1fms ITL=%.1fms throughput=%.2freq/s maxRPS=%.2f\n",
-				p.Name, result.AvgTTFT, result.AvgITL, result.Throughput, result.MaxRPS)
-		}
+	for _, r := range replicaSpecs {
+		fmt.Printf("replicaAlloc[%s]: acc=%s maxBatch=%d ITL=%.1fms TTFT=%.1fms rpm=%.2f inTok=%d outTok=%d\n",
+			r.Name, r.CurrentAlloc.Accelerator, r.CurrentAlloc.MaxBatch,
+			r.CurrentAlloc.ITLAverage, r.CurrentAlloc.TTFTAverage,
+			r.CurrentAlloc.Load.ArrivalRate, r.CurrentAlloc.Load.AvgInTokens, r.CurrentAlloc.Load.AvgOutTokens)
 	}
 
 	serverCollectorInfo := ctrl.ServerCollectorInfo{
 		Spec:         serverSpecs,
+		ReplicaSpecs: replicaSpecs,
 		KubeResource: serverMap,
 	}
 

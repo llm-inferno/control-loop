@@ -12,6 +12,7 @@ type ServerKubeInfo struct {
 // Inference server information collected
 type ServerCollectorInfo struct {
 	Spec         []config.ServerSpec       `json:"servers"`
+	ReplicaSpecs []config.ServerSpec       `json:"replicas"`       // one entry per running pod
 	KubeResource map[string]ServerKubeInfo `json:"kube-resources"` // map of server names to kubeInfo
 }
 
