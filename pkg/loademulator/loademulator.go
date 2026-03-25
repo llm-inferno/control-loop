@@ -13,6 +13,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/kubernetes"
 )
 
@@ -90,7 +91,7 @@ func (lg *LoadEmulator) Run() {
 
 			// update pod labels
 			selectorStr := labels.Set(d.Spec.Selector.MatchLabels).String()
-			if err := lg.updatePodLabels(d.Namespace, selectorStr, curRPM, curInTokens, curOutTokens); err != nil {
+			if err := lg.updatePodLabels(d.Namespace, selectorStr, d.UID, curRPM, curInTokens, curOutTokens); err != nil {
 				fmt.Println(err)
 			}
 		}
@@ -99,17 +100,41 @@ func (lg *LoadEmulator) Run() {
 }
 
 // update pod labels: split totalRPM across pods using skew, broadcast token counts
-func (lg *LoadEmulator) updatePodLabels(namespace, selectorStr string, totalRPM float64, inTokens, outTokens int) error {
+// pods are resolved via the ownership chain: Deployment UID → ReplicaSet → Pods
+func (lg *LoadEmulator) updatePodLabels(namespace, selectorStr string, deploymentUID types.UID, totalRPM float64, inTokens, outTokens int) error {
+	// find ReplicaSets owned by this deployment
+	rsList, err := lg.kubeClient.AppsV1().ReplicaSets(namespace).List(context.TODO(), metav1.ListOptions{
+		LabelSelector: selectorStr})
+	if err != nil {
+		return err
+	}
+	rsUIDs := make(map[types.UID]struct{})
+	for _, rs := range rsList.Items {
+		for _, owner := range rs.OwnerReferences {
+			if owner.UID == deploymentUID {
+				rsUIDs[rs.UID] = struct{}{}
+				break
+			}
+		}
+	}
+
+	// find pods owned by those ReplicaSets
 	pods, err := lg.kubeClient.CoreV1().Pods(namespace).List(context.TODO(), metav1.ListOptions{
 		LabelSelector: selectorStr})
 	if err != nil {
 		return err
 	}
-	// filter to running pods only
+	// filter to running pods owned by this deployment's ReplicaSets
 	running := make([]int, 0, len(pods.Items))
 	for i, p := range pods.Items {
-		if p.Status.Phase == corev1.PodRunning {
-			running = append(running, i)
+		if p.Status.Phase != corev1.PodRunning {
+			continue
+		}
+		for _, owner := range p.OwnerReferences {
+			if _, ok := rsUIDs[owner.UID]; ok {
+				running = append(running, i)
+				break
+			}
 		}
 	}
 	if len(running) == 0 {
