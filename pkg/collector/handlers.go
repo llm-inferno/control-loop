@@ -182,11 +182,12 @@ func collect(c *gin.Context) {
 					}
 					podITL := simResults[i].AvgITL
 					podTTFT := simResults[i].AvgTTFT
+					podThroughputRPM := float64(simResults[i].Throughput) * 60.0
 					fmt.Printf("pod %s: TTFT=%.1fms ITL=%.1fms throughput=%.2freq/s maxRPS=%.2f\n",
 						pe.pod.Name, podTTFT, podITL, simResults[i].Throughput, simResults[i].MaxRPS)
-					weightedITL += float64(podITL) * pe.rpm
-					weightedTTFT += float64(podTTFT) * pe.rpm
-					totalRPM += pe.rpm
+					weightedITL += float64(podITL) * podThroughputRPM
+					weightedTTFT += float64(podTTFT) * podThroughputRPM
+					totalRPM += podThroughputRPM
 					replicaSpecs = append(replicaSpecs, config.ServerSpec{
 						Name:  serverName + ctrl.ReplicaNameSeparator + pe.pod.Name,
 						Class: d.Labels[ctrl.KeyServerClass],
@@ -198,7 +199,7 @@ func collect(c *gin.Context) {
 							ITLAverage:  podITL,
 							TTFTAverage: podTTFT,
 							Load: config.ServerLoadSpec{
-								ArrivalRate:  float32(pe.rpm),
+								ArrivalRate:  float32(podThroughputRPM),
 								AvgInTokens:  pe.inTok,
 								AvgOutTokens: pe.outTok,
 							},
