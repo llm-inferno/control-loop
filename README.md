@@ -211,7 +211,10 @@ Following are the steps to run the optimization control loop within a cluster.
         inferno.server.allocation.accelerator: MI250
     ```
 
-    and some optional labels (if metrics are not available from Prometheus).
+    Each pod must run two sidecars: **server-sim** (port 8080) and **evaluator** (port 8081, `queue-analysis` mode).
+    The Collector calls `server-sim /simulate` on each running pod to obtain ITL and TTFT latency estimates.
+
+    Optional static fallback labels (used only if Prometheus metrics and server-sim are unavailable):
 
     ```bash
     labels:
@@ -221,7 +224,7 @@ Following are the steps to run the optimization control loop within a cluster.
         inferno.server.load.outtokens: "2048"
     ```
 
-    If using the Load Emulator, also set nominal load labels (used as the mean-reversion target):
+    Also set nominal load labels (used by the Load Emulator as the mean-reversion target):
 
     ```bash
     labels:
@@ -236,7 +239,7 @@ Following are the steps to run the optimization control loop within a cluster.
     watch kubectl get pods -n infer
     ```
 
-- (Optional) Start a load emulator to inference servers.
+- Start a load emulator to inference servers.
 
     ```bash
     cd $REPO_BASE/yamls/deploy

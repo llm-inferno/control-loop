@@ -29,15 +29,18 @@ There are no automated tests in this repository.
 The system is a **closed-loop inference optimizer** for Kubernetes. It runs as four cooperating REST microservices:
 
 ```
-Controller → Collector → (Prometheus + k8s)
-           → Optimizer (external: github.com/llm-inferno/optimizer)
-           → Actuator  → (k8s deployments)
+Controller    → Collector → (Prometheus + k8s labels + server-sim /simulate per pod)
+              → Optimizer (external: github.com/llm-inferno/optimizer)
+              → Actuator  → (k8s deployments)
+LoadEmulator  → (k8s deployment + pod labels: load metrics)
 ```
+
+Each managed workload pod runs two sidecars: **server-sim** (port 8080) and **evaluator** (port 8081, `queue-analysis` mode). The Collector calls `server-sim /simulate` on each running pod via the k8s API server proxy to obtain ITL and TTFT latency estimates; results are aggregated (weighted by RPM) into the deployment-level `curAlloc`.
 
 Data/config types (`config.SystemData`, `config.AllocationData`, etc.) and `utils.FromDataToSpec` come from `github.com/llm-inferno/optimizer-light/pkg/config` and `…/pkg/utils`. The `optimizer` module depends on `optimizer-light` and re-exports its REST server; the control-loop imports `optimizer-light` directly.
 
 **Control flow** (in `pkg/controller/controller.go:Optimize()`):
-1. Controller calls `GET /collect` on the Collector to read current server state from k8s labels and Prometheus
+1. Controller calls `GET /collect` on the Collector to read current server state from k8s labels, Prometheus, and server-sim simulations
 2. Controller calls `POST /optimizeOne` on the Optimizer with full `SystemData`
 3. Controller calls `POST /update` on the Actuator with allocation decisions + k8s references
 4. Actuator scales k8s deployment replicas to match the optimizer's allocation
@@ -45,10 +48,13 @@ Data/config types (`config.SystemData`, `config.AllocationData`, etc.) and `util
 **Data model** — `pkg/controller/`:
 - `State.SystemData` (`config.SystemData` from `optimizer-light/pkg/config`): holds static files (accelerators, models, service classes, optimizer params) and dynamic server data
 - `State.ServerMap`: maps server names to k8s `{uid, name, namespace}` for the Actuator to resolve deployments
+- `ServerCollectorInfo.Spec`: one `config.ServerSpec` per managed deployment (aggregated ITL/TTFT/load)
+- `ServerCollectorInfo.ReplicaSpecs`: one `config.ServerSpec` per running pod, named `<server>/<podName>`, with per-pod ITL/TTFT/load
 - Static data is read once at startup from `INFERNO_DATA_PATH`; in dynamic mode (`isDynamicMode=true`) it is re-read each cycle
 - `capacity-data.json` is always re-read each cycle (represents current accelerator availability)
+- `numReplicas` in `curAlloc` is the count of currently running pods (not `Spec.Replicas`)
 
-**Managed deployments** are discovered by k8s label `inferno.server.managed: "true"`. Required labels: `inferno.server.name`, `inferno.server.model`, `inferno.server.class`, `inferno.server.allocation.accelerator`. Load metrics come from Prometheus or fallback labels (`inferno.server.load.rpm`, `inferno.server.load.intokens`, `inferno.server.load.outtokens`). When using the Load Emulator, nominal load labels (`inferno.server.load.nominal.*`) must also be set; the emulator uses these as the mean-reversion target and writes dynamic load labels to both the deployment and its running pods.
+**Managed deployments** are discovered by k8s label `inferno.server.managed: "true"`. Required labels: `inferno.server.name`, `inferno.server.model`, `inferno.server.class`, `inferno.server.allocation.accelerator`. The Load Emulator sets traffic rate statistics (RPM, token counts) by writing dynamic load labels to both the deployment and its running pods; nominal load labels (`inferno.server.load.nominal.*`) must be set on each deployment as the mean-reversion target. The Collector reads these labels (or falls back to static labels `inferno.server.load.rpm`, `inferno.server.load.intokens`, `inferno.server.load.outtokens` if Prometheus is unavailable).
 
 **Controller** also exposes `GET /invoke` for on-demand (aperiodic) control cycles. Both periodic and aperiodic modes run simultaneously; the mutex in `Optimize()` serializes concurrent calls.
 
