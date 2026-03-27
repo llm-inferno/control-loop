@@ -17,8 +17,13 @@ import (
 
 // get URL of a REST server
 func GetURL(hostEnvName, portEnvName string) string {
-	host := "localhost"
-	port := "8080"
+	return GetURLWithDefaults(hostEnvName, portEnvName, "localhost", "8080")
+}
+
+// get URL of a REST server with explicit default host and port
+func GetURLWithDefaults(hostEnvName, portEnvName, defaultHost, defaultPort string) string {
+	host := defaultHost
+	port := defaultPort
 	if h := os.Getenv(hostEnvName); h != "" {
 		host = h
 	}
@@ -117,6 +122,64 @@ func GetServerData() (*config.ServerData, error) {
 		return nil, jsonErr
 	}
 	return &servers, nil
+}
+
+// send replica specs to Tuner and get tuned model data
+func POSTTune(replicaSpecs []config.ServerSpec) (*config.ModelData, error) {
+	endPoint := TunerURL + "/" + TuneVerb
+	if byteValue, err := json.Marshal(replicaSpecs); err != nil {
+		return nil, err
+	} else {
+		req, getErr := http.NewRequest("POST", endPoint, bytes.NewBuffer(byteValue))
+		if getErr != nil {
+			return nil, getErr
+		}
+		req.Header.Add("Content-Type", "application/json")
+		client := &http.Client{}
+		res, err := client.Do(req)
+		if err != nil {
+			return nil, err
+		}
+		defer func() { _ = res.Body.Close() }()
+		if res.StatusCode != http.StatusOK {
+			return nil, fmt.Errorf("%s", "tuner /tune failed: "+res.Status)
+		}
+		modelData := config.ModelData{}
+		derr := json.NewDecoder(res.Body).Decode(&modelData)
+		if derr != nil {
+			return nil, derr
+		}
+		return &modelData, nil
+	}
+}
+
+// send current model data to Tuner and get merged model data
+func POSTMerge(modelData *config.ModelData) (*config.ModelData, error) {
+	endPoint := TunerURL + "/" + MergeVerb
+	if byteValue, err := json.Marshal(modelData); err != nil {
+		return nil, err
+	} else {
+		req, getErr := http.NewRequest("POST", endPoint, bytes.NewBuffer(byteValue))
+		if getErr != nil {
+			return nil, getErr
+		}
+		req.Header.Add("Content-Type", "application/json")
+		client := &http.Client{}
+		res, err := client.Do(req)
+		if err != nil {
+			return nil, err
+		}
+		defer func() { _ = res.Body.Close() }()
+		if res.StatusCode != http.StatusOK {
+			return nil, fmt.Errorf("%s", "tuner /merge failed: "+res.Status)
+		}
+		merged := config.ModelData{}
+		derr := json.NewDecoder(res.Body).Decode(&merged)
+		if derr != nil {
+			return nil, derr
+		}
+		return &merged, nil
+	}
 }
 
 // send optimizer solution to Actuator

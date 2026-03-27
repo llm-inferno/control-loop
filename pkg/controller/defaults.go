@@ -14,6 +14,9 @@ const (
 	OptimizerHostEnvName = "INFERNO_HOST"
 	OptimizerPortEnvName = "INFERNO_PORT"
 
+	TunerHostEnvName = "TUNER_HOST"
+	TunerPortEnvName = "TUNER_PORT"
+
 	DataPathEnvName       = "INFERNO_DATA_PATH"
 	ControlPeriodEnvName  = "INFERNO_CONTROL_PERIOD"
 	ControlDynamicEnvName = "INFERNO_CONTROL_DYNAMIC"
@@ -34,6 +37,9 @@ const (
 
 	DefaultActuatorHost = ""
 	DefaultActuatorPort = "8080"
+
+	DefaultTunerHost = "localhost"
+	DefaultTunerPort = "8081"
 )
 
 const (
@@ -52,6 +58,8 @@ const (
 	ServersVerb  = "getServers"
 	CollectVerb  = "collect"
 	ActuatorVerb = "update"
+	TuneVerb     = "tune"
+	MergeVerb    = "merge"
 
 	// others
 	DefaultControlPeriodSeconds int  = 60 // periodicity of control (zero means aperiodic)
@@ -98,6 +106,7 @@ var (
 	CollectorURL string
 	OptimizerURL string
 	ActuatorURL  string
+	TunerURL     string
 
 	DataPath string
 )

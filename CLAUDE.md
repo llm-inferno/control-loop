@@ -26,11 +26,12 @@ There are no automated tests in this repository.
 
 ## Architecture
 
-The system is a **closed-loop inference optimizer** for Kubernetes. It runs as four cooperating REST microservices:
+The system is a **closed-loop inference optimizer** for Kubernetes. It runs as five cooperating REST microservices:
 
 ```
 Controller    → Collector → (Prometheus + k8s labels + server-sim /simulate per pod)
-              → Optimizer (external: github.com/llm-inferno/optimizer)
+              → Tuner     → (EKF-based model parameter refinement: github.com/llm-inferno/model-tuner)
+              → Optimizer → (external: github.com/llm-inferno/optimizer)
               → Actuator  → (k8s deployments)
 LoadEmulator  → (k8s deployment + pod labels: load metrics)
 ```
@@ -41,13 +42,16 @@ Data/config types (`config.SystemData`, `config.AllocationData`, etc.) and `util
 
 **Control flow** (in `pkg/controller/controller.go:Optimize()`):
 1. Controller calls `GET /collect` on the Collector to read current server state from k8s labels, Prometheus, and server-sim simulations
-2. Controller calls `POST /optimizeOne` on the Optimizer with full `SystemData`
-3. Controller calls `POST /update` on the Actuator with allocation decisions + k8s references
-4. Actuator scales k8s deployment replicas to match the optimizer's allocation
+2. Controller calls `POST /tune` then `POST /merge` on the Tuner (if `TUNER_HOST` is set), passing `replicaSpecs` to refine model performance parameters via EKF; the merged `ModelData` replaces `State.currentModelData` and is injected into `SystemData` before the optimizer call
+3. Controller calls `POST /optimizeOne` on the Optimizer with full `SystemData` (including tuned model data)
+4. Controller calls `POST /update` on the Actuator with allocation decisions + k8s references
+5. Actuator scales k8s deployment replicas to match the optimizer's allocation
 
 **Data model** — `pkg/controller/`:
 - `State.SystemData` (`config.SystemData` from `optimizer-light/pkg/config`): holds static files (accelerators, models, service classes, optimizer params) and dynamic server data
 - `State.ServerMap`: maps server names to k8s `{uid, name, namespace}` for the Actuator to resolve deployments
+- `State.originalModelData`: `ModelData` read from `model-data.json` at startup; reset each cycle in dynamic mode
+- `State.currentModelData`: starts as a copy of `originalModelData`; updated each cycle with the tuner's merged output and fed into `SystemData.Spec.Models` before the optimizer call
 - `ServerCollectorInfo.Spec`: one `config.ServerSpec` per managed deployment (aggregated ITL/TTFT/load)
 - `ServerCollectorInfo.ReplicaSpecs`: one `config.ServerSpec` per running pod whose simulation succeeded, named `<server>/<podName>`, with per-pod ITL/TTFT/load
 - Static data is read once at startup from `INFERNO_DATA_PATH`; in dynamic mode (`isDynamicMode=true`) it is re-read each cycle
@@ -70,6 +74,8 @@ Data/config types (`config.SystemData`, `config.AllocationData`, etc.) and `util
 | `INFERNO_PORT` | `8080` | Optimizer client target port |
 | `ACTUATOR_HOST` | `""` (all interfaces) | Actuator server listen address; `localhost` when used as client target |
 | `ACTUATOR_PORT` | `8080` | Actuator server listen port |
+| `TUNER_HOST` | unset (Tuner disabled) | Tuner client target address; set to enable tuner integration |
+| `TUNER_PORT` | `8081` | Tuner client target port |
 | `INFERNO_DATA_PATH` | `./` | Path to JSON data files (must end with `/`) |
 | `INFERNO_CONTROL_PERIOD` | `60` | Control loop period in seconds (0 = aperiodic only) |
 | `INFERNO_CONTROL_DYNAMIC` | `false` | Re-read static data each cycle |

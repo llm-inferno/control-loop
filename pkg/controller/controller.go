@@ -26,6 +26,7 @@ type Controller struct {
 	State         *State
 	router        *gin.Engine
 	isDynamicMode bool
+	tunerEnabled  bool
 }
 
 // State consists of static (read from files) and dynamic data
@@ -38,6 +39,10 @@ type State struct {
 	SystemData *config.SystemData
 
 	ServerMap map[string]ServerKubeInfo
+
+	// model data copies: original from static files, current updated by tuner each cycle
+	originalModelData config.ModelData
+	currentModelData  config.ModelData
 }
 
 func NewController(isDynamicMode bool) (*Controller, error) {
@@ -59,6 +64,8 @@ func (a *Controller) Init() error {
 	CollectorURL = GetURL(CollectorHostEnvName, CollectorPortEnvName)
 	OptimizerURL = GetURL(OptimizerHostEnvName, OptimizerPortEnvName)
 	ActuatorURL = GetURL(ActuatorHostEnvName, ActuatorPortEnvName)
+	TunerURL = GetURLWithDefaults(TunerHostEnvName, TunerPortEnvName, DefaultTunerHost, DefaultTunerPort)
+	a.tunerEnabled = os.Getenv(TunerHostEnvName) != ""
 
 	// read data from files in data path
 	if DataPath = os.Getenv(DataPathEnvName); DataPath == "" {
@@ -69,6 +76,8 @@ func (a *Controller) Init() error {
 	if err := a.State.readStaticData(); err != nil {
 		return err
 	}
+	a.State.originalModelData = a.State.SystemData.Spec.Models
+	a.State.currentModelData = a.State.SystemData.Spec.Models
 
 	// read capacity data
 	if err := a.State.readCapacityData(); err != nil {
@@ -191,6 +200,8 @@ func (a *Controller) Optimize() error {
 		if err := a.State.readStaticData(); err != nil {
 			return err
 		}
+		a.State.originalModelData = a.State.SystemData.Spec.Models
+		a.State.currentModelData = a.State.SystemData.Spec.Models
 	}
 
 	// call Collector to get updated server data
@@ -206,12 +217,27 @@ func (a *Controller) Optimize() error {
 	a.State.ServerMap = collectorInfo.KubeResource
 	collectTime := time.Since(startTime)
 
+	// call Tuner to update model performance parameters
+	var tuneTime time.Duration
+	if a.tunerEnabled {
+		if _, tuneErr := POSTTune(collectorInfo.ReplicaSpecs); tuneErr != nil {
+			return tuneErr
+		}
+		mergedModelData, mergeErr := POSTMerge(&a.State.currentModelData)
+		if mergeErr != nil {
+			return mergeErr
+		}
+		a.State.currentModelData = *mergedModelData
+		a.State.SystemData.Spec.Models = a.State.currentModelData
+		tuneTime = time.Since(startTime) - collectTime
+	}
+
 	// call optimizer
 	allocSolution, postErr := POSTOptimize(a.State.SystemData)
 	if postErr != nil {
 		return postErr
 	}
-	optimizeTime := time.Since(startTime) - collectTime
+	optimizeTime := time.Since(startTime) - collectTime - tuneTime
 
 	// call Actuator to realize desired state
 	actuatorInfo := &ServerActuatorInfo{
@@ -222,12 +248,12 @@ func (a *Controller) Optimize() error {
 	if actErr != nil {
 		return actErr
 	}
-	actuateTime := time.Since(startTime) - collectTime - optimizeTime
+	actuateTime := time.Since(startTime) - collectTime - tuneTime - optimizeTime
 	totalTime := time.Since(startTime)
-	fmt.Printf("%v:\t collect: %d\t optimize: %d\t actuate: %d\t total: %d msec\n",
+	fmt.Printf("%v:\t collect: %d\t tune: %d\t optimize: %d\t actuate: %d\t total: %d msec\n",
 		time.Now().Format("15:04:05.000"),
-		collectTime.Milliseconds(), optimizeTime.Milliseconds(),
-		actuateTime.Milliseconds(), totalTime.Milliseconds())
+		collectTime.Milliseconds(), tuneTime.Milliseconds(),
+		optimizeTime.Milliseconds(), actuateTime.Milliseconds(), totalTime.Milliseconds())
 
 	return nil
 }
