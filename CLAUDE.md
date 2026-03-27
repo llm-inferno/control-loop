@@ -62,10 +62,14 @@ Data/config types (`config.SystemData`, `config.AllocationData`, etc.) and `util
 
 | Variable | Default | Description |
 |---|---|---|
-| `CONTROLLER_HOST/PORT` | `localhost:3300` | Controller REST address |
-| `COLLECTOR_HOST/PORT` | `localhost:3301` | Collector REST address |
-| `INFERNO_HOST/PORT` | `localhost:3302` | Optimizer REST address |
-| `ACTUATOR_HOST/PORT` | `localhost:3303` | Actuator REST address |
+| `CONTROLLER_HOST` | `""` (all interfaces) | Controller server listen address |
+| `CONTROLLER_PORT` | `8080` | Controller server listen port |
+| `COLLECTOR_HOST` | `""` (all interfaces) | Collector server listen address; `localhost` when used as client target |
+| `COLLECTOR_PORT` | `8080` | Collector server listen port |
+| `INFERNO_HOST` | `localhost` | Optimizer client target address |
+| `INFERNO_PORT` | `8080` | Optimizer client target port |
+| `ACTUATOR_HOST` | `""` (all interfaces) | Actuator server listen address; `localhost` when used as client target |
+| `ACTUATOR_PORT` | `8080` | Actuator server listen port |
 | `INFERNO_DATA_PATH` | `./` | Path to JSON data files (must end with `/`) |
 | `INFERNO_CONTROL_PERIOD` | `60` | Control loop period in seconds (0 = aperiodic only) |
 | `INFERNO_CONTROL_DYNAMIC` | `false` | Re-read static data each cycle |

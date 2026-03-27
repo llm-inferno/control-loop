@@ -153,19 +153,11 @@ func (state *State) readCapacityData() error {
 }
 
 // periodically run the controller
-func (a *Controller) Run(controlPeriod int) {
+func (a *Controller) Run(host, port string, controlPeriod int) {
 	// start server
 	Wg.Add(1)
 	go func() {
 		defer Wg.Done()
-		host := ""
-		port := "8080"
-		if h := os.Getenv(ControllerHostEnvName); h != "" {
-			host = h
-		}
-		if p := os.Getenv(ControllerPortEnvName); p != "" {
-			port = p
-		}
 		_ = a.router.Run(host + ":" + port)
 	}()
 

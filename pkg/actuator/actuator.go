@@ -1,8 +1,6 @@
 package actuator
 
 import (
-	"os"
-
 	ctrl "github.com/llm-inferno/control-loop/pkg/controller"
 
 	"github.com/gin-gonic/gin"
@@ -30,14 +28,6 @@ func NewActuator() (actuator *Actuator, err error) {
 }
 
 // start server
-func (server *Actuator) Run() {
-	host := ""
-	port := "8080"
-	if h := os.Getenv(ctrl.ActuatorHostEnvName); h != "" {
-		host = h
-	}
-	if p := os.Getenv(ctrl.ActuatorPortEnvName); p != "" {
-		port = p
-	}
+func (server *Actuator) Run(host, port string) {
 	_ = server.router.Run(host + ":" + port)
 }

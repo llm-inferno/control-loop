@@ -24,6 +24,18 @@ const (
 	LoadSkewEnvName     = "INFERNO_LOAD_SKEW"
 )
 
+// Default host and port for each REST server
+const (
+	DefaultControllerHost = ""
+	DefaultControllerPort = "8080"
+
+	DefaultCollectorHost = ""
+	DefaultCollectorPort = "8080"
+
+	DefaultActuatorHost = ""
+	DefaultActuatorPort = "8080"
+)
+
 const (
 	// path to static data json files (ends with /)
 	DefaultDataPath = "./"

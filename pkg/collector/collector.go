@@ -1,8 +1,6 @@
 package collector
 
 import (
-	"os"
-
 	ctrl "github.com/llm-inferno/control-loop/pkg/controller"
 
 	"github.com/gin-gonic/gin"
@@ -30,14 +28,6 @@ func NewCollector() (collector *Collector, err error) {
 }
 
 // start server
-func (server *Collector) Run() {
-	host := ""
-	port := "8080"
-	if h := os.Getenv(ctrl.CollectorHostEnvName); h != "" {
-		host = h
-	}
-	if p := os.Getenv(ctrl.CollectorPortEnvName); p != "" {
-		port = p
-	}
+func (server *Collector) Run(host, port string) {
 	_ = server.router.Run(host + ":" + port)
 }

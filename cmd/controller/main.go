@@ -75,6 +75,15 @@ func main() {
 		return
 	}
 
-	controller.Run(period)
+	host := os.Getenv(ctrl.ControllerHostEnvName)
+	if host == "" {
+		host = ctrl.DefaultControllerHost
+	}
+	port := os.Getenv(ctrl.ControllerPortEnvName)
+	if port == "" {
+		port = ctrl.DefaultControllerPort
+	}
+
+	controller.Run(host, port, period)
 	ctrl.Wg.Wait()
 }
