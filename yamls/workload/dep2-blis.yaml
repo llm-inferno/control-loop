@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bronze-granite-13b
+  namespace: infer
+  labels:
+    inferno.server.managed: "true"
+    inferno.server.name: vllm-002
+    inferno.server.model: granite_13b
+    inferno.server.class: Bronze
+    inferno.server.allocation.accelerator: H100
+    inferno.server.allocation.maxbatchsize: "16"
+    inferno.server.load.rpm: "60"
+    inferno.server.load.intokens: "512"
+    inferno.server.load.outtokens: "512"
+    inferno.server.load.nominal.rpm: "60"
+    inferno.server.load.nominal.intokens: "512"
+    inferno.server.load.nominal.outtokens: "512"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: vllm-002
+  template:
+    metadata:
+      labels:
+        app: vllm-002
+    spec:
+      containers:
+      - name: server-sim
+        image: quay.io/atantawi/inferno-server-sim:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+        - name: EVALUATOR_URL
+          value: "http://localhost:8081"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+      - name: evaluator
+        image: quay.io/atantawi/inferno-evaluator:latest
+        imagePullPolicy: IfNotPresent
+        args: ["blis"]
+        ports:
+        - containerPort: 8081
+        env:
+        - name: BLIS_CONFIG_FILE
+          value: "/app/config/blis-config.json"
+        - name: HW_CONFIG_FILE
+          value: "/app/config/hardware_config.json"
+        - name: LATENCY_BACKEND
+          value: "roofline"
+        volumeMounts:
+        - name: blis-config
+          mountPath: /app/config
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+      volumes:
+      - name: blis-config
+        configMap:
+          name: server-sim-blis-config
