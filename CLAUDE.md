@@ -36,7 +36,7 @@ Controller    → Collector → (Prometheus + k8s labels + server-sim /simulate 
 LoadEmulator  → (k8s deployment + pod labels: load metrics)
 ```
 
-Each managed workload pod runs two sidecars: **server-sim** (port 8080) and **evaluator** (port 8081, `queue-analysis` mode). The Collector calls `server-sim /simulate` on each running pod via the k8s API server proxy to obtain ITL, TTFT, and throughput; ITL/TTFT are aggregated (weighted by per-pod throughput in RPM) into the deployment-level `curAlloc`. Both per-pod and deployment-level `LoadSpec.ArrivalRate` are set to the simulated throughput (goodput) — per-pod from `simResult.Throughput * 60`, deployment-level from `totalRPM` (sum of per-pod goodput) — not the offered arrival rate.
+Each managed workload pod runs two sidecars: **server-sim** (port 8080) and **evaluator** (port 8081, `queue-analysis` mode). The Collector calls `server-sim /simulate` on each running pod via the k8s API server proxy to obtain ITL, TTFT, and throughput; ITL/TTFT are aggregated (weighted by per-pod throughput in RPM) into the deployment-level `curAlloc`. Both per-pod and deployment-level `LoadSpec.ArrivalRate` are set to the simulated throughput (goodput) — per-pod from `simResult.Throughput * 60`, deployment-level from `totalRPM` (sum of per-pod goodput) — not the offered arrival rate. If `totalRPM==0` (no running pods or all simulations failed), the deployment-level `ArrivalRate` falls back to the label-based `inferno.server.load.rpm` value to prevent the 0-replica deadlock.
 
 Data/config types (`config.SystemData`, `config.AllocationData`, etc.) and `utils.FromDataToSpec` come from `github.com/llm-inferno/optimizer-light/pkg/config` and `…/pkg/utils`. The `optimizer` module depends on `optimizer-light` and re-exports its REST server; the control-loop imports `optimizer-light` directly.
 
@@ -96,3 +96,30 @@ Data/config types (`config.SystemData`, `config.AllocationData`, etc.) and `util
 - `capacity-data.json` — current accelerator capacity counts (re-read each cycle)
 
 Sample data is in the `sample-data/` git submodule (`sample-data/large/` has realistic-scale data).
+
+## Known Behaviours and Operational Notes
+
+**0-replica deadlock and fallback**: When all replicas for a managed deployment are 0 (or pods are starting up with no load labels yet), the Collector gets `totalRPM=0` from server-sim (no pods to simulate). The optimizer then sees 0 arrival rate and allocates 0 replicas, creating a permanent deadlock. **Fix**: the Collector falls back to the label-based arrival rate (`inferno.server.load.rpm`) whenever `totalRPM==0`, regardless of replica count (`pkg/collector/handlers.go`). This covers both the zero-replica case and the newly-started-pod case (labels not yet written by the load emulator).
+
+**Tuner EKF convergence in synthetic environments**: In test environments where server-sim uses the same alpha/beta/gamma parameters it is simulating, the tuner's EKF will converge immediately to the static file values — there is no discrepancy to correct. EKF divergence from static values only occurs with real LLM servers whose actual behaviour differs from the initial parameter estimates.
+
+**Tuner skipped when replicaSpecs empty**: The tuner block is skipped silently (tune: 0ms in timing log) when `len(collectorInfo.ReplicaSpecs) == 0`. This happens when all pod simulations fail (evaluator 500/400). Check evaluator logs if tune time is consistently 0 despite pods running.
+
+**Evaluator 500 for missing model/accelerator**: The evaluator sidecar returns HTTP 500 when the requested model+accelerator combination is not in its `model-data.json` config. Each workload deployment's evaluator must be configured with a `model-data.json` that includes an entry for its `inferno.server.model` label paired with the accelerator assigned by the optimizer. Missing entries cause the pod's simulation to fail, resulting in empty `ReplicaSpecs` and the tuner being skipped.
+
+**ConfigMap propagation delay in dynamic mode**: When `INFERNO_CONTROL_DYNAMIC=true`, static data files are re-read from the mounted ConfigMap each cycle. ConfigMap updates take ~30–60 seconds to propagate to mounted volumes (kubelet sync period). Changes are not reflected until the next cycle after the file is updated on disk.
+
+**Tuner fault tolerance**: If the model-tuner service is unreachable, `POSTTune` fails with a connection error. The controller logs a warning (`tuner /tune warning: ...`) and continues the cycle using `currentModelData` unchanged. The tune timing column shows ~1ms (fast fail). Cycles remain uninterrupted.
+
+## Integration Test Results (k3s / Rancher Desktop)
+
+Tested with `dep1` (`premium-llama-13b`, vllm-001) and `dep2-blis` (`bronze-granite-13b`, vllm-002) workloads:
+
+| Experiment | Observation |
+|---|---|
+| Tuner convergence | EKF stable at static values each cycle (expected: simulator uses same params it estimates) |
+| Load variation → scaling | Raising nominal RPM from 60→300 caused scale-out 1→2 replicas at ~113 RPM; scale-in when load reverted |
+| Tuner fault tolerance | Scaling model-tuner to 0 replicas: controller logs `connection refused` warning each cycle, optimize+actuate continue normally |
+| Dynamic mode | `INFERNO_CONTROL_DYNAMIC=true`: ConfigMap edit (`saturationPolicy`) picked up within one cycle after kubelet sync; no errors, no restart needed |
+
+Typical cycle timing (2 managed deployments, k3s single-node): `collect: ~220ms  tune: 2–3ms  optimize: ~30ms  actuate: ~10ms  total: ~265ms`
