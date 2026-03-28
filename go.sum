@@ -82,6 +82,8 @@ github.com/llm-inferno/optimizer v0.7.1 h1:WqB4F84L0E+0oZRL/4JU9mHWi8/eDnF1jN3Ky
 github.com/llm-inferno/optimizer v0.7.1/go.mod h1:Pv6a/2mBwd9k+QzREcAzG/fhAFJvQCZ0sqApPGWVIRk=
 github.com/llm-inferno/optimizer-light v0.7.1 h1:i/Pc3VI57mlYCZYALIgU5ppBZ9vJ8FtDVzH6sVS1gOE=
 github.com/llm-inferno/optimizer-light v0.7.1/go.mod h1:UlNtJTLWQG5+TJt8Xdm7qRN8IymPv0VUC3S/6Nnjqak=
+github.com/llm-inferno/optimizer-light v0.7.2-0.20260328031026-a5f49d989aea h1:P1jcyLJctFij5201PooaOTcOX63GGCe7YrON4uI5860=
+github.com/llm-inferno/optimizer-light v0.7.2-0.20260328031026-a5f49d989aea/go.mod h1:UlNtJTLWQG5+TJt8Xdm7qRN8IymPv0VUC3S/6Nnjqak=
 github.com/llm-inferno/queue-analysis v0.3.0 h1:rFc60z7Lgj2QOZPzQDJhaqD7QhaCwMT4m0XfuGw/vUs=
 github.com/llm-inferno/queue-analysis v0.3.0/go.mod h1:18cK7006sgMuEci090V6kbCJVwQ7kf82UeRMcDr/cxQ=
 github.com/mailru/easyjson v0.9.0 h1:PrnmzHw7262yW8sTBwxi1PdJA3Iw/EKBa8psRf7d9a4=
