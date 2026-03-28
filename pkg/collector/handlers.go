@@ -214,6 +214,12 @@ func collect(c *gin.Context) {
 			}
 		}
 
+		// fall back to label-based arrival rate when no pods are running (breaks 0-replica deadlock)
+		effectiveRPM := totalRPM
+		if effectiveRPM == 0 && numReplicas == 0 {
+			effectiveRPM = arrvRate
+		}
+
 		curAlloc := config.AllocationData{
 			Accelerator: d.Labels[ctrl.KeyAccelerator],
 			NumReplicas: int(numReplicas),
@@ -221,7 +227,7 @@ func collect(c *gin.Context) {
 			ITLAverage:  itlAvg,
 			TTFTAverage: ttftAvg,
 			Load: config.ServerLoadSpec{
-				ArrivalRate:  float32(totalRPM),
+				ArrivalRate:  float32(effectiveRPM),
 				AvgInTokens:  int(inTokens),
 				AvgOutTokens: int(outTokens),
 			},
