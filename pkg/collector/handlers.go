@@ -214,9 +214,10 @@ func collect(c *gin.Context) {
 			}
 		}
 
-		// fall back to label-based arrival rate when no pods are running (breaks 0-replica deadlock)
+		// fall back to label-based arrival rate when server-sim yields 0 goodput
+		// (covers both 0-replica deadlock and newly-started pods whose labels aren't set yet)
 		effectiveRPM := totalRPM
-		if effectiveRPM == 0 && numReplicas == 0 {
+		if effectiveRPM == 0 {
 			effectiveRPM = arrvRate
 		}
 
