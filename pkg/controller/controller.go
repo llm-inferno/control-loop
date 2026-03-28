@@ -219,16 +219,20 @@ func (a *Controller) Optimize() error {
 
 	// call Tuner to update model performance parameters
 	var tuneTime time.Duration
-	if a.tunerEnabled {
+	if a.tunerEnabled && len(collectorInfo.ReplicaSpecs) > 0 {
 		if _, tuneErr := POSTTune(collectorInfo.ReplicaSpecs); tuneErr != nil {
-			return tuneErr
+			fmt.Printf("%v: tuner /tune warning (continuing with current model data): %s\n",
+				time.Now().Format("15:04:05.000"), tuneErr.Error())
+		} else {
+			mergedModelData, mergeErr := POSTMerge(&a.State.currentModelData)
+			if mergeErr != nil {
+				fmt.Printf("%v: tuner /merge warning (continuing with current model data): %s\n",
+					time.Now().Format("15:04:05.000"), mergeErr.Error())
+			} else {
+				a.State.currentModelData = *mergedModelData
+				a.State.SystemData.Spec.Models = a.State.currentModelData
+			}
 		}
-		mergedModelData, mergeErr := POSTMerge(&a.State.currentModelData)
-		if mergeErr != nil {
-			return mergeErr
-		}
-		a.State.currentModelData = *mergedModelData
-		a.State.SystemData.Spec.Models = a.State.currentModelData
 		tuneTime = time.Since(startTime) - collectTime
 	}
 

@@ -15,8 +15,11 @@ rules:
   - apiGroups: [""]
     resources: ["pods", "configmaps"]
     verbs: ["get", "list", "watch", "patch", "update"]
+  - apiGroups: [""]
+    resources: ["pods/proxy"]
+    verbs: ["get", "create"]
   - apiGroups: ["apps"]
-    resources: ["deployments"]
+    resources: ["deployments", "replicasets"]
     verbs: ["get", "list", "watch", "patch", "update"]
   - apiGroups: ["rbac.authorization.k8s.io"]
     resources: ["clusterrole"]
@@ -81,13 +84,17 @@ spec:
             value: "3302"
           - name: ACTUATOR_PORT
             value: "3303"
+          - name: TUNER_HOST
+            value: "model-tuner"
+          - name: TUNER_PORT
+            value: "8081"
         ports:
         - containerPort: 3300
         command: ["controller"]
         resources:
           requests:
             memory: "512Mi"
-            cpu: "500m"
+            cpu: "200m"
           limits:
             memory: "1Gi"
             cpu: "1"
@@ -105,7 +112,7 @@ spec:
         resources:
           requests:
             memory: "512Mi"
-            cpu: "500m"
+            cpu: "200m"
           limits:
             memory: "1Gi"
             cpu: "1"
@@ -121,7 +128,7 @@ spec:
         resources:
           requests:
             memory: "512Mi"
-            cpu: "500m"
+            cpu: "200m"
           limits:
             memory: "2Gi"
             cpu: "1"
@@ -139,7 +146,7 @@ spec:
         resources:
           requests:
             memory: "512Mi"
-            cpu: "500m"
+            cpu: "200m"
           limits:
             memory: "1Gi"
             cpu: "1"  

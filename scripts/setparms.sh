@@ -18,6 +18,9 @@ export INFERNO_PORT=3302
 export ACTUATOR_HOST=localhost
 export ACTUATOR_PORT=3303
 
+export TUNER_HOST=localhost
+export TUNER_PORT=8081
+
 export INFERNO_CONTROL_PERIOD=60
 export INFERNO_CONTROL_DYNAMIC=false
 
