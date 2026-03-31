@@ -38,7 +38,7 @@ LoadEmulator  → (k8s deployment + pod labels: load metrics)
 
 The five components (Controller, Collector, Optimizer, Actuator, Tuner) share the network namespace of the `inferno` pod and communicate over `localhost` on ports 3300–3304 respectively.
 
-Each managed workload pod runs two sidecars: **server-sim** (port 8080) and **evaluator** (port 8081, `queue-analysis` mode). The Collector calls `server-sim /simulate` on each running pod via the k8s API server proxy to obtain ITL, TTFT, and throughput; ITL/TTFT are aggregated (weighted by per-pod throughput in RPM) into the deployment-level `curAlloc`. Both per-pod and deployment-level `LoadSpec.ArrivalRate` are set to the simulated throughput (goodput) — per-pod from `simResult.Throughput * 60`, deployment-level from `totalRPM` (sum of per-pod goodput) — not the offered arrival rate. If `totalRPM==0` (no running pods or all simulations failed), the deployment-level `ArrivalRate` falls back to the label-based `inferno.server.load.rpm` value to prevent the 0-replica deadlock.
+Each managed workload pod runs two sidecars: **server-sim** (port 8080) and **evaluator** (port 8081, `queue-analysis` mode). The Collector calls `server-sim /simulate` on each running pod via the k8s API server proxy to obtain ITL, TTFT, and throughput; ITL/TTFT are aggregated (weighted by per-pod simulated throughput in RPM) into the deployment-level `curAlloc`. Per-pod `LoadSpec.ArrivalRate` is set to the pod's `inferno.server.load.rpm` label. Deployment-level `LoadSpec.ArrivalRate` is read from Prometheus (falling back to the deployment's `inferno.server.load.rpm` label if Prometheus is unavailable).
 
 Data/config types (`config.SystemData`, `config.AllocationData`, etc.) and `utils.FromDataToSpec` come from `github.com/llm-inferno/optimizer-light/pkg/config` and `…/pkg/utils`. The `optimizer` module depends on `optimizer-light` and re-exports its REST server; the control-loop imports `optimizer-light` directly.
 
@@ -55,10 +55,10 @@ Data/config types (`config.SystemData`, `config.AllocationData`, etc.) and `util
 - `State.originalModelData`: `ModelData` read from `model-data.json` at startup; reset each cycle in dynamic mode
 - `State.currentModelData`: starts as a copy of `originalModelData`; updated each cycle with the tuner's merged output and fed into `SystemData.Spec.Models` before the optimizer call
 - `ServerCollectorInfo.Spec`: one `config.ServerSpec` per managed deployment (aggregated ITL/TTFT/load)
-- `ServerCollectorInfo.ReplicaSpecs`: one `config.ServerSpec` per running pod whose simulation succeeded, named `<server>/<podName>`, with per-pod ITL/TTFT/load
+- `ServerCollectorInfo.ReplicaSpecs`: one `config.ServerSpec` per running pod whose simulation succeeded, named `<server>/<podName>`, with per-pod ITL/TTFT and `ArrivalRate` from the pod's `inferno.server.load.rpm` label
 - Static data is read once at startup from `INFERNO_DATA_PATH`; in dynamic mode (`isDynamicMode=true`) it is re-read each cycle
 - `capacity-data.json` is always re-read each cycle (represents current accelerator availability)
-- `numReplicas` in `curAlloc` is the count of currently running pods (not `Spec.Replicas`)
+- `numReplicas` in `curAlloc` is `Spec.Replicas` from the deployment spec
 
 **Managed deployments** are discovered by k8s label `inferno.server.managed: "true"`. Required labels: `inferno.server.name`, `inferno.server.model`, `inferno.server.class`, `inferno.server.allocation.accelerator`. The Load Emulator sets traffic rate statistics (RPM, token counts) by writing dynamic load labels to both the deployment and its running pods; nominal load labels (`inferno.server.load.nominal.*`) must be set on each deployment as the mean-reversion target. The Collector reads these labels (or falls back to static labels `inferno.server.load.rpm`, `inferno.server.load.intokens`, `inferno.server.load.outtokens` if Prometheus is unavailable). **The Load Emulator must be running** for pods to have non-zero load labels; without it, per-pod RPM=0 causes the evaluator sidecar's `/simulate` to return HTTP 500, resulting in empty `ReplicaSpecs` (Tuner is then skipped) and all pods contributing zero weight to the aggregated `curAlloc`.
 
@@ -102,8 +102,6 @@ Data/config types (`config.SystemData`, `config.AllocationData`, etc.) and `util
 Sample data is in the `sample-data/` git submodule (`sample-data/large/` has realistic-scale data).
 
 ## Known Behaviours and Operational Notes
-
-**0-replica deadlock and fallback**: When all replicas for a managed deployment are 0 (or pods are starting up with no load labels yet), the Collector gets `totalRPM=0` from server-sim (no pods to simulate). The optimizer then sees 0 arrival rate and allocates 0 replicas, creating a permanent deadlock. **Fix**: the Collector falls back to the label-based arrival rate (`inferno.server.load.rpm`) whenever `totalRPM==0`, regardless of replica count (`pkg/collector/handlers.go`). This covers both the zero-replica case and the newly-started-pod case (labels not yet written by the load emulator).
 
 **Tuner EKF convergence in synthetic environments**: In test environments where server-sim uses the same alpha/beta/gamma parameters it is simulating, the tuner's EKF will converge immediately to the static file values — there is no discrepancy to correct. EKF divergence from static values only occurs with real LLM servers whose actual behaviour differs from the initial parameter estimates.
 

@@ -151,7 +151,7 @@ func collect(c *gin.Context) {
 					outTok, _ := strconv.Atoi(p.Labels[ctrl.KeyOutTokens])
 					runningPods = append(runningPods, podEntry{p, rpm, inTok, outTok})
 				}
-				numReplicas = len(runningPods)
+				numReplicas = int(*d.Spec.Replicas)
 
 				// fan-out: simulate all pods in parallel
 				simResults := make([]*simResult, len(runningPods))
@@ -200,7 +200,7 @@ func collect(c *gin.Context) {
 							ITLAverage:  podITL,
 							TTFTAverage: podTTFT,
 							Load: config.ServerLoadSpec{
-								ArrivalRate:  float32(podThroughputRPM),
+								ArrivalRate:  float32(pe.rpm),
 								AvgInTokens:  pe.inTok,
 								AvgOutTokens: pe.outTok,
 							},
@@ -214,13 +214,6 @@ func collect(c *gin.Context) {
 			}
 		}
 
-		// fall back to label-based arrival rate when server-sim yields 0 goodput
-		// (covers both 0-replica deadlock and newly-started pods whose labels aren't set yet)
-		effectiveRPM := totalRPM
-		if effectiveRPM == 0 {
-			effectiveRPM = arrvRate
-		}
-
 		curAlloc := config.AllocationData{
 			Accelerator: d.Labels[ctrl.KeyAccelerator],
 			NumReplicas: int(numReplicas),
@@ -228,7 +221,7 @@ func collect(c *gin.Context) {
 			ITLAverage:  itlAvg,
 			TTFTAverage: ttftAvg,
 			Load: config.ServerLoadSpec{
-				ArrivalRate:  float32(effectiveRPM),
+				ArrivalRate:  float32(arrvRate),
 				AvgInTokens:  int(inTokens),
 				AvgOutTokens: int(outTokens),
 			},
