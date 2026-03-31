@@ -26,7 +26,7 @@ There are no automated tests in this repository.
 
 ## Architecture
 
-The system is a **closed-loop inference optimizer** for Kubernetes. It runs as five cooperating REST microservices:
+The system is a **closed-loop inference optimizer** for Kubernetes. It runs as five cooperating REST microservices, all deployed as containers in a single `inferno` pod (plus a separate `LoadEmulator` deployment):
 
 ```
 Controller    → Collector → (Prometheus + k8s labels + server-sim /simulate per pod)
@@ -35,6 +35,8 @@ Controller    → Collector → (Prometheus + k8s labels + server-sim /simulate 
               → Actuator  → (k8s deployments)
 LoadEmulator  → (k8s deployment + pod labels: load metrics)
 ```
+
+The five components (Controller, Collector, Optimizer, Actuator, Tuner) share the network namespace of the `inferno` pod and communicate over `localhost` on ports 3300–3304 respectively.
 
 Each managed workload pod runs two sidecars: **server-sim** (port 8080) and **evaluator** (port 8081, `queue-analysis` mode). The Collector calls `server-sim /simulate` on each running pod via the k8s API server proxy to obtain ITL, TTFT, and throughput; ITL/TTFT are aggregated (weighted by per-pod throughput in RPM) into the deployment-level `curAlloc`. Both per-pod and deployment-level `LoadSpec.ArrivalRate` are set to the simulated throughput (goodput) — per-pod from `simResult.Throughput * 60`, deployment-level from `totalRPM` (sum of per-pod goodput) — not the offered arrival rate. If `totalRPM==0` (no running pods or all simulations failed), the deployment-level `ArrivalRate` falls back to the label-based `inferno.server.load.rpm` value to prevent the 0-replica deadlock.
 
@@ -60,6 +62,8 @@ Data/config types (`config.SystemData`, `config.AllocationData`, etc.) and `util
 
 **Managed deployments** are discovered by k8s label `inferno.server.managed: "true"`. Required labels: `inferno.server.name`, `inferno.server.model`, `inferno.server.class`, `inferno.server.allocation.accelerator`. The Load Emulator sets traffic rate statistics (RPM, token counts) by writing dynamic load labels to both the deployment and its running pods; nominal load labels (`inferno.server.load.nominal.*`) must be set on each deployment as the mean-reversion target. The Collector reads these labels (or falls back to static labels `inferno.server.load.rpm`, `inferno.server.load.intokens`, `inferno.server.load.outtokens` if Prometheus is unavailable). **The Load Emulator must be running** for pods to have non-zero load labels; without it, per-pod RPM=0 causes the evaluator sidecar's `/simulate` to return HTTP 500, resulting in empty `ReplicaSpecs` (Tuner is then skipped) and all pods contributing zero weight to the aggregated `curAlloc`.
 
+**Tuner ConfigMap requirement**: The Tuner container requires a `model-tuner-config` ConfigMap in the `inferno` namespace, mounted at `/etc/tuner/config` and referenced via `CONFIG_DATA_DIR`. This ConfigMap holds the EKF filter and model parameter configuration (see `github.com/llm-inferno/model-tuner/config-data/` for examples). Without it the tuner container will fail to start.
+
 **Collector RBAC requirements**: The `inferno` ClusterRole must include `replicasets` in the `apps` API group (to find pods owned by a deployment via its ReplicaSet) and a `pods/proxy` rule with `get, create` verbs (to reach pod sidecars through the k8s API server proxy). Without `replicasets`, the Collector cannot discover running pods. Without `pods/proxy`, the `/simulate` calls to server-sim fail with 403.
 
 **Controller** also exposes `GET /invoke` for on-demand (aperiodic) control cycles. Both periodic and aperiodic modes run simultaneously; the mutex in `Optimize()` serializes concurrent calls.
@@ -76,8 +80,8 @@ Data/config types (`config.SystemData`, `config.AllocationData`, etc.) and `util
 | `INFERNO_PORT` | `8080` | Optimizer client target port |
 | `ACTUATOR_HOST` | `""` (all interfaces) | Actuator server listen address; `localhost` when used as client target |
 | `ACTUATOR_PORT` | `8080` | Actuator server listen port |
-| `TUNER_HOST` | unset (Tuner disabled) | Tuner client target address; set to enable tuner integration |
-| `TUNER_PORT` | `8081` | Tuner client target port |
+| `TUNER_HOST` | unset (Tuner disabled) | Tuner client target address; set to `localhost` when Tuner runs as a sidecar in the same pod |
+| `TUNER_PORT` | `8081` | Tuner client target port (`3304` in the inferno pod deployment) |
 | `INFERNO_DATA_PATH` | `./` | Path to JSON data files (must end with `/`) |
 | `INFERNO_CONTROL_PERIOD` | `60` | Control loop period in seconds (0 = aperiodic only) |
 | `INFERNO_CONTROL_DYNAMIC` | `false` | Re-read static data each cycle |
@@ -109,7 +113,7 @@ Sample data is in the `sample-data/` git submodule (`sample-data/large/` has rea
 
 **ConfigMap propagation delay in dynamic mode**: When `INFERNO_CONTROL_DYNAMIC=true`, static data files are re-read from the mounted ConfigMap each cycle. ConfigMap updates take ~30–60 seconds to propagate to mounted volumes (kubelet sync period). Changes are not reflected until the next cycle after the file is updated on disk.
 
-**Tuner fault tolerance**: If the model-tuner service is unreachable, `POSTTune` fails with a connection error. The controller logs a warning (`tuner /tune warning: ...`) and continues the cycle using `currentModelData` unchanged. The tune timing column shows ~1ms (fast fail). Cycles remain uninterrupted.
+**Tuner fault tolerance**: If the tuner container is not ready or crashes, `POSTTune` fails with a connection error. The controller logs a warning (`tuner /tune warning: ...`) and continues the cycle using `currentModelData` unchanged. The tune timing column shows ~1ms (fast fail). Cycles remain uninterrupted.
 
 ## Integration Test Results (k3s / Rancher Desktop)
 
@@ -119,7 +123,7 @@ Tested with `dep1` (`premium-llama-13b`, vllm-001) and `dep2-blis` (`bronze-gran
 |---|---|
 | Tuner convergence | EKF stable at static values each cycle (expected: simulator uses same params it estimates) |
 | Load variation → scaling | Raising nominal RPM from 60→300 caused scale-out 1→2 replicas at ~113 RPM; scale-in when load reverted |
-| Tuner fault tolerance | Scaling model-tuner to 0 replicas: controller logs `connection refused` warning each cycle, optimize+actuate continue normally |
+| Tuner fault tolerance | Killing the tuner container: controller logs `connection refused` warning each cycle, optimize+actuate continue normally |
 | Dynamic mode | `INFERNO_CONTROL_DYNAMIC=true`: ConfigMap edit (`saturationPolicy`) picked up within one cycle after kubelet sync; no errors, no restart needed |
 
 Typical cycle timing (2 managed deployments, k3s single-node): `collect: ~220ms  tune: 2–3ms  optimize: ~30ms  actuate: ~10ms  total: ~265ms`
