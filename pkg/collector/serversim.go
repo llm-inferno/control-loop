@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	simPollInitial = 100 * time.Millisecond
+	simPollInitial = 20 * time.Millisecond
 	simTimeout     = 30 * time.Second
 )
 
