@@ -35,6 +35,8 @@ spec:
         env:
         - name: EVALUATOR_URL
           value: "http://localhost:8081"
+        - name: NOISE_ENABLED
+          value: "true"
         resources:
           requests:
             memory: "128Mi"
