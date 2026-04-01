@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	DefaultIntervalSec int     = 60
+	DefaultIntervalSec int     = 20
 	DefaultAlpha       float64 = 0.1
 	DefaultTheta       float64 = 0.2
 	DefaultSkew        float64 = 0.3

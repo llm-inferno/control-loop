@@ -85,7 +85,7 @@ Data/config types (`config.SystemData`, `config.AllocationData`, etc.) and `util
 | `INFERNO_DATA_PATH` | `./` | Path to JSON data files (must end with `/`) |
 | `INFERNO_CONTROL_PERIOD` | `60` | Control loop period in seconds (0 = aperiodic only) |
 | `INFERNO_CONTROL_DYNAMIC` | `false` | Re-read static data each cycle |
-| `INFERNO_LOAD_INTERVAL` | `60` | Load emulator update interval in seconds |
+| `INFERNO_LOAD_INTERVAL` | `20` | Load emulator update interval in seconds |
 | `INFERNO_LOAD_ALPHA` | `0.1` | Load emulator noise magnitude relative to nominal |
 | `INFERNO_LOAD_THETA` | `0.2` | Load emulator mean-reversion strength |
 | `INFERNO_LOAD_SKEW` | `0.3` | Load emulator pod skew factor (0=equal, 1=fully random) |

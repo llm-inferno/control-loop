@@ -12,7 +12,7 @@ spec:
     command: ["loademulator"]
     env:
     - name: INFERNO_LOAD_INTERVAL
-      value: "60"
+      value: "20"
     - name: INFERNO_LOAD_ALPHA
       value: "0.1"
     - name: INFERNO_LOAD_THETA

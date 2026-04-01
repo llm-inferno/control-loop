@@ -100,7 +100,7 @@ Following are the steps to run the optimization control loop external to a clust
 
     | Variable | Default | Description |
     |---|---|---|
-    | `INFERNO_LOAD_INTERVAL` | `60` | Update interval in seconds |
+    | `INFERNO_LOAD_INTERVAL` | `20` | Update interval in seconds |
     | `INFERNO_LOAD_ALPHA` | `0.1` | Noise magnitude relative to nominal |
     | `INFERNO_LOAD_THETA` | `0.2` | Mean-reversion strength (0=no reversion, 1=snap to nominal) |
     | `INFERNO_LOAD_SKEW` | `0.3` | Load skew across pods (0=equal, 1=fully random) |

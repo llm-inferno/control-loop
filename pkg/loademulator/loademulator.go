@@ -55,8 +55,6 @@ func NewLoadEmulator(intervalSec int, alpha, theta, skew float64) (loadEmulator 
 // run the load emulator
 func (lg *LoadEmulator) Run() {
 	for {
-		fmt.Println("Waiting " + lg.interval.String() + "...")
-		time.Sleep(time.Duration(lg.interval))
 
 		// get deployments
 		labelSelector := ctrl.KeyManaged + "=true"
@@ -96,6 +94,8 @@ func (lg *LoadEmulator) Run() {
 			}
 		}
 		fmt.Printf("%d deployment(s) updated\n", len(deps.Items))
+		fmt.Println("Waiting " + lg.interval.String() + "...")
+		time.Sleep(time.Duration(lg.interval))
 	}
 }
 
