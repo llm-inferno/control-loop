@@ -38,7 +38,7 @@ LoadEmulator  → (k8s deployment + pod labels: load metrics)
 
 The five components (Controller, Collector, Optimizer, Actuator, Tuner) share the network namespace of the `inferno` pod and communicate over `localhost` on ports 3300–3304 respectively.
 
-Each managed workload pod runs two sidecars: **server-sim** (port 8080) and **evaluator** (port 8081, `queue-analysis` mode). The Collector calls `server-sim /simulate` on each running pod via the k8s API server proxy to obtain ITL, TTFT, and throughput; ITL/TTFT are aggregated (weighted by per-pod simulated throughput in RPM) into the deployment-level `curAlloc`. Per-pod `LoadSpec.ArrivalRate` is set to the pod's `inferno.server.load.rpm` label. Deployment-level `LoadSpec.ArrivalRate` is read from Prometheus (falling back to the deployment's `inferno.server.load.rpm` label if Prometheus is unavailable).
+Each managed workload pod runs two sidecars: **server-sim** (port 8080) and **evaluator** (port 8081, `queue-analysis` mode). The Collector calls `server-sim /simulate` on each running pod via the k8s API server proxy to obtain ITL, TTFT, and throughput; ITL/TTFT are aggregated (weighted by per-pod simulated throughput in RPM) into the deployment-level `curAlloc`. Per-pod `LoadSpec.ArrivalRate` and `LoadSpec.Throughput` are both set from the simulation throughput (same value for now; a TODO exists to use a separate arrival-rate metric when available). Deployment-level `LoadSpec.ArrivalRate` and `LoadSpec.Throughput` are both read from the same Prometheus query (`vllm:request_success_total`, i.e. completion rate) as a placeholder; a TODO exists to use a separate arrival-rate query when `vllm:request_arrival_total` becomes available.
 
 Data/config types (`config.SystemData`, `config.AllocationData`, etc.) and `utils.FromDataToSpec` come from `github.com/llm-inferno/optimizer-light/pkg/config` and `…/pkg/utils`. The `optimizer` module depends on `optimizer-light` and re-exports its REST server; the control-loop imports `optimizer-light` directly.
 
@@ -55,7 +55,7 @@ Data/config types (`config.SystemData`, `config.AllocationData`, etc.) and `util
 - `State.originalModelData`: `ModelData` read from `model-data.json` at startup; reset each cycle in dynamic mode
 - `State.currentModelData`: starts as a copy of `originalModelData`; updated each cycle with the tuner's merged output and fed into `SystemData.Spec.Models` before the optimizer call
 - `ServerCollectorInfo.Spec`: one `config.ServerSpec` per managed deployment (aggregated ITL/TTFT/load)
-- `ServerCollectorInfo.ReplicaSpecs`: one `config.ServerSpec` per running pod whose simulation succeeded, named `<server>/<podName>`, with per-pod ITL/TTFT and `ArrivalRate` from the pod's `inferno.server.load.rpm` label
+- `ServerCollectorInfo.ReplicaSpecs`: one `config.ServerSpec` per running pod whose simulation succeeded, named `<server>/<podName>`, with per-pod ITL/TTFT and `ArrivalRate`/`Throughput` both set from the simulation throughput
 - Static data is read once at startup from `INFERNO_DATA_PATH`; in dynamic mode (`isDynamicMode=true`) it is re-read each cycle
 - `capacity-data.json` is always re-read each cycle (represents current accelerator availability)
 - `numReplicas` in `curAlloc` is `Spec.Replicas` from the deployment spec

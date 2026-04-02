@@ -109,12 +109,12 @@ func patchDeployment(d v1.Deployment, serverName, deployName, nameSpace string, 
 	// TODO: fix this
 	// print change - for testing
 	curMaxBatchSize, _ := strconv.Atoi(d.Labels[ctrl.KeyMaxBatchSize])
-	curRPM := allocData.Load.ArrivalRate
+	arrivalRateRPM := allocData.Load.ArrivalRate
 	curInTokens := allocData.Load.AvgInTokens
 	curOutTokens := allocData.Load.AvgOutTokens
-	fmt.Printf("srv=[%s/%s/%s]: rpm=%.2f; inTok=%d; outTok=%d; acc=%s->%s; num=%d->%d; batch=%d->%d \n",
+	fmt.Printf("srv=[%s/%s/%s]: arrivalRateRPM=%.2f; inTok=%d; outTok=%d; acc=%s->%s; num=%d->%d; batch=%d->%d \n",
 		serverName, d.Labels[ctrl.KeyServerClass], d.Labels[ctrl.KeyServerModel],
-		curRPM, curInTokens, curOutTokens,
+		arrivalRateRPM, curInTokens, curOutTokens,
 		d.Labels[ctrl.KeyAccelerator], acceleratorName,
 		*d.Spec.Replicas, numReplicas, curMaxBatchSize, maxBatchSize)
 

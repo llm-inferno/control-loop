@@ -3,7 +3,7 @@
 echo "Launching terminals ..."
 
 # load
-term -p 50,50 -s 400,300 $CMD_DIR/loademulator set_theme black orange
+term -p 50,50 -s 400,250 $CMD_DIR/loademulator set_theme black orange
 sleep 1
 
 # collector
@@ -22,10 +22,14 @@ sleep 1
 term -p 1200,50 -s 800,300 $CMD_DIR/controller set_theme black yellow
 sleep 1
 
+# tuner
+term -p 1200,400 -s 800,300 $TUNER_REPO set_theme white purple
+sleep 1
+
 # watch
-term -p 1200,500 -s 800,400 set_theme red beige
+term -p 1200,750 -s 800,300 set_theme red beige
 sleep 1
 
 # launcher
-term -p 1500,850 -s 500,300 $YAMLS_DIR/workload set_theme yellow DarkGreen
+term -p 1500,900 -s 500,250 $YAMLS_DIR/workload set_theme yellow DarkGreen
 sleep 1

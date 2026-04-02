@@ -12,22 +12,34 @@ Following are the steps to run the optimization control loop external to a clust
 
 ### Steps
 
-- [Install prerequisites](https://github.com/llm-inferno/optimizer/blob/main/README.md#prerequisites).
+- If using [optimizer](https://github.com/llm-inferno/optimizer), as opposed to [optimizer-light](https://github.com/llm-inferno/optimizer-light), [install optimizer prerequisites](https://github.com/llm-inferno/optimizer/blob/main/README.md#prerequisites).
 - Create a Kubernetes cluster and make sure `$HOME/.kube/config` points to it.
-- Run script to create terminals for the various components. You may need to install [term](https://github.com/liyanage/macosx-shell-scripts/blob/master/term) and add terminal coloring support. (Hint: [Change OSX Terminal Settings from Command Line](https://ict4g.net/adolfo/notes/admin/change-osx-terminal-settings-from-command-line.html))
+- Set env variables:
+  - `REPO_BASE` path to this repository
+  - `TUNER_REPO`path to [model-tuner](https://github.com/llm-inferno/model-tuner) repository
+- Setup [server-sim](https://github.com/llm-inferno/server-sim), which is used in the demo as a replacement to a real vLLM server.
+  - Make sure images `inferno-server-sim` and `inferno-evaluator`, as specified in the [deployment yaml files](yamls/workload/), are built and available in the cluster.
+  - For the queue-model server-sim (default) evaluator, deploy `server-sim-model-data` configMap.
+
+    ```bash
+    kubectl create ns infer
+    kubectl create configmap server-sim-model-data -n infer \
+      --from-file=model-data.json=$REPO_BASE/sample-data/large/model-data.json \
+      --dry-run=client -o yaml | kubectl apply -f -
+    ```
+
+- Run script to create terminals for the various components. You may need to install [term](https://github.com/liyanage/macosx-shell-scripts/blob/master/term) and add terminal coloring support. (Hint: [Change OSX Terminal Settings from Command Line](https://ict4g.net/adolfo/notes/admin/change-osx-terminal-settings-from-command-line.html)).
 
     ```bash
     cd $REPO_BASE/scripts
     ./launch-terms.sh
     ```
 
-    where `$REPO_BASE` is the path to this repository.
-
     ![snapshot](docs/figs/snapshot.png)
 
-    In this demo there are five components: Collector, Optimizer, Actuator, Controller, and Load Emulator.
-    Terminals for the Collector, Optimizer, Actuator, and Controller are (light) green, red, blue, and yellow, repectively.
-    The Load Emulator is orange.
+    In this demo there are six components: Collector, Optimizer, Actuator, Controller, Tuner, and Load Emulator.
+    Terminals for the Collector, Optimizer, Actuator, and Controller are (light) green, red, blue, and yellow, respectively.
+    The Tuner is purple and the Load Emulator is orange.
     The green terminal is for interaction with the cluster through kubectl commands.
     And, the beige terminal to observe the currently running pods.
 
@@ -37,7 +49,7 @@ Following are the steps to run the optimization control loop external to a clust
     export INFERNO_DATA_PATH=$REPO_BASE/sample-data/large/
     ```
 
-- Set the environment in all of the (five) component terminals. [Make sure `$REPO_BASE` is set]
+- Set the environment in all of the (six) component terminals. [Make sure `$REPO_BASE` is set]
 
     ```bash
     . $REPO_BASE/scripts/setparms.sh
@@ -85,6 +97,23 @@ Following are the steps to run the optimization control loop external to a clust
     This means that, at the beginning of every control cycle, the (static) data files are read (default false).
     The arguments for the Controller may also be set through the environment variables `INFERNO_CONTROL_PERIOD` and `INFERNO_CONTROL_DYNAMIC`, respectively.
     The command line arguments override the values of the environment variables.
+
+  - Tuner (purple, optional)
+
+    The Tuner runs from the [model-tuner](https://github.com/llm-inferno/model-tuner) repository.
+    Set `$TUNER_REPO` to the path of that repository, then in its terminal:
+
+    ```bash
+    cd $TUNER_REPO
+    go run cmd/tuner/main.go
+    ```
+
+    The Controller enables the Tuner only when `TUNER_HOST` is set (already set to `localhost` by `setparms.sh`).
+    To disable the Tuner, unset the variable in the Controller terminal before starting it:
+
+    ```bash
+    unset TUNER_HOST
+    ```
 
   - Load Emulator (orange)
 
