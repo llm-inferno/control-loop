@@ -55,7 +55,7 @@ Data/config types (`config.SystemData`, `config.AllocationData`, etc.) and `util
 - `State.originalModelData`: `ModelData` read from `model-data.json` at startup; reset each cycle in dynamic mode
 - `State.currentModelData`: starts as a copy of `originalModelData`; updated each cycle with the tuner's merged output and fed into `SystemData.Spec.Models` before the optimizer call
 - `ServerCollectorInfo.Spec`: one `config.ServerSpec` per managed deployment (aggregated ITL/TTFT/load)
-- `ServerCollectorInfo.ReplicaSpecs`: one `config.ServerSpec` per running pod whose simulation succeeded, named `<server>/<podName>`, with per-pod ITL/TTFT and `ArrivalRate`/`Throughput` both set from the simulation throughput
+- `ServerCollectorInfo.ReplicaSpecs`: one `config.ServerSpec` per running pod whose simulation succeeded, named `<server>/<podName>`, with per-pod ITL/TTFT and `ArrivalRate`/`Throughput` both set from the simulation throughput. If a pod is near saturation (`Throughput/MaxRPS ≥ 0.95`), the Collector re-simulates at 90% of `MaxRPS` and reports those metrics instead, so the Tuner receives well-conditioned EKF observations rather than degenerate near-saturation values.
 - Static data is read once at startup from `INFERNO_DATA_PATH`; in dynamic mode (`isDynamicMode=true`) it is re-read each cycle
 - `capacity-data.json` is always re-read each cycle (represents current accelerator availability)
 - `numReplicas` in `curAlloc` is `Spec.Replicas` from the deployment spec
@@ -110,6 +110,8 @@ Sample data is in the `sample-data/` git submodule (`sample-data/large/` has rea
 **Evaluator 500 for missing model/accelerator**: The evaluator sidecar returns HTTP 500 when the requested model+accelerator combination is not in its `model-data.json` config. Each workload deployment's evaluator must be configured with a `model-data.json` that includes an entry for its `inferno.server.model` label paired with the accelerator assigned by the optimizer. Missing entries cause the pod's simulation to fail, resulting in empty `ReplicaSpecs` and the tuner being skipped.
 
 **ConfigMap propagation delay in dynamic mode**: When `INFERNO_CONTROL_DYNAMIC=true`, static data files are re-read from the mounted ConfigMap each cycle. ConfigMap updates take ~30–60 seconds to propagate to mounted volumes (kubelet sync period). Changes are not reflected until the next cycle after the file is updated on disk.
+
+**Overloaded pod re-simulation**: When a pod's simulation returns `Throughput/MaxRPS ≥ 0.95`, the queueing model is near saturation and the resulting TTFT/ITL are degenerate (very high, non-informative for EKF tuning). The Collector automatically re-simulates that pod at `0.90 × MaxRPS` and reports those metrics in `ReplicaSpecs` instead. Both `ArrivalRate` and `Throughput` in the replicaSpec are set to the adjusted rate. If the re-simulation fails, the original results are used as fallback. The thresholds are `overloadSaturationThreshold = 0.95` and `overloadTargetUtilization = 0.90` in `pkg/collector/collector.go`.
 
 **Tuner fault tolerance**: If the tuner container is not ready or crashes, `POSTTune` fails with a connection error. The controller logs a warning (`tuner /tune warning: ...`) and continues the cycle using `currentModelData` unchanged. The tune timing column shows ~1ms (fast fail). Cycles remain uninterrupted.
 

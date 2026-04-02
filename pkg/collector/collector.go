@@ -7,6 +7,16 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
+const (
+	// overloadSaturationThreshold is the ratio of Throughput/MaxRPS above which a pod is
+	// considered near saturation and its simulation results are not useful for EKF tuning.
+	overloadSaturationThreshold = float32(0.95)
+
+	// overloadTargetUtilization is the fraction of MaxRPS used for the re-simulation when
+	// a pod is detected as overloaded, targeting a stable ~90% utilization operating point.
+	overloadTargetUtilization = float32(0.90)
+)
+
 // Kube client as global variable, used by handler functions
 var KubeClient *kubernetes.Clientset
 

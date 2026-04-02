@@ -182,11 +182,37 @@ func collect(c *gin.Context) {
 						fmt.Printf("pod %s simulation error: %v\n", pe.pod.Name, simErrors[i])
 						continue
 					}
-					podITL := simResults[i].AvgITL
-					podTTFT := simResults[i].AvgTTFT
-					podThroughputRPM := float64(simResults[i].Throughput) * 60.0
+					sim := simResults[i]
+
+					// If the pod is near saturation (throughput ≈ maxRPS), the queueing model
+					// operates in the unstable region and the resulting metrics (very high TTFT/ITL)
+					// are not useful for EKF tuning. Re-simulate at a stable operating point
+					// (~overloadTargetUtilization of maxRPS) so the tuner receives well-conditioned
+					// observations. Both ArrivalRate and Throughput are set to the adjusted rate.
+					if sim.MaxRPS > 0 && sim.Throughput/sim.MaxRPS >= overloadSaturationThreshold {
+						adjustedRPS := sim.MaxRPS * overloadTargetUtilization
+						fmt.Printf("pod %s: overloaded (throughput=%.2freq/s ≥ %.0f%% of maxRPS=%.2f); re-simulating at %.2freq/s\n",
+							pe.pod.Name, sim.Throughput, overloadSaturationThreshold*100, sim.MaxRPS, adjustedRPS)
+						adjReq := simRequest{
+							RPS:             adjustedRPS,
+							MaxConcurrency:  maxBatchSize,
+							AvgInputTokens:  float32(pe.inTok),
+							AvgOutputTokens: float32(pe.outTok),
+							Accelerator:     d.Labels[ctrl.KeyAccelerator],
+							Model:           d.Labels[ctrl.KeyServerModel],
+						}
+						if adjSim, adjErr := simulatePod(KubeClient, pe.pod.Namespace, pe.pod.Name, ctrl.ServerSimPort, adjReq); adjErr == nil {
+							sim = adjSim
+						} else {
+							fmt.Printf("pod %s: re-simulation error: %v; using original results\n", pe.pod.Name, adjErr)
+						}
+					}
+
+					podITL := sim.AvgITL
+					podTTFT := sim.AvgTTFT
+					podThroughputRPM := float64(sim.Throughput) * 60.0
 					fmt.Printf("pod %s: TTFT=%.1fms ITL=%.1fms throughput=%.2freq/s maxRPS=%.2f\n",
-						pe.pod.Name, podTTFT, podITL, simResults[i].Throughput, simResults[i].MaxRPS)
+						pe.pod.Name, podTTFT, podITL, sim.Throughput, sim.MaxRPS)
 					weightedITL += float64(podITL) * podThroughputRPM
 					weightedTTFT += float64(podTTFT) * podThroughputRPM
 					totalRPM += podThroughputRPM
