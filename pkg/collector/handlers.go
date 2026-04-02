@@ -57,16 +57,17 @@ func collect(c *gin.Context) {
 		var inTokens float64
 		var outTokens float64
 
-		// Query Prometheus for the arrival rate (requests/minute)
-		// note: substituting missing metric arrrival rate with completion rate
-		arrivalQuery := fmt.Sprintf(`sum(rate(vllm:request_success_total{job="%s"}[1m]))*60`, d.Name)
-		if arrvRate, err = PrometheusQuery(arrivalQuery); err != nil {
+		// Query Prometheus for the throughput (completed requests/minute).
+		// TODO: use a separate arrival-rate query (e.g. vllm:request_arrival_total) when
+		// that metric becomes available; for now arrival rate and throughput use the same query.
+		throughputQuery := fmt.Sprintf(`sum(rate(vllm:request_success_total{job="%s"}[1m]))*60`, d.Name)
+		if arrvRate, err = PrometheusQuery(throughputQuery); err != nil {
 			fmt.Println(err.Error())
 			// check if label exists as a backup
 			fmt.Println("checking if label exists ...")
 			arrvRate, _ = strconv.ParseFloat(d.Labels[ctrl.KeyArrivalRate], 32)
 		}
-		fmt.Printf("Average arrival rate %f \n", arrvRate)
+		fmt.Printf("Average arrival rate / throughput %f \n", arrvRate)
 
 		// Query Prometheus for the input token rate
 		inTokenQuery := fmt.Sprintf(`delta(vllm:prompt_tokens_total{job="%s"}[1m])/delta(vllm:request_success_total{job="%s"}[1m])`,
@@ -200,7 +201,10 @@ func collect(c *gin.Context) {
 							ITLAverage:  podITL,
 							TTFTAverage: podTTFT,
 							Load: config.ServerLoadSpec{
-								ArrivalRate:  float32(pe.rpm),
+								// TODO: use a separate per-pod arrival-rate metric when available;
+								// for now arrival rate and throughput are both set from the simulation throughput.
+								ArrivalRate:  float32(podThroughputRPM),
+								Throughput:   float32(podThroughputRPM),
 								AvgInTokens:  pe.inTok,
 								AvgOutTokens: pe.outTok,
 							},
@@ -221,16 +225,19 @@ func collect(c *gin.Context) {
 			ITLAverage:  itlAvg,
 			TTFTAverage: ttftAvg,
 			Load: config.ServerLoadSpec{
+				// TODO: use a separate arrival-rate query when available;
+				// for now arrival rate and throughput are both set from the same Prometheus query.
 				ArrivalRate:  float32(arrvRate),
+				Throughput:   float32(arrvRate),
 				AvgInTokens:  int(inTokens),
 				AvgOutTokens: int(outTokens),
 			},
 		}
 
-		fmt.Printf("curAlloc[%s]: replicas=%d acc=%s maxBatch=%d ITL=%.1fms TTFT=%.1fms rpm=%.2f inTok=%d outTok=%d\n",
+		fmt.Printf("curAlloc[%s]: replicas=%d acc=%s maxBatch=%d ITL=%.1fms TTFT=%.1fms arrivalRateRPM=%.2f throughputRPM=%.2f inTok=%d outTok=%d\n",
 			serverName, curAlloc.NumReplicas, curAlloc.Accelerator, curAlloc.MaxBatch,
 			curAlloc.ITLAverage, curAlloc.TTFTAverage,
-			curAlloc.Load.ArrivalRate, curAlloc.Load.AvgInTokens, curAlloc.Load.AvgOutTokens)
+			curAlloc.Load.ArrivalRate, curAlloc.Load.Throughput, curAlloc.Load.AvgInTokens, curAlloc.Load.AvgOutTokens)
 
 		serverSpec := config.ServerSpec{
 			Name:         serverName,
@@ -242,10 +249,10 @@ func collect(c *gin.Context) {
 	}
 
 	for _, r := range replicaSpecs {
-		fmt.Printf("replicaAlloc[%s]: acc=%s maxBatch=%d ITL=%.1fms TTFT=%.1fms rpm=%.2f inTok=%d outTok=%d\n",
+		fmt.Printf("replicaAlloc[%s]: acc=%s maxBatch=%d ITL=%.1fms TTFT=%.1fms arrivalRateRPM=%.2f throughputRPM=%.2f inTok=%d outTok=%d\n",
 			r.Name, r.CurrentAlloc.Accelerator, r.CurrentAlloc.MaxBatch,
 			r.CurrentAlloc.ITLAverage, r.CurrentAlloc.TTFTAverage,
-			r.CurrentAlloc.Load.ArrivalRate, r.CurrentAlloc.Load.AvgInTokens, r.CurrentAlloc.Load.AvgOutTokens)
+			r.CurrentAlloc.Load.ArrivalRate, r.CurrentAlloc.Load.Throughput, r.CurrentAlloc.Load.AvgInTokens, r.CurrentAlloc.Load.AvgOutTokens)
 	}
 
 	serverCollectorInfo := ctrl.ServerCollectorInfo{
