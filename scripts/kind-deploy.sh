@@ -37,6 +37,8 @@ kubectl apply -f "$MODEL_TUNER_DIR/deploy/configmap.yaml"
 
 echo "==> Deploying inferno pod (controller, collector, optimizer, actuator, tuner)"
 kubectl apply -f "$REPO_ROOT/yamls/deploy/deploy-loop.yaml"
+kubectl rollout restart deployment/inferno -n inferno
+kubectl rollout status  deployment/inferno -n inferno --timeout=120s
 
 echo "==> Creating workload ConfigMaps"
 kubectl create configmap server-sim-model-data -n infer \
