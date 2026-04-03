@@ -182,6 +182,26 @@ func POSTMerge(modelData *config.ModelData) (*config.ModelData, error) {
 	}
 }
 
+// query Tuner warm-up status
+func GETWarmUp() (bool, error) {
+	endPoint := TunerURL + "/" + WarmUpVerb
+	res, err := http.Get(endPoint)
+	if err != nil {
+		return false, err
+	}
+	defer func() { _ = res.Body.Close() }()
+	if res.StatusCode != http.StatusOK {
+		return false, fmt.Errorf("tuner /warmup failed: %s", res.Status)
+	}
+	var body struct {
+		WarmingUp bool `json:"warmingUp"`
+	}
+	if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
+		return false, err
+	}
+	return body.WarmingUp, nil
+}
+
 // send optimizer solution to Actuator
 func POSTActuator(actuatorInfo *ServerActuatorInfo) error {
 	endPoint := ActuatorURL + "/" + ActuatorVerb

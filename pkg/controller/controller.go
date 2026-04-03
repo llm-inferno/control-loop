@@ -219,21 +219,37 @@ func (a *Controller) Optimize() error {
 
 	// call Tuner to update model performance parameters
 	var tuneTime time.Duration
+	warmingUp := false
 	if a.tunerEnabled && len(collectorInfo.ReplicaSpecs) > 0 {
 		if _, tuneErr := POSTTune(collectorInfo.ReplicaSpecs); tuneErr != nil {
 			fmt.Printf("%v: tuner /tune warning (continuing with current model data): %s\n",
 				time.Now().Format("15:04:05.000"), tuneErr.Error())
 		} else {
-			mergedModelData, mergeErr := POSTMerge(&a.State.currentModelData)
-			if mergeErr != nil {
-				fmt.Printf("%v: tuner /merge warning (continuing with current model data): %s\n",
-					time.Now().Format("15:04:05.000"), mergeErr.Error())
+			if wu, wuErr := GETWarmUp(); wuErr != nil {
+				fmt.Printf("%v: tuner /warmup warning (proceeding with optimize): %s\n",
+					time.Now().Format("15:04:05.000"), wuErr.Error())
 			} else {
-				a.State.currentModelData = *mergedModelData
-				a.State.SystemData.Spec.Models = a.State.currentModelData
+				warmingUp = wu
+			}
+			if !warmingUp {
+				mergedModelData, mergeErr := POSTMerge(&a.State.currentModelData)
+				if mergeErr != nil {
+					fmt.Printf("%v: tuner /merge warning (continuing with current model data): %s\n",
+						time.Now().Format("15:04:05.000"), mergeErr.Error())
+				} else {
+					a.State.currentModelData = *mergedModelData
+					a.State.SystemData.Spec.Models = a.State.currentModelData
+				}
 			}
 		}
 		tuneTime = time.Since(startTime) - collectTime
+	}
+
+	if warmingUp {
+		fmt.Printf("%v:\t collect: %d\t tune: %d\t (warm-up in progress — skipping optimize+actuate)\n",
+			time.Now().Format("15:04:05.000"),
+			collectTime.Milliseconds(), tuneTime.Milliseconds())
+		return nil
 	}
 
 	// call optimizer

@@ -58,8 +58,9 @@ const (
 	ServersVerb  = "getServers"
 	CollectVerb  = "collect"
 	ActuatorVerb = "update"
-	TuneVerb     = "tune"
-	MergeVerb    = "merge"
+	TuneVerb    = "tune"
+	MergeVerb   = "merge"
+	WarmUpVerb  = "warmup"
 
 	// others
 	DefaultControlPeriodSeconds int  = 60 // periodicity of control (zero means aperiodic)
