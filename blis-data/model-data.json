@@ -1,0 +1,76 @@
+{
+  "models": [
+    {
+      "name": "granite_8b",
+      "acc": "H100",
+      "accCount": 1,
+      "maxBatchSize": 256,
+      "atTokens": 512,
+      "perfParms": {
+        "alpha": 1.0,
+        "beta": 0.001,
+        "gamma": 0.000001
+      }
+    },
+    {
+      "name": "granite_8b",
+      "acc": "A100",
+      "accCount": 1,
+      "maxBatchSize": 256,
+      "atTokens": 512,
+      "perfParms": {
+        "alpha": 1.0,
+        "beta": 0.001,
+        "gamma": 0.000001
+      }
+    },
+    {
+      "name": "llama_13b",
+      "acc": "H100",
+      "accCount": 1,
+      "maxBatchSize": 256,
+      "atTokens": 512,
+      "perfParms": {
+        "alpha": 1.0,
+        "beta": 0.001,
+        "gamma": 0.000001
+      }
+    },
+    {
+      "name": "llama_13b",
+      "acc": "A100",
+      "accCount": 1,
+      "maxBatchSize": 256,
+      "atTokens": 512,
+      "perfParms": {
+        "alpha": 1.0,
+        "beta": 0.001,
+        "gamma": 0.000001
+      }
+    },
+    {
+      "name": "mixtral_8_7b",
+      "acc": "H100",
+      "accCount": 1,
+      "maxBatchSize": 256,
+      "atTokens": 512,
+      "perfParms": {
+        "alpha": 1.0,
+        "beta": 0.001,
+        "gamma": 0.000001
+      }
+    },
+    {
+      "name": "mixtral_8_7b",
+      "acc": "A100",
+      "accCount": 1,
+      "maxBatchSize": 256,
+      "atTokens": 512,
+      "perfParms": {
+        "alpha": 1.0,
+        "beta": 0.001,
+        "gamma": 0.000001
+      }
+    }
+  ]
+}
