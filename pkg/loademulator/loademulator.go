@@ -17,9 +17,13 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-var (
-	ArvRateRange   = [2]float64{6.0, 240.0}
-	NumTokensRange = [2]int{100, 10000}
+const (
+	// LoadRangeFactor is the multiplicative factor used to derive min/max bounds from
+	// nominal values: min = nominal/factor, max = nominal*factor (symmetric in log space).
+	LoadRangeFactor = 10.0
+
+	// LoadRangeTokensFloor is the minimum allowed value for token counts.
+	LoadRangeTokensFloor = 1
 )
 
 // Load emulator
@@ -161,13 +165,15 @@ func (lg *LoadEmulator) updatePodLabels(namespace, selectorStr string, deploymen
 // mean-reverting random walk: time average converges to nominal
 func (lg *LoadEmulator) perturbLoad(rpm *float64, inTok *int, outTok *int, nomRPM float64, nomInTok, nomOutTok int) {
 	newArv := *rpm + lg.theta*(nomRPM-*rpm) + rand.NormFloat64()*lg.alpha*nomRPM
-	*rpm = min(max(newArv, ArvRateRange[0]), ArvRateRange[1])
+	*rpm = min(max(newArv, nomRPM/LoadRangeFactor), nomRPM*LoadRangeFactor)
 
+	tokInMin := max(int(math.Ceil(float64(nomInTok)/LoadRangeFactor)), LoadRangeTokensFloor)
 	newInTok := float64(*inTok) + lg.theta*(float64(nomInTok)-float64(*inTok)) + rand.NormFloat64()*lg.alpha*float64(nomInTok)
-	*inTok = min(max(int(math.Ceil(newInTok)), NumTokensRange[0]), NumTokensRange[1])
+	*inTok = min(max(int(math.Ceil(newInTok)), tokInMin), int(float64(nomInTok)*LoadRangeFactor))
 
+	tokOutMin := max(int(math.Ceil(float64(nomOutTok)/LoadRangeFactor)), LoadRangeTokensFloor)
 	newOutTok := float64(*outTok) + lg.theta*(float64(nomOutTok)-float64(*outTok)) + rand.NormFloat64()*lg.alpha*float64(nomOutTok)
-	*outTok = min(max(int(math.Ceil(newOutTok)), NumTokensRange[0]), NumTokensRange[1])
+	*outTok = min(max(int(math.Ceil(newOutTok)), tokOutMin), int(float64(nomOutTok)*LoadRangeFactor))
 }
 
 // split totalRPM across n pods using skew factor
