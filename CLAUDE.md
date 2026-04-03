@@ -82,6 +82,7 @@ Data/config types (`config.SystemData`, `config.AllocationData`, etc.) and `util
 | `ACTUATOR_PORT` | `8080` | Actuator server listen port |
 | `TUNER_HOST` | unset (Tuner disabled) | Tuner client target address; set to `localhost` when Tuner runs as a sidecar in the same pod |
 | `TUNER_PORT` | `8081` | Tuner client target port (`3304` in the inferno pod deployment) |
+| `TUNER_WARM_UP_CYCLES` | `5` | Number of accepted EKF updates during which the NIS gate is disabled; set to `0` to disable warm-up |
 | `INFERNO_DATA_PATH` | `./` | Path to JSON data files (must end with `/`) |
 | `INFERNO_CONTROL_PERIOD` | `60` | Control loop period in seconds (0 = aperiodic only) |
 | `INFERNO_CONTROL_DYNAMIC` | `false` | Re-read static data each cycle |
