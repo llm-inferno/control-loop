@@ -37,6 +37,8 @@ spec:
           value: "http://localhost:8081"
         - name: NOISE_ENABLED
           value: "true"
+        - name: NOISE_STD_FRACTION
+          value: "0.01"
         resources:
           requests:
             memory: "128Mi"
