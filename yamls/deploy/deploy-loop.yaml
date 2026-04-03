@@ -161,6 +161,8 @@ spec:
             value: "3304"
           - name: CONFIG_DATA_DIR
             value: "/etc/tuner/config"
+          - name: TUNER_WARM_UP_CYCLES
+            value: "3"
         ports:
         - containerPort: 3304
         command: ["/app/tuner"]
