@@ -115,6 +115,81 @@ Sample data is in the `sample-data/` git submodule (`sample-data/large/` has rea
 
 **Tuner fault tolerance**: If the tuner container is not ready or crashes, `POSTTune` fails with a connection error. The controller logs a warning (`tuner /tune warning: ...`) and continues the cycle using `currentModelData` unchanged. The tune timing column shows ~1ms (fast fail). Cycles remain uninterrupted.
 
+## Local kind Cluster: Build and Deploy
+
+### Prerequisites
+
+- [kind](https://kind.sigs.k8s.io/) cluster running (`kind create cluster --name kind-cluster`)
+- Docker runtime (images built with `docker build` and loaded via `kind load docker-image`)
+- Sibling repos checked out under the same parent directory as `control-loop`:
+  - `../optimizer`, `../model-tuner`, `../server-sim`
+- `sample-data` submodule initialized (`git submodule update --init`)
+
+### Step 1: Build images (run in parallel)
+
+```bash
+# From control-loop/
+docker build -t quay.io/atantawi/inferno-loop:latest .
+
+# From ../optimizer/
+docker build -t quay.io/atantawi/inferno-optimizer:latest .
+
+# From ../model-tuner/
+docker build -t quay.io/atantawi/inferno-tuner:latest .
+
+# From ../server-sim/
+docker build -f Dockerfile.server-sim -t quay.io/atantawi/inferno-server-sim:latest .
+docker build -f Dockerfile.evaluator  -t quay.io/atantawi/inferno-evaluator:latest .
+```
+
+All YAML files use `imagePullPolicy: IfNotPresent`, so kind will use locally-loaded images and never pull from quay.io.
+
+### Step 2: Load images + deploy
+
+```bash
+# From control-loop/
+scripts/kind-deploy.sh
+```
+
+See `scripts/kind-deploy.sh` for the full deploy sequence (load images → namespaces → ConfigMaps → inferno pod → workloads → load-emulator).
+
+### Workloads
+
+Two managed deployments are used for testing:
+
+| Deployment | Model | Accelerator | Evaluator |
+|---|---|---|---|
+| `dep1.yaml` (`premium-llama-13b`) | `llama_13b` | MI250 | queue-analysis |
+| `dep2.yaml` (`bronze-granite-13b`) | `granite_13b` | H100 | queue-analysis |
+
+Both share the `server-sim-model-data` ConfigMap (from `sample-data/large/model-data.json`), which contains entries for both model+accelerator pairs.
+
+`dep2-blis.yaml` (blis evaluator variant) is available but requires additional ConfigMap setup — use `dep2.yaml` for standard testing.
+
+### Useful commands after deploy
+
+```bash
+# Watch controller logs (cycle timing, tune/optimize/actuate)
+kubectl logs -f -n inferno deployment/inferno -c controller
+
+# Watch tuner EKF output (alpha/beta/gamma per cycle)
+kubectl logs -f -n inferno deployment/inferno -c tuner
+
+# Watch load emulator (RPM updates)
+kubectl logs -f -n inferno pod/load-emulator
+
+# Trigger an on-demand control cycle
+kubectl exec -n inferno deployment/inferno -c controller -- \
+  wget -qO- http://localhost:3300/invoke
+
+# Check pod simulation directly (replace <pod> and <ns>)
+kubectl get --raw /api/v1/namespaces/<ns>/pods/<pod>/proxy/simulate
+
+# Patch nominal RPM on a deployment (triggers load change experiment)
+kubectl patch deployment <name> -n infer \
+  --type=json -p='[{"op":"replace","path":"/metadata/labels/inferno.server.load.nominal.rpm","value":"300"}]'
+```
+
 ## Integration Test Results (k3s / Rancher Desktop)
 
 Tested with `dep1` (`premium-llama-13b`, vllm-001) and `dep2-blis` (`bronze-granite-13b`, vllm-002) workloads:

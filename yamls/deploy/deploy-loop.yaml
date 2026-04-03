@@ -163,7 +163,7 @@ spec:
             value: "/etc/tuner/config"
         ports:
         - containerPort: 3304
-        command: ["/app/tunerservice"]
+        command: ["/app/tuner"]
         resources:
           requests:
             memory: "512Mi"
