@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/llm-inferno/control-loop/pkg/monitor"
 	"github.com/llm-inferno/optimizer-light/pkg/config"
 	"github.com/llm-inferno/optimizer-light/pkg/utils"
 
@@ -27,6 +28,8 @@ type Controller struct {
 	router        *gin.Engine
 	isDynamicMode bool
 	tunerEnabled  bool
+	recorder      *monitor.CycleRecorder
+	cycleNum      int64
 }
 
 // State consists of static (read from files) and dynamic data
@@ -87,6 +90,12 @@ func (a *Controller) Init() error {
 	// initialize dynamic server data
 	a.State.SystemData.Spec.Servers = config.ServerData{
 		Spec: make([]config.ServerSpec, 0),
+	}
+
+	if rec, err := monitor.NewCycleRecorder(); err != nil {
+		fmt.Printf("warning: cycle logging disabled: %s\n", err)
+	} else {
+		a.recorder = rec
 	}
 
 	return nil
@@ -274,6 +283,18 @@ func (a *Controller) Optimize() error {
 		time.Now().Format("15:04:05.000"),
 		collectTime.Milliseconds(), tuneTime.Milliseconds(),
 		optimizeTime.Milliseconds(), actuateTime.Milliseconds(), totalTime.Milliseconds())
+
+	a.cycleNum++
+	rec := monitor.BuildRecord(
+		a.cycleNum,
+		a.State.SystemData.Spec.Servers.Spec,
+		allocSolution.Spec,
+		a.State.SystemData.Spec.ServiceClasses.Spec,
+		a.State.currentModelData,
+		collectTime.Milliseconds(), tuneTime.Milliseconds(),
+		optimizeTime.Milliseconds(), actuateTime.Milliseconds(), totalTime.Milliseconds(),
+	)
+	a.recorder.Record(rec)
 
 	return nil
 }

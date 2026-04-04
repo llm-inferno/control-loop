@@ -134,6 +134,44 @@ Following are the steps to run the optimization control loop external to a clust
     | `INFERNO_LOAD_THETA` | `0.2` | Mean-reversion strength (0=no reversion, 1=snap to nominal) |
     | `INFERNO_LOAD_SKEW` | `0.3` | Load skew across pods (0=equal, 1=fully random) |
 
+- (Optional) Run the visualization dashboard
+
+  The controller writes one JSON line per cycle to a JSONL log file. A standalone Python dashboard reads the log and displays four panels: workload, performance vs SLO targets, controls, and EKF internals.
+
+  **Step 1 — copy the log file out of the running controller container:**
+
+    ```bash
+    POD=$(kubectl get pod -n inferno -l app=inferno -o jsonpath="{.items[0].metadata.name}")
+    kubectl cp inferno/$POD:/inferno-cycles.jsonl $REPO_BASE/inferno-cycles.jsonl
+    ```
+
+  **Step 2 — set up a Python virtual environment (first time only):**
+
+    ```bash
+    cd $REPO_BASE/dashboard
+    python3 -m venv .venv
+    source .venv/bin/activate
+    pip install -r requirements.txt
+    ```
+
+  **Step 3 — run the dashboard:**
+
+    ```bash
+    cd $REPO_BASE/dashboard
+    source .venv/bin/activate
+    INFERNO_CYCLE_LOG=$REPO_BASE/inferno-cycles.jsonl python dashboard.py
+    ```
+
+  Open `http://localhost:8050` in a browser. The dashboard auto-refreshes every 5 seconds.
+
+  To get more data points, repeat Step 1 to copy a fresh log file while the controller is running, then refresh the browser.
+
+  | Variable | Default | Description |
+  |---|---|---|
+  | `INFERNO_CYCLE_LOG` | `inferno-cycles.jsonl` | Path to the JSONL log file. Set to `-` to disable logging. |
+  | `INFERNO_DASH_REFRESH` | `5000` | Dashboard auto-refresh interval in milliseconds |
+  | `INFERNO_DASH_PORT` | `8050` | Dashboard port |
+
 - Cleanup
 
   - Stop all (five) components using Ctrl-c

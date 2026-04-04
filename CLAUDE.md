@@ -90,6 +90,7 @@ Data/config types (`config.SystemData`, `config.AllocationData`, etc.) and `util
 | `INFERNO_LOAD_ALPHA` | `0.1` | Load emulator noise magnitude relative to nominal |
 | `INFERNO_LOAD_THETA` | `0.2` | Load emulator mean-reversion strength |
 | `INFERNO_LOAD_SKEW` | `0.3` | Load emulator pod skew factor (0=equal, 1=fully random) |
+| `INFERNO_CYCLE_LOG` | `inferno-cycles.jsonl` | Path to JSONL cycle log written by the controller each cycle. Set to `-` to disable. |
 | `KUBECONFIG` | `$HOME/.kube/config` | Kubernetes config path |
 
 ## Data Files (in `INFERNO_DATA_PATH`)
@@ -115,6 +116,19 @@ Sample data is in the `sample-data/` git submodule (`sample-data/large/` has rea
 **Overloaded pod re-simulation**: When a pod's simulation returns `Throughput/MaxRPS ≥ 0.95`, the queueing model is near saturation and the resulting TTFT/ITL are degenerate (very high, non-informative for EKF tuning). The Collector automatically re-simulates that pod at `0.90 × MaxRPS` and reports those metrics in `ReplicaSpecs` instead. Both `ArrivalRate` and `Throughput` in the replicaSpec are set to the adjusted rate. If the re-simulation fails, the original results are used as fallback. The thresholds are `overloadSaturationThreshold = 0.95` and `overloadTargetUtilization = 0.90` in `pkg/collector/collector.go`.
 
 **Tuner fault tolerance**: If the tuner container is not ready or crashes, `POSTTune` fails with a connection error. The controller logs a warning (`tuner /tune warning: ...`) and continues the cycle using `currentModelData` unchanged. The tune timing column shows ~1ms (fast fail). Cycles remain uninterrupted.
+
+## Visualization
+
+The controller emits one JSON line per completed cycle to `INFERNO_CYCLE_LOG` (default: `inferno-cycles.jsonl` relative to the working directory). Warm-up cycles (tuner not yet converged) do not produce a record.
+
+Each record contains: timestamp, cycle counter, per-server workload (RPM, tokens), per-server attained ITL/TTFT with SLO targets, per-server allocation (replicas, cost, accelerator), total cost, EKF model parameters (alpha/beta/gamma), and cycle phase timings.
+
+The `pkg/monitor/` package handles all logging:
+- `record.go` — `CycleRecord` and sub-struct definitions (the JSON schema)
+- `builder.go` — `BuildRecord()` assembles a record from controller data; SLO targets are looked up by matching server class → service class → model target
+- `monitor.go` — `CycleRecorder` writes records; nil-receiver pattern makes all methods no-ops when logging is disabled
+
+The `dashboard/` directory contains a standalone Python Dash app (`dashboard.py`) that reads the JSONL file and displays four auto-refreshing panels: Workload, Performance, Controls, and EKF Internals. The internals panel is filtered to only show model/accelerator pairs actively assigned to deployed servers. See `dashboard/requirements.txt` for Python dependencies and README for run instructions.
 
 ## Local kind Cluster: Build and Deploy
 
