@@ -101,7 +101,7 @@ func collect(c *gin.Context) {
 
 		// simulate running pods and compute weighted average ITL/TTFT
 		var itlAvg, ttftAvg float32
-		var totalRPM float64
+		var totalThroughputRPM float64
 		var numReplicas int
 		selectorStr := labels.Set(d.Spec.Selector.MatchLabels).String()
 
@@ -215,7 +215,7 @@ func collect(c *gin.Context) {
 						pe.pod.Name, podTTFT, podITL, sim.Throughput, sim.MaxRPS)
 					weightedITL += float64(podITL) * podThroughputRPM
 					weightedTTFT += float64(podTTFT) * podThroughputRPM
-					totalRPM += podThroughputRPM
+					totalThroughputRPM += podThroughputRPM
 					replicaSpecs = append(replicaSpecs, config.ServerSpec{
 						Name:  serverName + ctrl.ReplicaNameSeparator + pe.pod.Name,
 						Class: d.Labels[ctrl.KeyServerClass],
@@ -237,9 +237,9 @@ func collect(c *gin.Context) {
 						},
 					})
 				}
-				if totalRPM > 0 {
-					itlAvg = float32(weightedITL / totalRPM)
-					ttftAvg = float32(weightedTTFT / totalRPM)
+				if totalThroughputRPM > 0 {
+					itlAvg = float32(weightedITL / totalThroughputRPM)
+					ttftAvg = float32(weightedTTFT / totalThroughputRPM)
 				}
 			}
 		}
@@ -254,7 +254,7 @@ func collect(c *gin.Context) {
 				// TODO: use a separate arrival-rate query when available;
 				// for now arrival rate and throughput are both set from the same Prometheus query.
 				ArrivalRate:  float32(arrvRate),
-				Throughput:   float32(arrvRate),
+				Throughput:   float32(totalThroughputRPM),
 				AvgInTokens:  int(inTokens),
 				AvgOutTokens: int(outTokens),
 			},
