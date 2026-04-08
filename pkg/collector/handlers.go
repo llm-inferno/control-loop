@@ -137,6 +137,10 @@ func collect(c *gin.Context) {
 					if p.Status.Phase != corev1.PodRunning {
 						continue
 					}
+					if !ctrl.IsPodReady(p.Status.StartTime) {
+						fmt.Printf("pod %s: skipping (within startup delay)\n", p.Name)
+						continue
+					}
 					owned := false
 					for _, owner := range p.OwnerReferences {
 						if _, ok := rsUIDs[owner.UID]; ok {

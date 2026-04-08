@@ -90,6 +90,7 @@ Data/config types (`config.SystemData`, `config.AllocationData`, etc.) and `util
 | `INFERNO_LOAD_ALPHA` | `0.1` | Load emulator noise magnitude relative to nominal |
 | `INFERNO_LOAD_THETA` | `0.2` | Load emulator mean-reversion strength |
 | `INFERNO_LOAD_SKEW` | `0.3` | Load emulator pod skew factor (0=equal, 1=fully random) |
+| `INFERNO_STARTUP_DELAY` | `0` | Seconds after pod `StartTime` before the pod is treated as ready; filtered from both the Collector and Load Emulator during the window |
 | `INFERNO_WARM_UP_TIMEOUT` | `10` | Max consecutive warm-up cycles before the controller overrides the warm-up gate and proceeds with optimize+actuate using current model data; set to `0` to disable the timeout |
 | `INFERNO_CYCLE_LOG` | `inferno-cycles.jsonl` | Path to JSONL cycle log written by the controller each cycle. Set to `-` to disable. |
 | `KUBECONFIG` | `$HOME/.kube/config` | Kubernetes config path |
@@ -117,6 +118,8 @@ Sample data is in the `sample-data/` git submodule (`sample-data/large/` has rea
 **Overloaded pod re-simulation**: When a pod's simulation returns `Throughput/MaxRPS ≥ 0.95`, the queueing model is near saturation and the resulting TTFT/ITL are degenerate (very high, non-informative for EKF tuning). The Collector automatically re-simulates that pod at `0.90 × MaxRPS` and reports those metrics in `ReplicaSpecs` instead. Both `ArrivalRate` and `Throughput` in the replicaSpec are set to the adjusted rate. If the re-simulation fails, the original results are used as fallback. The thresholds are `overloadSaturationThreshold = 0.95` and `overloadTargetUtilization = 0.90` in `pkg/collector/collector.go`.
 
 **Tuner fault tolerance**: If the tuner container is not ready or crashes, `POSTTune` fails with a connection error. The controller logs a warning (`tuner /tune warning: ...`) and continues the cycle using `currentModelData` unchanged. The tune timing column shows ~1ms (fast fail). Cycles remain uninterrupted.
+
+**Server startup delay** (`INFERNO_STARTUP_DELAY`): When set to a positive integer (seconds), both the Collector and Load Emulator ignore pods whose `Status.StartTime` is less than that many seconds ago. This prevents collecting metrics from or assigning traffic labels to pods still loading model weights. The check uses `pod.Status.StartTime` (set by the kubelet when the pod begins running), not `CreationTimestamp`. Default is `0` (no delay, fully backward-compatible). During the delay window the pod is excluded from `ReplicaSpecs` (Tuner is skipped for it) and receives no load labels.
 
 ## Visualization
 

@@ -19,6 +19,8 @@ spec:
       value: "0.2"
     - name: INFERNO_LOAD_SKEW
       value: "0.3"
+    - name: INFERNO_STARTUP_DELAY
+      value: "60"
     resources:
       requests:
         memory: "512Mi"

@@ -133,6 +133,7 @@ Following are the steps to run the optimization control loop external to a clust
     | `INFERNO_LOAD_ALPHA` | `0.1` | Noise magnitude relative to nominal |
     | `INFERNO_LOAD_THETA` | `0.2` | Mean-reversion strength (0=no reversion, 1=snap to nominal) |
     | `INFERNO_LOAD_SKEW` | `0.3` | Load skew across pods (0=equal, 1=fully random) |
+    | `INFERNO_STARTUP_DELAY` | `0` | Seconds after pod start before it is treated as ready; pods within this window are skipped by both the Load Emulator and the Collector |
 
 - (Optional) Run the visualization dashboard
 
