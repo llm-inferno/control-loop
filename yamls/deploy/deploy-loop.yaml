@@ -88,6 +88,8 @@ spec:
             value: "localhost"
           - name: TUNER_PORT
             value: "3304"
+          - name: INFERNO_WARM_UP_TIMEOUT
+            value: "10"
         ports:
         - containerPort: 3300
         command: ["controller"]
