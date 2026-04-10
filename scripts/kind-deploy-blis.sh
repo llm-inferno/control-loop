@@ -38,15 +38,15 @@ kubectl apply -f "$MODEL_TUNER_DIR/deploy/configmap.yaml"
 
 echo "==> Deploying inferno pod (controller, collector, optimizer, actuator, tuner)"
 kubectl apply -f "$REPO_ROOT/yamls/deploy/deploy-loop.yaml"
-kubectl rollout restart deployment/inferno -n inferno
+# blis experiment: EKF must fully converge before optimizer runs; disable warm-up timeout
+kubectl set env deployment/inferno -n inferno -c controller INFERNO_WARM_UP_TIMEOUT=0
 kubectl rollout status  deployment/inferno -n inferno --timeout=120s
 
 echo "==> Creating blis workload ConfigMap"
 kubectl apply -f "$REPO_ROOT/yamls/workload/configmap-blis-small.yaml"
 
-echo "==> Deploying blis workloads (granite_8b/H100, llama_13b/A100, mixtral_8_7b/H100)"
+echo "==> Deploying blis workloads (granite_8b/H100 Premium, mixtral_8_7b/H100 Bronze)"
 kubectl apply -f "$REPO_ROOT/yamls/workload/dep-blis-granite.yaml"
-kubectl apply -f "$REPO_ROOT/yamls/workload/dep-blis-llama.yaml"
 kubectl apply -f "$REPO_ROOT/yamls/workload/dep-blis-mixtral.yaml"
 
 echo "==> Deploying load emulator"
@@ -58,3 +58,6 @@ echo "    kubectl logs -f -n inferno deployment/inferno -c controller"
 echo ""
 echo "    Watch tuner EKF output (alpha/beta/gamma convergence):"
 echo "    kubectl logs -f -n inferno deployment/inferno -c tuner"
+echo ""
+echo "    NOTE: INFERNO_WARM_UP_TIMEOUT=0 — controller will wait for full EKF"
+echo "    convergence before invoking the optimizer (no timeout override)."
