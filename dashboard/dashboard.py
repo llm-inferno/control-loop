@@ -20,6 +20,8 @@ Environment variables:
 
 import json
 import os
+import tempfile
+import time
 
 import pandas as pd
 import plotly.graph_objects as go
@@ -60,11 +62,14 @@ def _sync_pod_log():
                 timeout=30,
             )
             if result.returncode == 0 and result.stdout:
-                with open(LOG_PATH, "wb") as f:
-                    f.write(result.stdout)
+                dir_ = os.path.dirname(os.path.abspath(LOG_PATH))
+                with tempfile.NamedTemporaryFile(dir=dir_, delete=False, suffix=".tmp") as tmp:
+                    tmp.write(result.stdout)
+                    tmp_path = tmp.name
+                os.replace(tmp_path, LOG_PATH)
         except Exception:
             pass  # silently retry on next interval
-        threading.Event().wait(POD_SYNC_INTERVAL)
+        time.sleep(POD_SYNC_INTERVAL)
 
 
 if POD_SYNC:
