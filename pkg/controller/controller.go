@@ -308,6 +308,7 @@ func (a *Controller) Optimize() error {
 		allocSolution.Spec,
 		a.State.SystemData.Spec.ServiceClasses.Spec,
 		a.State.currentModelData,
+		a.State.SystemData.Spec.Capacity,
 		collectTime.Milliseconds(), tuneTime.Milliseconds(),
 		optimizeTime.Milliseconds(), actuateTime.Milliseconds(), totalTime.Milliseconds(),
 	)
