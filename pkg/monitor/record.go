@@ -2,12 +2,13 @@ package monitor
 
 // CycleRecord is one JSON line written per control cycle.
 type CycleRecord struct {
-	Timestamp string         `json:"ts"`        // RFC3339Nano
-	Cycle     int64          `json:"cycle"`     // monotonically increasing counter
-	Servers   []ServerRecord `json:"servers"`   // per-deployment metrics
-	Internals []ModelParms   `json:"internals"` // EKF-tuned model parameters
-	TotalCost float32        `json:"totalCost"` // sum of all server costs
-	Timing    TimingRecord   `json:"timing"`    // cycle phase durations in ms
+	Timestamp string                      `json:"ts"`        // RFC3339Nano
+	Cycle     int64                       `json:"cycle"`     // monotonically increasing counter
+	Servers   []ServerRecord              `json:"servers"`   // per-deployment metrics
+	Internals []ModelParms                `json:"internals"` // EKF-tuned model parameters
+	Capacity  []AcceleratorCapacityRecord `json:"capacity"`  // allocated vs available per accelerator type
+	TotalCost float32                     `json:"totalCost"` // sum of all server costs
+	Timing    TimingRecord                `json:"timing"`    // cycle phase durations in ms
 }
 
 // ServerRecord holds per-deployment metrics for one cycle.
@@ -33,6 +34,13 @@ type ServerRecord struct {
 	Accelerator string  `json:"accelerator"`
 	NumReplicas int     `json:"replicas"`
 	Cost        float32 `json:"cost"`
+}
+
+// AcceleratorCapacityRecord holds allocated vs available counts for one accelerator type.
+type AcceleratorCapacityRecord struct {
+	Type      string `json:"type"`      // accelerator type name (e.g. "H100")
+	Allocated int    `json:"allocated"` // number of accelerator units in use
+	Available int    `json:"available"` // total number of units in the cluster
 }
 
 // ModelParms holds EKF-estimated latency model parameters for one model/accelerator pair.
