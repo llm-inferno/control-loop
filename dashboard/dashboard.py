@@ -30,6 +30,47 @@ LOG_PATH = os.environ.get("INFERNO_CYCLE_LOG", "inferno-cycles.jsonl")
 REFRESH_MS = int(os.environ.get("INFERNO_DASH_REFRESH", "5000"))
 PORT = int(os.environ.get("INFERNO_DASH_PORT", "8050"))
 
+POD_SYNC = os.environ.get("INFERNO_POD_SYNC", "0") == "1"
+NAMESPACE = os.environ.get("INFERNO_NAMESPACE", "inferno")
+POD_SYNC_INTERVAL = int(os.environ.get("INFERNO_POD_SYNC_INTERVAL", "10"))
+POD_LOG_PATH = os.environ.get("INFERNO_CYCLE_LOG_POD_PATH", "inferno-cycles.jsonl")
+
+# ---------------------------------------------------------------------------
+# Pod log sync (optional)
+# ---------------------------------------------------------------------------
+
+import subprocess
+import threading
+
+
+def _sync_pod_log():
+    """Fetch the cycle log from the inferno controller pod via kubectl exec."""
+    while True:
+        try:
+            result = subprocess.run(
+                [
+                    "kubectl", "exec",
+                    "-n", NAMESPACE,
+                    "deployment/inferno",
+                    "-c", "controller",
+                    "--",
+                    "cat", POD_LOG_PATH,
+                ],
+                capture_output=True,
+                timeout=30,
+            )
+            if result.returncode == 0 and result.stdout:
+                with open(LOG_PATH, "wb") as f:
+                    f.write(result.stdout)
+        except Exception:
+            pass  # silently retry on next interval
+        threading.Event().wait(POD_SYNC_INTERVAL)
+
+
+if POD_SYNC:
+    _t = threading.Thread(target=_sync_pod_log, daemon=True)
+    _t.start()
+
 # ---------------------------------------------------------------------------
 # Data loading
 # ---------------------------------------------------------------------------
@@ -353,7 +394,8 @@ app.layout = html.Div(
     children=[
         html.H2("Inferno Control Loop", style={"color": "#e0e0e0", "marginBottom": "4px"}),
         html.Div(
-            f"Log: {LOG_PATH}  |  Refresh: {REFRESH_MS}ms",
+            f"Log: {LOG_PATH}  |  Refresh: {REFRESH_MS}ms"
+            + (f"  |  Pod sync: every {POD_SYNC_INTERVAL}s from {NAMESPACE}/inferno" if POD_SYNC else ""),
             style={"color": "#888", "fontSize": "12px", "marginBottom": "16px"},
         ),
         dcc.Interval(id="tick", interval=REFRESH_MS, n_intervals=0),
