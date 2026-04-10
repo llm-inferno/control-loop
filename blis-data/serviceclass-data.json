@@ -6,8 +6,8 @@
       "modelTargets": [
         {
           "model": "granite_8b",
-          "slo-itl": 40,
-          "slo-ttft": 1000
+          "slo-itl": 8,
+          "slo-ttft": 30
         },
         {
           "model": "llama_13b",
@@ -16,8 +16,8 @@
         },
         {
           "model": "mixtral_8_7b",
-          "slo-itl": 80,
-          "slo-ttft": 1000
+          "slo-itl": 2,
+          "slo-ttft": 60
         }
       ]
     },
@@ -27,8 +27,8 @@
       "modelTargets": [
         {
           "model": "granite_8b",
-          "slo-itl": 80,
-          "slo-ttft": 2000
+          "slo-itl": 12,
+          "slo-ttft": 50
         },
         {
           "model": "llama_13b",
@@ -37,8 +37,8 @@
         },
         {
           "model": "mixtral_8_7b",
-          "slo-itl": 160,
-          "slo-ttft": 2000
+          "slo-itl": 3,
+          "slo-ttft": 100
         }
       ]
     }
