@@ -28,15 +28,17 @@ const (
 
 // Load emulator
 type LoadEmulator struct {
-	kubeClient *kubernetes.Clientset
-	interval   time.Duration
-	alpha      float64
-	theta      float64
-	skew       float64
+	kubeClient         *kubernetes.Clientset
+	interval           time.Duration
+	alpha              float64
+	theta              float64
+	skew               float64
+	tracker            *PhaseTracker      // nil when phases are disabled
+	originalNominalRPM map[string]float64 // baseline nominal RPM per deployment (namespace/name)
 }
 
-// create a new load emulator
-func NewLoadEmulator(intervalSec int, alpha, theta, skew float64) (loadEmulator *LoadEmulator, err error) {
+// NewLoadEmulator creates a new load emulator. tracker may be nil (phases disabled).
+func NewLoadEmulator(intervalSec int, alpha, theta, skew float64, tracker *PhaseTracker) (loadEmulator *LoadEmulator, err error) {
 	if intervalSec <= 0 || alpha < 0 || alpha > 1 || theta < 0 || theta > 1 || skew < 0 || skew > 1 {
 		return nil, fmt.Errorf("%s", "invalid input: interval="+strconv.Itoa(intervalSec)+
 			", alpha="+strconv.FormatFloat(alpha, 'f', 3, 64)+
@@ -46,11 +48,13 @@ func NewLoadEmulator(intervalSec int, alpha, theta, skew float64) (loadEmulator 
 	var kubeClient *kubernetes.Clientset
 	if kubeClient, err = ctrl.GetKubeClient(); err == nil {
 		return &LoadEmulator{
-			kubeClient: kubeClient,
-			interval:   time.Duration(intervalSec) * time.Second,
-			alpha:      alpha,
-			theta:      theta,
-			skew:       skew,
+			kubeClient:         kubeClient,
+			interval:           time.Duration(intervalSec) * time.Second,
+			alpha:              alpha,
+			theta:              theta,
+			skew:               skew,
+			tracker:            tracker,
+			originalNominalRPM: make(map[string]float64),
 		}, nil
 	}
 	return nil, err
@@ -59,18 +63,27 @@ func NewLoadEmulator(intervalSec int, alpha, theta, skew float64) (loadEmulator 
 // run the load emulator
 func (lg *LoadEmulator) Run() {
 	for {
-
 		// get deployments
 		labelSelector := ctrl.KeyManaged + "=true"
 		deps, err := lg.kubeClient.AppsV1().Deployments("").List(context.TODO(), metav1.ListOptions{
 			LabelSelector: labelSelector})
 		if err != nil {
 			fmt.Println(err)
+			time.Sleep(time.Duration(lg.interval))
 			continue
+		}
+
+		// compute phase multiplier once per cycle (same for all deployments)
+		multiplier := 1.0
+		phaseIdx := 0
+		if lg.tracker != nil {
+			multiplier, phaseIdx = lg.tracker.GetMultiplier()
 		}
 
 		// update deployments
 		for _, d := range deps.Items {
+			depKey := d.Namespace + "/" + d.Name
+
 			curRPM, _ := strconv.ParseFloat(d.Labels[ctrl.KeyArrivalRate], 64)
 			curInTokens, _ := strconv.Atoi(d.Labels[ctrl.KeyInTokens])
 			curOutTokens, _ := strconv.Atoi(d.Labels[ctrl.KeyOutTokens])
@@ -79,8 +92,24 @@ func (lg *LoadEmulator) Run() {
 			nomInTokens, _ := strconv.Atoi(d.Labels[ctrl.KeyNominalInTokens])
 			nomOutTokens, _ := strconv.Atoi(d.Labels[ctrl.KeyNominalOutTokens])
 
+			// capture original nominal RPM on first encounter
+			if _, seen := lg.originalNominalRPM[depKey]; !seen {
+				lg.originalNominalRPM[depKey] = nomRPM
+			}
+
+			// apply phase multiplier to original baseline
+			adjustedNomRPM := lg.originalNominalRPM[depKey] * multiplier
+
+			if lg.tracker != nil {
+				fmt.Printf("deployment %s: phase=%d mult=%.4f nomRPM=%.4f\n",
+					depKey, phaseIdx, multiplier, adjustedNomRPM)
+			}
+
+			// update nominal.rpm label to reflect current phase-adjusted value
+			d.Labels[ctrl.KeyNominalArrivalRate] = fmt.Sprintf("%.4f", adjustedNomRPM)
+
 			// perturb arrival rates and number of tokens randomly
-			lg.perturbLoad(&curRPM, &curInTokens, &curOutTokens, nomRPM, nomInTokens, nomOutTokens)
+			lg.perturbLoad(&curRPM, &curInTokens, &curOutTokens, adjustedNomRPM, nomInTokens, nomOutTokens)
 
 			// update deployment labels
 			d.Labels[ctrl.KeyArrivalRate] = fmt.Sprintf("%.4f", curRPM)

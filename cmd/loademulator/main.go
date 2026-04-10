@@ -84,7 +84,7 @@ func main() {
 		", startupDelay=" + ctrl.StartupDelay.String())
 
 	// run emulator
-	lg, err := loademulator.NewLoadEmulator(interval, alpha, theta, skew)
+	lg, err := loademulator.NewLoadEmulator(interval, alpha, theta, skew, nil)
 	if err != nil {
 		fmt.Println(err)
 		return
