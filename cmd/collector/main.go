@@ -21,6 +21,7 @@ func main() {
 		port = ctrl.DefaultCollectorPort
 	}
 
+	ctrl.StartupDelay = time.Duration(ctrl.DefaultStartupDelaySec) * time.Second
 	if s := os.Getenv(ctrl.StartupDelayEnvName); s != "" {
 		v, err := strconv.Atoi(s)
 		if err != nil {

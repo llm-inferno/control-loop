@@ -134,15 +134,21 @@ func (lg *LoadEmulator) updatePodLabels(namespace, selectorStr string, deploymen
 		if p.Status.Phase != corev1.PodRunning {
 			continue
 		}
-		if !ctrl.IsPodReady(p.Status.StartTime) {
-			continue
-		}
+		owned := false
 		for _, owner := range p.OwnerReferences {
 			if _, ok := rsUIDs[owner.UID]; ok {
-				running = append(running, i)
+				owned = true
 				break
 			}
 		}
+		if !owned {
+			continue
+		}
+		if !ctrl.IsPodReady(p.Status.StartTime) {
+			fmt.Printf("pod %s: skipping (within startup delay)\n", p.Name)
+			continue
+		}
+		running = append(running, i)
 	}
 	if len(running) == 0 {
 		return nil

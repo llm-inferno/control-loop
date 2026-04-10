@@ -68,6 +68,7 @@ func main() {
 		skew = v
 	}
 
+	ctrl.StartupDelay = time.Duration(ctrl.DefaultStartupDelaySec) * time.Second
 	if s := os.Getenv(ctrl.StartupDelayEnvName); s != "" {
 		v, err := strconv.Atoi(s)
 		if err != nil {

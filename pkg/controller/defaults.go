@@ -2,8 +2,6 @@ package controller
 
 import (
 	"time"
-
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // Environment names for hosts and ports
@@ -124,15 +122,4 @@ var (
 	StartupDelay time.Duration // how long to wait after pod StartTime before treating pod as ready
 )
 
-// IsPodReady returns true if the pod has been running long enough to be past the startup delay.
-// When StartupDelay is 0 (default), all running pods are considered ready.
-// A nil startTime is treated as "still starting" to be safe.
-func IsPodReady(startTime *metav1.Time) bool {
-	if StartupDelay <= 0 {
-		return true
-	}
-	if startTime == nil {
-		return false
-	}
-	return time.Since(startTime.Time) >= StartupDelay
-}
+
