@@ -21,10 +21,21 @@ spec:
       value: "0.3"
     - name: INFERNO_STARTUP_DELAY
       value: "60"
+    - name: INFERNO_LOAD_PHASES
+      value: ""   # set to /etc/loadphases/phases.yaml to enable phase sequence
+    volumeMounts:
+    - name: load-phases-config
+      mountPath: /etc/loadphases
+      readOnly: true
     resources:
       requests:
         memory: "512Mi"
         cpu: "100m"
       limits:
         memory: "1Gi"
-        cpu: "500"
+        cpu: "500m"
+  volumes:
+  - name: load-phases-config
+    configMap:
+      name: load-phases-config
+      optional: true   # pod starts normally even if the ConfigMap does not exist
