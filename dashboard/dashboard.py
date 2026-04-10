@@ -1,11 +1,12 @@
 """
 Inferno control loop dashboard.
 
-Reads a JSONL cycle log and displays four panels:
+Reads a JSONL cycle log and displays five panels:
   1. Workload   — arrival rate & throughput (RPM) per server
   2. Performance — attained ITL & TTFT vs SLO targets per server
   3. Controls   — replicas per server (left y) + total cost (right y)
-  4. Internals  — EKF alpha / beta / gamma per model/accelerator
+  4. Capacity   — accelerators allocated vs available per type
+  5. Internals  — EKF alpha / beta / gamma per model/accelerator
 
 Usage:
     pip install -r requirements.txt
@@ -35,13 +36,14 @@ PORT = int(os.environ.get("INFERNO_DASH_PORT", "8050"))
 
 
 def load_data():
-    """Return (servers_df, internals_df) parsed from the JSONL log.
+    """Return (servers_df, internals_df, capacity_df) parsed from the JSONL log.
 
     servers_df columns:  cycle, ts, name, class, model,
                          rpm, throughput, avgInTok, avgOutTok,
                          itl, ttft, sloItl, sloTtft,
                          accelerator, replicas, cost
     internals_df columns: cycle, ts, model, acc, alpha, beta, gamma
+    capacity_df columns:  cycle, ts, type, allocated, available
     """
     records = []
     try:
@@ -57,7 +59,7 @@ def load_data():
         pass
 
     if not records:
-        return pd.DataFrame(), pd.DataFrame()
+        return pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
 
     servers_df = pd.json_normalize(
         records,
@@ -73,7 +75,14 @@ def load_data():
         errors="ignore",
     )
 
-    return servers_df, internals_df
+    capacity_df = pd.json_normalize(
+        records,
+        record_path="capacity",
+        meta=["cycle", "ts"],
+        errors="ignore",
+    )
+
+    return servers_df, internals_df, capacity_df
 
 
 # ---------------------------------------------------------------------------
@@ -242,6 +251,44 @@ def fig_controls(df):
     return fig
 
 
+def fig_capacity(df):
+    title = "Capacity: Accelerators Allocated vs Available"
+    if df.empty or "type" not in df.columns:
+        return _empty(title)
+
+    palette = [
+        "#636efa", "#ef553b", "#00cc96", "#ab63fa",
+        "#ffa15a", "#19d3f3", "#ff6692", "#b6e880",
+    ]
+    acc_types = sorted(df["type"].unique())
+    colors = {t: palette[i % len(palette)] for i, t in enumerate(acc_types)}
+
+    fig = go.Figure()
+    for acc_type in acc_types:
+        s = df[df["type"] == acc_type].sort_values("cycle")
+        color = colors[acc_type]
+
+        fig.add_trace(go.Scatter(
+            x=s["cycle"], y=s["allocated"],
+            mode="lines+markers", name=f"{acc_type} allocated",
+            line=dict(color=color), legendgroup=acc_type,
+        ))
+        fig.add_trace(go.Scatter(
+            x=s["cycle"], y=s["available"],
+            mode="lines", name=f"{acc_type} available",
+            line=dict(color=color, dash="dash"),
+            legendgroup=acc_type, showlegend=True,
+        ))
+
+    fig.update_layout(
+        title=title, xaxis_title="Cycle",
+        template="plotly_dark", paper_bgcolor="#1e1e1e", plot_bgcolor="#1e1e1e",
+        legend=dict(orientation="h", yanchor="bottom", y=1.02),
+        yaxis=dict(title="Accelerator Units", dtick=1, rangemode="tozero"),
+    )
+    return fig
+
+
 def fig_internals(df, servers_df=None):
     title = "EKF Parameters: alpha / beta / gamma"
     if df.empty:
@@ -308,6 +355,7 @@ app.layout = html.Div(
         dcc.Graph(id="workload-panel", style={"marginBottom": "8px"}),
         dcc.Graph(id="performance-panel", style={"marginBottom": "8px"}),
         dcc.Graph(id="controls-panel", style={"marginBottom": "8px"}),
+        dcc.Graph(id="capacity-panel", style={"marginBottom": "8px"}),
         dcc.Graph(id="internals-panel"),
     ],
 )
@@ -318,16 +366,18 @@ app.layout = html.Div(
         Output("workload-panel", "figure"),
         Output("performance-panel", "figure"),
         Output("controls-panel", "figure"),
+        Output("capacity-panel", "figure"),
         Output("internals-panel", "figure"),
     ],
     [Input("tick", "n_intervals")],
 )
 def update(_n):
-    servers_df, internals_df = load_data()
+    servers_df, internals_df, capacity_df = load_data()
     return (
         fig_workload(servers_df),
         fig_performance(servers_df),
         fig_controls(servers_df),
+        fig_capacity(capacity_df),
         fig_internals(internals_df, servers_df),
     )
 
