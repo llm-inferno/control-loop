@@ -65,9 +65,9 @@ const (
 	ServersVerb  = "getServers"
 	CollectVerb  = "collect"
 	ActuatorVerb = "update"
-	TuneVerb    = "tune"
-	MergeVerb   = "merge"
-	WarmUpVerb  = "warmup"
+	TuneVerb     = "tune"
+	MergeVerb    = "merge"
+	WarmUpVerb   = "warmup"
 
 	// others
 	DefaultControlPeriodSeconds int  = 60 // periodicity of control (zero means aperiodic)
@@ -121,5 +121,3 @@ var (
 	DataPath     string
 	StartupDelay time.Duration // how long to wait after pod StartTime before treating pod as ready
 )
-
-
