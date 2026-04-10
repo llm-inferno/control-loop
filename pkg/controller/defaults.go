@@ -25,6 +25,8 @@ const (
 	LoadAlphaEnvName    = "INFERNO_LOAD_ALPHA"
 	LoadThetaEnvName    = "INFERNO_LOAD_THETA"
 	LoadSkewEnvName     = "INFERNO_LOAD_SKEW"
+
+	WarmUpTimeoutEnvName = "INFERNO_WARM_UP_TIMEOUT"
 )
 
 // Default host and port for each REST server
@@ -65,6 +67,7 @@ const (
 	// others
 	DefaultControlPeriodSeconds int  = 60 // periodicity of control (zero means aperiodic)
 	DefaultControlDynamicMode   bool = false
+	DefaultWarmUpTimeout        int  = 10 // max consecutive warm-up cycles before proceeding (0 = no timeout)
 
 	ServerSimPort = 8080 // server-sim sidecar listen port
 

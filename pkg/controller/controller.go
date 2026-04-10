@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"sync"
 	"time"
 
@@ -30,6 +31,8 @@ type Controller struct {
 	tunerEnabled  bool
 	recorder      *monitor.CycleRecorder
 	cycleNum      int64
+	warmUpCount   int // consecutive cycles where tuner reported warm-up
+	warmUpTimeout int // max consecutive warm-up cycles before proceeding (0 = no timeout)
 }
 
 // State consists of static (read from files) and dynamic data
@@ -69,6 +72,12 @@ func (a *Controller) Init() error {
 	ActuatorURL = GetURL(ActuatorHostEnvName, ActuatorPortEnvName)
 	TunerURL = GetURLWithDefaults(TunerHostEnvName, TunerPortEnvName, DefaultTunerHost, DefaultTunerPort)
 	a.tunerEnabled = os.Getenv(TunerHostEnvName) != ""
+	a.warmUpTimeout = DefaultWarmUpTimeout
+	if v := os.Getenv(WarmUpTimeoutEnvName); v != "" {
+		if n, err := strconv.Atoi(v); err == nil && n >= 0 {
+			a.warmUpTimeout = n
+		}
+	}
 
 	// read data from files in data path
 	if DataPath = os.Getenv(DataPathEnvName); DataPath == "" {
@@ -255,10 +264,18 @@ func (a *Controller) Optimize() error {
 	}
 
 	if warmingUp {
-		fmt.Printf("%v:\t collect: %d\t tune: %d\t (warm-up in progress — skipping optimize+actuate)\n",
+		a.warmUpCount++
+		if a.warmUpTimeout == 0 || a.warmUpCount < a.warmUpTimeout {
+			fmt.Printf("%v:\t collect: %d\t tune: %d\t (warm-up in progress — skipping optimize+actuate)\n",
+				time.Now().Format("15:04:05.000"),
+				collectTime.Milliseconds(), tuneTime.Milliseconds())
+			return nil
+		}
+		fmt.Printf("%v:\t collect: %d\t tune: %d\t (warm-up timeout after %d cycles — proceeding with current model data)\n",
 			time.Now().Format("15:04:05.000"),
-			collectTime.Milliseconds(), tuneTime.Milliseconds())
-		return nil
+			collectTime.Milliseconds(), tuneTime.Milliseconds(), a.warmUpCount)
+	} else {
+		a.warmUpCount = 0
 	}
 
 	// call optimizer
