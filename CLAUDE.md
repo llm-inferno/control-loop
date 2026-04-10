@@ -123,6 +123,8 @@ Sample data is in the `sample-data/` git submodule (`sample-data/large/` has rea
 
 **Server startup delay** (`INFERNO_STARTUP_DELAY`): When set to a positive integer (seconds), both the Collector and Load Emulator ignore pods whose `Status.StartTime` is less than that many seconds ago. This prevents collecting metrics from or assigning traffic labels to pods still loading model weights. The check uses `pod.Status.StartTime` (set by the kubelet when the pod begins running), not `CreationTimestamp`. Default is `0` (no delay, fully backward-compatible). During the delay window the pod is excluded from `ReplicaSpecs` (Tuner is skipped for it) and receives no load labels.
 
+**Zero perfParms blocks optimizer (EKF warm-up)**: When `model-data.json` omits `perfParms` (or all three values are `0`), `optimizer-light`'s `CreateAllocation` skips that model/accelerator pair and `Solve()` returns an error listing the affected servers. The controller logs the error and skips the cycle. Under normal operation with `TUNER_INIT_HOLD_BACK=true` (default), the controller never calls the optimizer during EKF warm-up (`warmingUp=true`), so this error is unreachable in practice. The only exception is if `INFERNO_WARM_UP_TIMEOUT` fires before the EKF converges. **When using the blis evaluator and relying on the EKF to learn perfParms from scratch, set `INFERNO_WARM_UP_TIMEOUT=0`** to disable the timeout and ensure the controller waits for full EKF convergence before invoking the optimizer.
+
 ## Visualization
 
 The controller emits one JSON line per completed cycle to `INFERNO_CYCLE_LOG` (default: `inferno-cycles.jsonl` relative to the working directory). Warm-up cycles (tuner not yet converged) do not produce a record.
