@@ -105,9 +105,10 @@ Data/config types (`config.SystemData`, `config.AllocationData`, etc.) and `util
 - `serviceclass-data.json` — SLA/service class definitions (static)
 - `optimizer-data.json` — optimizer parameters (static)
 - `capacity-data.json` — current accelerator capacity counts (re-read each cycle)
-- `load-phases.yaml` — optional load emulator phase sequence (see `sample-data/load-phases.yaml` for format); delivered as the `load-phases-config` ConfigMap
 
 Sample data is in the `sample-data/` git submodule (`sample-data/large/` has realistic-scale data).
+
+The load emulator phase sequence is configured separately: see `sample-data/load-phases.yaml` for the format; it is delivered to the pod as the `load-phases-config` ConfigMap mounted at `/etc/loadphases/`.
 
 ## Known Behaviours and Operational Notes
 
