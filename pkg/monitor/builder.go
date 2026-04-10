@@ -1,6 +1,7 @@
 package monitor
 
 import (
+	"sort"
 	"time"
 
 	"github.com/llm-inferno/optimizer-light/pkg/config"
@@ -94,6 +95,9 @@ func BuildRecord(
 			Available: availableByType[accType],
 		})
 	}
+	sort.Slice(capacityRecords, func(i, j int) bool {
+		return capacityRecords[i].Type < capacityRecords[j].Type
+	})
 
 	return &CycleRecord{
 		Timestamp: time.Now().UTC().Format(time.RFC3339Nano),
