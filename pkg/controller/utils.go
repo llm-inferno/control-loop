@@ -7,9 +7,11 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/llm-inferno/optimizer-light/pkg/config"
 
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -224,4 +226,17 @@ func POSTActuator(actuatorInfo *ServerActuatorInfo) error {
 		}
 		return nil
 	}
+}
+
+// IsPodReady returns true if the pod has been running long enough to be past the startup delay.
+// When StartupDelay is 0 (default), all running pods are considered ready.
+// A nil startTime is treated as "still starting" to be safe.
+func IsPodReady(startTime *metav1.Time) bool {
+	if StartupDelay <= 0 {
+		return true
+	}
+	if startTime == nil {
+		return false
+	}
+	return time.Since(startTime.Time) >= StartupDelay
 }

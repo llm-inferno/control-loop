@@ -28,5 +28,6 @@ export INFERNO_LOAD_INTERVAL=20
 export INFERNO_LOAD_ALPHA=0.1
 export INFERNO_LOAD_THETA=0.2
 export INFERNO_LOAD_SKEW=0.3
+export INFERNO_STARTUP_DELAY=0
 
 echo "==> parameters set"

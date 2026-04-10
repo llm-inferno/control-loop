@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
+	"time"
 
 	"github.com/llm-inferno/control-loop/pkg/collector"
 	ctrl "github.com/llm-inferno/control-loop/pkg/controller"
@@ -17,6 +19,16 @@ func main() {
 	port := os.Getenv(ctrl.CollectorPortEnvName)
 	if port == "" {
 		port = ctrl.DefaultCollectorPort
+	}
+
+	ctrl.StartupDelay = time.Duration(ctrl.DefaultStartupDelaySec) * time.Second
+	if s := os.Getenv(ctrl.StartupDelayEnvName); s != "" {
+		v, err := strconv.Atoi(s)
+		if err != nil {
+			fmt.Println("bad env variable " + ctrl.StartupDelayEnvName + ": " + s)
+			return
+		}
+		ctrl.StartupDelay = time.Duration(v) * time.Second
 	}
 
 	collector, err := collector.NewCollector()

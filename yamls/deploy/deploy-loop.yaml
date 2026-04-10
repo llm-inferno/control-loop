@@ -108,6 +108,8 @@ spec:
             value: "3301"
           - name: KUBECONFIG
             value: ""
+          - name: INFERNO_STARTUP_DELAY
+            value: "60"
         ports:
         - containerPort: 3301
         command: ["collector"]

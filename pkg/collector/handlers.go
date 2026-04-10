@@ -147,6 +147,10 @@ func collect(c *gin.Context) {
 					if !owned {
 						continue
 					}
+					if !ctrl.IsPodReady(p.Status.StartTime) {
+						fmt.Printf("pod %s: skipping (within startup delay)\n", p.Name)
+						continue
+					}
 					rpm, _ := strconv.ParseFloat(p.Labels[ctrl.KeyArrivalRate], 32)
 					inTok, _ := strconv.Atoi(p.Labels[ctrl.KeyInTokens])
 					outTok, _ := strconv.Atoi(p.Labels[ctrl.KeyOutTokens])

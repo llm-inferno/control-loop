@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"time"
 
 	ctrl "github.com/llm-inferno/control-loop/pkg/controller"
 	"github.com/llm-inferno/control-loop/pkg/loademulator"
@@ -23,7 +24,8 @@ func main() {
 			ctrl.LoadIntervalEnvName + " " +
 			ctrl.LoadAlphaEnvName + " " +
 			ctrl.LoadThetaEnvName + " " +
-			ctrl.LoadSkewEnvName)
+			ctrl.LoadSkewEnvName + " " +
+			ctrl.StartupDelayEnvName)
 		return
 	}
 
@@ -66,9 +68,20 @@ func main() {
 		skew = v
 	}
 
+	ctrl.StartupDelay = time.Duration(ctrl.DefaultStartupDelaySec) * time.Second
+	if s := os.Getenv(ctrl.StartupDelayEnvName); s != "" {
+		v, err := strconv.Atoi(s)
+		if err != nil {
+			fmt.Println("bad env variable " + ctrl.StartupDelayEnvName + ": " + s)
+			return
+		}
+		ctrl.StartupDelay = time.Duration(v) * time.Second
+	}
+
 	fmt.Println("Running with interval=" + strconv.Itoa(interval) + "(sec), alpha=" + strconv.FormatFloat(alpha, 'f', 3, 64) +
 		", theta=" + strconv.FormatFloat(theta, 'f', 3, 64) +
-		", skew=" + strconv.FormatFloat(skew, 'f', 3, 64))
+		", skew=" + strconv.FormatFloat(skew, 'f', 3, 64) +
+		", startupDelay=" + ctrl.StartupDelay.String())
 
 	// run emulator
 	lg, err := loademulator.NewLoadEmulator(interval, alpha, theta, skew)
