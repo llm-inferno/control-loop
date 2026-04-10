@@ -5,7 +5,7 @@ go 1.24.0
 require (
 	github.com/gin-gonic/gin v1.11.0
 	github.com/llm-inferno/optimizer v0.7.2
-	github.com/llm-inferno/optimizer-light v0.7.3
+	github.com/llm-inferno/optimizer-light v0.7.4
 	github.com/prometheus/client_golang v1.22.0
 	github.com/prometheus/common v0.64.0
 	k8s.io/api v0.33.1
@@ -80,5 +80,3 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.6.0 // indirect
 	sigs.k8s.io/yaml v1.4.0 // indirect
 )
-
-replace github.com/llm-inferno/optimizer-light => ../optimizer-light
