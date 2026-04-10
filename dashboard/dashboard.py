@@ -75,12 +75,17 @@ def load_data():
         errors="ignore",
     )
 
-    capacity_df = pd.json_normalize(
-        records,
-        record_path="capacity",
-        meta=["cycle", "ts"],
-        errors="ignore",
-    )
+    # Filter to records that have capacity before normalizing
+    records_with_capacity = [r for r in records if "capacity" in r and r["capacity"]]
+    if records_with_capacity:
+        capacity_df = pd.json_normalize(
+            records_with_capacity,
+            record_path="capacity",
+            meta=["cycle", "ts"],
+            errors="ignore",
+        )
+    else:
+        capacity_df = pd.DataFrame()
 
     return servers_df, internals_df, capacity_df
 
