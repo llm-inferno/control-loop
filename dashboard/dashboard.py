@@ -321,7 +321,10 @@ def fig_capacity(df):
     acc_types = sorted(df["type"].unique())
     colors = {t: palette[i % len(palette)] for i, t in enumerate(acc_types)}
 
+    # Log scale: allocated (1–3) and available (200+) span very different magnitudes;
+    # log scale keeps both series visible on a single axis.
     fig = go.Figure()
+
     for acc_type in acc_types:
         s = df[df["type"] == acc_type].sort_values("cycle")
         color = colors[acc_type]
@@ -342,7 +345,7 @@ def fig_capacity(df):
         title=title, xaxis_title="Cycle",
         template="plotly_dark", paper_bgcolor="#1e1e1e", plot_bgcolor="#1e1e1e",
         legend=dict(orientation="h", yanchor="bottom", y=1.02),
-        yaxis=dict(title="Accelerator Units", dtick=1, rangemode="tozero"),
+        yaxis=dict(title="Accelerator Units", type="log"),
     )
     return fig
 
