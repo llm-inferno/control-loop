@@ -344,8 +344,9 @@ def fig_capacity(df):
     fig.update_layout(
         title=title, xaxis_title="Cycle",
         template="plotly_dark", paper_bgcolor="#1e1e1e", plot_bgcolor="#1e1e1e",
-        legend=dict(orientation="h", yanchor="bottom", y=1.02),
+        legend=dict(orientation="h", yanchor="top", y=-0.2, x=0.5, xanchor="center"),
         yaxis=dict(title="Accelerator Units", type="log"),
+        margin=dict(b=100),
     )
     return fig
 
