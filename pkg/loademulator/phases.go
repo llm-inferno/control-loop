@@ -57,6 +57,9 @@ func LoadPhasesFromFile(path string) (*PhaseTracker, error) {
 		if d == 0 && i != len(f.Phases)-1 {
 			return nil, fmt.Errorf("phases: entry %d: duration=0 (terminal) must be the last entry", i)
 		}
+		if d == 0 && e.Ratio != 0 {
+			fmt.Printf("phases: entry %d: warning: ratio %.4f is ignored for terminal (duration=0) phases\n", i, e.Ratio)
+		}
 		if d > 0 && e.Ratio <= 0 {
 			return nil, fmt.Errorf("phases: entry %d: ratio must be > 0, got %g", i, e.Ratio)
 		}
@@ -111,7 +114,10 @@ func (pt *PhaseTracker) GetMultiplier() (float64, int) {
 
 	// Past all phases: hold at final cumMult.
 	finalPhase := len(pt.phases)
-	pt.logTransition(finalPhase, cumMult)
+	if finalPhase != pt.lastPhase {
+		fmt.Printf("phases: past all phases, holding at multiplier=%.4f\n", cumMult)
+		pt.lastPhase = finalPhase
+	}
 	return cumMult, finalPhase
 }
 
