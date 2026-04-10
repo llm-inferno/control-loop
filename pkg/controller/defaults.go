@@ -29,6 +29,7 @@ const (
 	LoadAlphaEnvName    = "INFERNO_LOAD_ALPHA"
 	LoadThetaEnvName    = "INFERNO_LOAD_THETA"
 	LoadSkewEnvName     = "INFERNO_LOAD_SKEW"
+	LoadPhasesEnvName   = "INFERNO_LOAD_PHASES"
 
 	StartupDelayEnvName  = "INFERNO_STARTUP_DELAY"
 	WarmUpTimeoutEnvName = "INFERNO_WARM_UP_TIMEOUT"
