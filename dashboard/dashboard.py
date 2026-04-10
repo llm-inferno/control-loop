@@ -20,6 +20,7 @@ Environment variables:
 
 import json
 import os
+import sys
 import tempfile
 import time
 
@@ -61,14 +62,20 @@ def _sync_pod_log():
                 capture_output=True,
                 timeout=30,
             )
-            if result.returncode == 0 and result.stdout:
+            if result.returncode != 0:
+                print(
+                    f"[pod-sync] kubectl exited {result.returncode}: "
+                    + result.stderr.decode(errors="replace").strip(),
+                    file=sys.stderr, flush=True,
+                )
+            elif result.stdout:
                 dir_ = os.path.dirname(os.path.abspath(LOG_PATH))
                 with tempfile.NamedTemporaryFile(dir=dir_, delete=False, suffix=".tmp") as tmp:
                     tmp.write(result.stdout)
                     tmp_path = tmp.name
                 os.replace(tmp_path, LOG_PATH)
-        except Exception:
-            pass  # silently retry on next interval
+        except Exception as e:
+            print(f"[pod-sync] error: {e}", file=sys.stderr, flush=True)
         time.sleep(POD_SYNC_INTERVAL)
 
 

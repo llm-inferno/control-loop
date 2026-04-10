@@ -89,6 +89,7 @@ func BuildRecord(
 	}
 	capacityRecords := make([]AcceleratorCapacityRecord, 0, len(allocatedByType))
 	for accType, allocated := range allocatedByType {
+		// Available is 0 if accType is absent from capacity-data.json (map zero value).
 		capacityRecords = append(capacityRecords, AcceleratorCapacityRecord{
 			Type:      accType,
 			Allocated: allocated,
