@@ -92,6 +92,7 @@ Data/config types (`config.SystemData`, `config.AllocationData`, etc.) and `util
 | `INFERNO_LOAD_ALPHA` | `0.1` | Load emulator noise magnitude relative to nominal |
 | `INFERNO_LOAD_THETA` | `0.2` | Load emulator mean-reversion strength |
 | `INFERNO_LOAD_SKEW` | `0.3` | Load emulator pod skew factor (0=equal, 1=fully random) |
+| `INFERNO_LOAD_PHASES` | `""` (disabled) | Path to YAML phase config file for the load emulator. When set, the nominal RPM follows the configured phase sequence (linear ramp between phases). Empty = static nominal (current behavior). |
 | `INFERNO_STARTUP_DELAY` | `0` | Seconds after pod `StartTime` before the pod is treated as ready; filtered from both the Collector and Load Emulator during the window |
 | `INFERNO_WARM_UP_TIMEOUT` | `10` | Max consecutive warm-up cycles before the controller overrides the warm-up gate and proceeds with optimize+actuate using current model data; set to `0` to disable the timeout |
 | `INFERNO_CYCLE_LOG` | `inferno-cycles.jsonl` | Path to JSONL cycle log written by the controller each cycle. Set to `-` to disable. |
@@ -104,6 +105,7 @@ Data/config types (`config.SystemData`, `config.AllocationData`, etc.) and `util
 - `serviceclass-data.json` — SLA/service class definitions (static)
 - `optimizer-data.json` — optimizer parameters (static)
 - `capacity-data.json` — current accelerator capacity counts (re-read each cycle)
+- `load-phases.yaml` — optional load emulator phase sequence (see `sample-data/load-phases.yaml` for format); delivered as the `load-phases-config` ConfigMap
 
 Sample data is in the `sample-data/` git submodule (`sample-data/large/` has realistic-scale data).
 
