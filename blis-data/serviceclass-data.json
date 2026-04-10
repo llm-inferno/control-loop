@@ -37,8 +37,8 @@
         },
         {
           "model": "mixtral_8_7b",
-          "slo-itl": 3,
-          "slo-ttft": 100
+          "slo-itl": 10,
+          "slo-ttft": 200
         }
       ]
     }
