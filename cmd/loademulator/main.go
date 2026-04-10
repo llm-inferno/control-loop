@@ -25,6 +25,7 @@ func main() {
 			ctrl.LoadAlphaEnvName + " " +
 			ctrl.LoadThetaEnvName + " " +
 			ctrl.LoadSkewEnvName + " " +
+			ctrl.LoadPhasesEnvName + " " +
 			ctrl.StartupDelayEnvName)
 		return
 	}
@@ -78,13 +79,27 @@ func main() {
 		ctrl.StartupDelay = time.Duration(v) * time.Second
 	}
 
+	// load optional phase config
+	var tracker *loademulator.PhaseTracker
+	if phasesPath := os.Getenv(ctrl.LoadPhasesEnvName); phasesPath != "" {
+		var err error
+		tracker, err = loademulator.LoadPhasesFromFile(phasesPath)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		if tracker != nil {
+			tracker.LogConfig()
+		}
+	}
+
 	fmt.Println("Running with interval=" + strconv.Itoa(interval) + "(sec), alpha=" + strconv.FormatFloat(alpha, 'f', 3, 64) +
 		", theta=" + strconv.FormatFloat(theta, 'f', 3, 64) +
 		", skew=" + strconv.FormatFloat(skew, 'f', 3, 64) +
 		", startupDelay=" + ctrl.StartupDelay.String())
 
 	// run emulator
-	lg, err := loademulator.NewLoadEmulator(interval, alpha, theta, skew, nil)
+	lg, err := loademulator.NewLoadEmulator(interval, alpha, theta, skew, tracker)
 	if err != nil {
 		fmt.Println(err)
 		return
