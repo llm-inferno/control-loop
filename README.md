@@ -125,6 +125,21 @@ Following are the steps to run the optimization control loop external to a clust
     Each metric follows a mean-reverting random walk: `next = current + theta*(nominal - current) + Normal(0, alpha*nominal)`, keeping the time average near the nominal value set in the deployment labels.
     The total deployment request rate is split across running pods using a skew factor (0 = equal split, 1 = fully random split).
 
+    Optionally, a **phase sequence** can be configured to vary the nominal request rate over time. Each phase specifies a real-time duration and a change ratio; the nominal RPM ramps linearly from its value at the start of the phase to `ratio × start` by the end. Ratios are chained: each is relative to the nominal at the start of that phase. The random walk tracks the changing nominal throughout. A `duration: 0s` terminal phase holds the final value indefinitely. Example (`sample-data/load-phases.yaml`):
+
+    ```yaml
+    phases:
+      - duration: 2m
+        ratio: 1.0    # hold flat at baseline
+      - duration: 5m
+        ratio: 3.0    # ramp up to 3x over 5 minutes
+      - duration: 5m
+        ratio: 0.333  # ramp back down to ~1x
+      - duration: 0s  # hold at final value forever
+    ```
+
+    The phase config is delivered as the `load-phases-config` ConfigMap (see `yamls/deploy/load-emulator.yaml`). When `INFERNO_LOAD_PHASES` is unset, the emulator behaves as before (static nominal).
+
     Configuration is via environment variables (all optional, defaults shown):
 
     | Variable | Default | Description |
@@ -133,6 +148,7 @@ Following are the steps to run the optimization control loop external to a clust
     | `INFERNO_LOAD_ALPHA` | `0.1` | Noise magnitude relative to nominal |
     | `INFERNO_LOAD_THETA` | `0.2` | Mean-reversion strength (0=no reversion, 1=snap to nominal) |
     | `INFERNO_LOAD_SKEW` | `0.3` | Load skew across pods (0=equal, 1=fully random) |
+    | `INFERNO_LOAD_PHASES` | `""` | Path to YAML phase config file; empty = static nominal |
     | `INFERNO_STARTUP_DELAY` | `0` | Seconds after pod start before it is treated as ready; pods within this window are skipped by both the Load Emulator and the Collector |
 
 - Cleanup
