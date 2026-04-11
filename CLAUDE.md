@@ -83,7 +83,7 @@ Data/config types (`config.SystemData`, `config.AllocationData`, etc.) and `util
 | `TUNER_HOST` | unset (Tuner disabled) | Tuner client target address; set to `localhost` when Tuner runs as a sidecar in the same pod |
 | `TUNER_PORT` | `8081` | Tuner client target port (`3304` in the inferno pod deployment) |
 | `TUNER_WARM_UP_CYCLES` | `5` | Number of accepted EKF updates during which the NIS gate is disabled; set to `0` to disable warm-up |
-| `TUNER_INIT_OBS` | `5` | Observations to accumulate before the multi-observation Nelder-Mead fit; set to `1` to revert to single-observation `guessInitState` behaviour |
+| `TUNER_INIT_OBS` | `5` | Observations to accumulate before the multi-observation Nelder-Mead fit; set to `1` to revert to single-observation `guessInitState` behaviour (`3` in deploy-loop.yaml) |
 | `TUNER_INIT_HOLD_BACK` | `true` | If `true`, the tuner reports `warmingUp=true` during collection so the controller skips optimize+actuate (Option B). Set `false` to let the controller proceed with static model-data during collection (Option A). |
 | `INFERNO_DATA_PATH` | `./` | Path to JSON data files (must end with `/`) |
 | `INFERNO_CONTROL_PERIOD` | `60` | Control loop period in seconds (0 = aperiodic only) |

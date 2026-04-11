@@ -167,6 +167,10 @@ spec:
             value: "/etc/tuner/config"
           - name: TUNER_WARM_UP_CYCLES
             value: "3"
+          - name: TUNER_INIT_OBS
+            value: "3"
+          - name: TUNER_INIT_HOLD_BACK
+            value: "true"
         ports:
         - containerPort: 3304
         command: ["/app/tuner"]
