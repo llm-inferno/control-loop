@@ -21,19 +21,5 @@
       "maxBatchSize": 256,
       "atTokens": 512
     },
-    {
-      "name": "mixtral_8_7b",
-      "acc": "H100",
-      "accCount": 1,
-      "maxBatchSize": 256,
-      "atTokens": 512
-    },
-    {
-      "name": "mixtral_8_7b",
-      "acc": "A100",
-      "accCount": 1,
-      "maxBatchSize": 256,
-      "atTokens": 512
-    }
   ]
 }
