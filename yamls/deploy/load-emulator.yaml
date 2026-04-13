@@ -22,7 +22,7 @@ spec:
     - name: INFERNO_STARTUP_DELAY
       value: "60"
     - name: INFERNO_LOAD_PHASES
-      value: ""   # set to /etc/loadphases/phases.yaml to enable phase sequence
+      value: "/etc/loadphases/phases.yaml"
     volumeMounts:
     - name: load-phases-config
       mountPath: /etc/loadphases
