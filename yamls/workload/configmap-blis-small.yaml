@@ -9,7 +9,6 @@ data:
   # "hfConfigPath" references a flat filename under the configmap mount (/app/config).
   #
   # betaCoeffs/alphaCoeffs: trained-physics recommended values (hardware-independent).
-  #   Roofline backend (dep-blis-mixtral) ignores these fields.
   #   trained-physics backend (dep-blis-granite, dep-blis-llama) requires all entries
   #   to carry ≥7 betaCoeffs at startup — hence all entries are populated uniformly.
   #
@@ -75,28 +74,10 @@ data:
           "numRequests": 0,
           "seed": 42
         },
-        {
-          "accelerator": "A100",
-          "model": "llama_13b",
-          "hfConfigPath": "/app/config/Llama-2-13b-hf.json",
-          "gpu": "A100-80",
-          "tp": 1,
-          "totalKVBlocks": 10240,
-          "blockSizeTokens": 16,
-          "maxRunningReqs": 256,
-          "maxScheduledTokens": 8192,
-          "maxModelLen": 0,
-          "scheduler": "fcfs",
-          "betaCoeffs": [0.15, 0.0, 1.4, 0.75, 32.0, 4.0, 126.0, 482.0, 0.0, 1.9],
-          "alphaCoeffs": [15563.0, 777.0, 46.0],
-          "simulationHorizon": 60000000,
-          "numRequests": 0,
-          "seed": 42
-        },
       ]
     }
 
-  # hardware_config.json: GPU specs used by the blis roofline latency backend.
+  # hardware_config.json: GPU specs used by the blis trained-physics latency backend.
   # "gpu" in blis-config.json must match a key here.
   hardware_config.json: |
     {
