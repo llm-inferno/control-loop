@@ -50,15 +50,7 @@ kubectl apply -f "$REPO_ROOT/yamls/workload/dep1.yaml"
 kubectl apply -f "$REPO_ROOT/yamls/workload/dep2.yaml"
 
 echo "==> Deploying load emulator"
-PHASES_FILE="$REPO_ROOT/sample-data/load-phases.yaml"
-if [ -f "$PHASES_FILE" ]; then
-  echo "    Creating load-phases-config ConfigMap from $PHASES_FILE"
-  kubectl create configmap load-phases-config -n inferno \
-    --from-file=phases.yaml="$PHASES_FILE" \
-    --save-config --dry-run=client -o yaml | kubectl apply -f -
-else
-  echo "    No load-phases.yaml found; skipping load-phases-config ConfigMap (phases disabled)"
-fi
+kubectl apply -f "$REPO_ROOT/yamls/deploy/configmap-load-phases.yaml"
 kubectl apply -f "$REPO_ROOT/yamls/deploy/load-emulator.yaml"
 
 echo ""

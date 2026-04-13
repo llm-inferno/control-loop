@@ -125,7 +125,7 @@ Following are the steps to run the optimization control loop external to a clust
     Each metric follows a mean-reverting random walk: `next = current + theta*(nominal - current) + Normal(0, alpha*nominal)`, keeping the time average near the nominal value set in the deployment labels.
     The total deployment request rate is split across running pods using a skew factor (0 = equal split, 1 = fully random split).
 
-    Optionally, a **phase sequence** can be configured to vary the nominal request rate over time. Each phase specifies a real-time duration and a change ratio; the nominal RPM ramps linearly from its value at the start of the phase to `ratio × start` by the end. Ratios are chained: each is relative to the nominal at the start of that phase. The random walk tracks the changing nominal throughout. A `duration: 0s` terminal phase holds the final value indefinitely. Example (`sample-data/load-phases.yaml`):
+    Optionally, a **phase sequence** can be configured to vary the nominal request rate over time. Each phase specifies a real-time duration and a change ratio; the nominal RPM ramps linearly from its value at the start of the phase to `ratio × start` by the end. Ratios are chained: each is relative to the nominal at the start of that phase. The random walk tracks the changing nominal throughout. A `duration: 0s` terminal phase holds the final value indefinitely. Example (`yamls/deploy/configmap-load-phases.yaml`):
 
     ```yaml
     phases:

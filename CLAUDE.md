@@ -108,7 +108,7 @@ Data/config types (`config.SystemData`, `config.AllocationData`, etc.) and `util
 
 Sample data is in the `sample-data/` git submodule (`sample-data/large/` has realistic-scale data).
 
-The load emulator phase sequence is configured separately: see `sample-data/load-phases.yaml` for the format; it is delivered to the pod as the `load-phases-config` ConfigMap mounted at `/etc/loadphases/`.
+The load emulator phase sequence is configured via `yamls/deploy/configmap-load-phases.yaml`, delivered to the pod as the `load-phases-config` ConfigMap mounted at `/etc/loadphases/`.
 
 ## Known Behaviours and Operational Notes
 
