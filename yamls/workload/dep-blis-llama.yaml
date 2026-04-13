@@ -7,8 +7,8 @@ metadata:
     inferno.server.managed: "true"
     inferno.server.name: blis-llama
     inferno.server.model: llama_13b
-    inferno.server.class: Premium
-    inferno.server.allocation.accelerator: A100
+    inferno.server.class: Bronze
+    inferno.server.allocation.accelerator: H100
     inferno.server.allocation.maxbatchsize: "256"
     inferno.server.load.rpm: "30"
     inferno.server.load.intokens: "512"
@@ -54,7 +54,7 @@ spec:
         - name: HW_CONFIG_FILE
           value: "/app/config/hardware_config.json"
         - name: LATENCY_BACKEND
-          value: "roofline"
+          value: "trained-physics"
         volumeMounts:
         - name: blis-config
           mountPath: /app/config

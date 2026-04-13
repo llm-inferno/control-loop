@@ -54,7 +54,7 @@ spec:
         - name: HW_CONFIG_FILE
           value: "/app/config/hardware_config.json"
         - name: LATENCY_BACKEND
-          value: "roofline"
+          value: "trained-physics"
         volumeMounts:
         - name: blis-config
           mountPath: /app/config

@@ -7,6 +7,17 @@ data:
   # blis-config.json: one entry per (model, accelerator) pair.
   # "model" must match the inferno.server.model deployment label.
   # "hfConfigPath" references a flat filename under the configmap mount (/app/config).
+  #
+  # betaCoeffs/alphaCoeffs: trained-physics recommended values (hardware-independent).
+  #   Roofline backend (dep-blis-mixtral) ignores these fields.
+  #   trained-physics backend (dep-blis-granite, dep-blis-llama) requires all entries
+  #   to carry ≥7 betaCoeffs at startup — hence all entries are populated uniformly.
+  #
+  #   betaCoeffs (10-term): β₁ₐ=0.15, β₂ₐ=0.0, β₃=1.4, β₄=0.75, β₅=32µs/layer,
+  #                          β₆=4µs/req, β₇=126µs/step, β₈=482µs/MoE-layer,
+  #                          β₁ᵦ=0.0, β₂ᵦ=1.9
+  #   alphaCoeffs (3-term): α₀=15563µs (API overhead), α₁=777µs (post-decode),
+  #                          α₂=46µs/token (output token processing)
   blis-config.json: |
     {
       "models": [
@@ -22,8 +33,8 @@ data:
           "maxScheduledTokens": 8192,
           "maxModelLen": 0,
           "scheduler": "fcfs",
-          "betaCoeffs": [],
-          "alphaCoeffs": [],
+          "betaCoeffs": [0.15, 0.0, 1.4, 0.75, 32.0, 4.0, 126.0, 482.0, 0.0, 1.9],
+          "alphaCoeffs": [15563.0, 777.0, 46.0],
           "simulationHorizon": 60000000,
           "numRequests": 0,
           "seed": 42
@@ -40,8 +51,8 @@ data:
           "maxScheduledTokens": 8192,
           "maxModelLen": 0,
           "scheduler": "fcfs",
-          "betaCoeffs": [],
-          "alphaCoeffs": [],
+          "betaCoeffs": [0.15, 0.0, 1.4, 0.75, 32.0, 4.0, 126.0, 482.0, 0.0, 1.9],
+          "alphaCoeffs": [15563.0, 777.0, 46.0],
           "simulationHorizon": 60000000,
           "numRequests": 0,
           "seed": 42
@@ -58,8 +69,8 @@ data:
           "maxScheduledTokens": 8192,
           "maxModelLen": 0,
           "scheduler": "fcfs",
-          "betaCoeffs": [],
-          "alphaCoeffs": [],
+          "betaCoeffs": [0.15, 0.0, 1.4, 0.75, 32.0, 4.0, 126.0, 482.0, 0.0, 1.9],
+          "alphaCoeffs": [15563.0, 777.0, 46.0],
           "simulationHorizon": 60000000,
           "numRequests": 0,
           "seed": 42
@@ -76,8 +87,8 @@ data:
           "maxScheduledTokens": 8192,
           "maxModelLen": 0,
           "scheduler": "fcfs",
-          "betaCoeffs": [],
-          "alphaCoeffs": [],
+          "betaCoeffs": [0.15, 0.0, 1.4, 0.75, 32.0, 4.0, 126.0, 482.0, 0.0, 1.9],
+          "alphaCoeffs": [15563.0, 777.0, 46.0],
           "simulationHorizon": 60000000,
           "numRequests": 0,
           "seed": 42
@@ -94,8 +105,8 @@ data:
           "maxScheduledTokens": 8192,
           "maxModelLen": 0,
           "scheduler": "fcfs",
-          "betaCoeffs": [],
-          "alphaCoeffs": [],
+          "betaCoeffs": [0.15, 0.0, 1.4, 0.75, 32.0, 4.0, 126.0, 482.0, 0.0, 1.9],
+          "alphaCoeffs": [15563.0, 777.0, 46.0],
           "simulationHorizon": 60000000,
           "numRequests": 0,
           "seed": 42
@@ -112,8 +123,8 @@ data:
           "maxScheduledTokens": 8192,
           "maxModelLen": 0,
           "scheduler": "fcfs",
-          "betaCoeffs": [],
-          "alphaCoeffs": [],
+          "betaCoeffs": [0.15, 0.0, 1.4, 0.75, 32.0, 4.0, 126.0, 482.0, 0.0, 1.9],
+          "alphaCoeffs": [15563.0, 777.0, 46.0],
           "simulationHorizon": 60000000,
           "numRequests": 0,
           "seed": 42
