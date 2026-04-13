@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Deploy the inferno control loop + blis/roofline workloads to a local kind cluster.
+# Deploy the inferno control loop + blis/trained-physics workloads to a local kind cluster.
 # Uses blis-data/ for optimizer config and blis evaluator for all workloads.
 # Run from the control-loop/ repo root.
 # Prerequisites: images already built and Docker available (see CLAUDE.md Step 1).
@@ -45,20 +45,12 @@ kubectl rollout status  deployment/inferno -n inferno --timeout=120s
 echo "==> Creating blis workload ConfigMap"
 kubectl apply -f "$REPO_ROOT/yamls/workload/configmap-blis-small.yaml"
 
-echo "==> Deploying blis workloads (granite_8b/H100 Premium, mixtral_8_7b/H100 Bronze)"
+echo "==> Deploying blis workloads (granite_8b/H100 Premium, llama_13b/H100 Bronze)"
 kubectl apply -f "$REPO_ROOT/yamls/workload/dep-blis-granite.yaml"
-kubectl apply -f "$REPO_ROOT/yamls/workload/dep-blis-mixtral.yaml"
+kubectl apply -f "$REPO_ROOT/yamls/workload/dep-blis-llama.yaml"
 
 echo "==> Deploying load emulator"
-PHASES_FILE="$REPO_ROOT/sample-data/load-phases.yaml"
-if [ -f "$PHASES_FILE" ]; then
-  echo "    Creating load-phases-config ConfigMap from $PHASES_FILE"
-  kubectl create configmap load-phases-config -n inferno \
-    --from-file=phases.yaml="$PHASES_FILE" \
-    --save-config --dry-run=client -o yaml | kubectl apply -f -
-else
-  echo "    No load-phases.yaml found; skipping load-phases-config ConfigMap"
-fi
+kubectl apply -f "$REPO_ROOT/yamls/deploy/configmap-load-phases.yaml"
 kubectl delete pod load-emulator -n inferno --ignore-not-found
 kubectl apply -f "$REPO_ROOT/yamls/deploy/load-emulator.yaml"
 
