@@ -6,18 +6,18 @@
       "modelTargets": [
         {
           "model": "granite_8b",
-          "slo-itl": 8,
-          "slo-ttft": 30
+          "slo-itl": 10,
+          "slo-ttft": 300
         },
         {
           "model": "llama_13b",
-          "slo-itl": 80,
-          "slo-ttft": 1000
+          "slo-itl": 10,
+          "slo-ttft": 300
         },
         {
           "model": "mixtral_8_7b",
-          "slo-itl": 2,
-          "slo-ttft": 60
+          "slo-itl": 10,
+          "slo-ttft": 300
         }
       ]
     },
@@ -27,18 +27,18 @@
       "modelTargets": [
         {
           "model": "granite_8b",
-          "slo-itl": 12,
-          "slo-ttft": 50
+          "slo-itl": 20,
+          "slo-ttft": 1000
         },
         {
           "model": "llama_13b",
-          "slo-itl": 160,
-          "slo-ttft": 2000
+          "slo-itl": 20,
+          "slo-ttft": 1000
         },
         {
           "model": "mixtral_8_7b",
-          "slo-itl": 10,
-          "slo-ttft": 200
+          "slo-itl": 20,
+          "slo-ttft": 1000
         }
       ]
     }
