@@ -17,6 +17,7 @@ vendor/
 # Miscellaneous
 .DS_Store
 memory/
+.worktrees/
 dashboard/.venv/
 dashboard/__pycache__/
 inferno-cycles.jsonl
