@@ -31,8 +31,9 @@ type Controller struct {
 	tunerEnabled  bool
 	recorder      *monitor.CycleRecorder
 	cycleNum      int64
-	warmUpCount   int // consecutive cycles where tuner reported warm-up
-	warmUpTimeout int // max consecutive warm-up cycles before proceeding (0 = no timeout)
+	warmUpCount        int // consecutive cycles where tuner reported warm-up
+	warmUpTimeout      int // max consecutive warm-up cycles before proceeding (0 = no timeout)
+	defaultMaxBatchSize int // DEFAULT_MAX_BATCH_SIZE: pins MaxBatchSize on all server specs when > 0
 }
 
 // State consists of static (read from files) and dynamic data
@@ -76,6 +77,11 @@ func (a *Controller) Init() error {
 	if v := os.Getenv(WarmUpTimeoutEnvName); v != "" {
 		if n, err := strconv.Atoi(v); err == nil && n >= 0 {
 			a.warmUpTimeout = n
+		}
+	}
+	if v := os.Getenv(DefaultMaxBatchSizeEnvName); v != "" {
+		if n, err := strconv.Atoi(v); err == nil && n > 0 {
+			a.defaultMaxBatchSize = n
 		}
 	}
 
@@ -232,6 +238,13 @@ func (a *Controller) Optimize() error {
 		return fmt.Errorf("collector returned empty data")
 	}
 	a.State.SystemData.Spec.Servers.Spec = collectorInfo.Spec
+	if a.defaultMaxBatchSize > 0 {
+		for i := range a.State.SystemData.Spec.Servers.Spec {
+			if a.State.SystemData.Spec.Servers.Spec[i].MaxBatchSize == 0 {
+				a.State.SystemData.Spec.Servers.Spec[i].MaxBatchSize = a.defaultMaxBatchSize
+			}
+		}
+	}
 	a.State.ServerMap = collectorInfo.KubeResource
 	collectTime := time.Since(startTime)
 

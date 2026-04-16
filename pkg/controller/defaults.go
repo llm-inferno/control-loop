@@ -21,7 +21,8 @@ const (
 	TunerHostEnvName = "TUNER_HOST"
 	TunerPortEnvName = "TUNER_PORT"
 
-	DataPathEnvName       = "INFERNO_DATA_PATH"
+	DataPathEnvName          = "INFERNO_DATA_PATH"
+	DefaultMaxBatchSizeEnvName = "DEFAULT_MAX_BATCH_SIZE"
 	ControlPeriodEnvName  = "INFERNO_CONTROL_PERIOD"
 	ControlDynamicEnvName = "INFERNO_CONTROL_DYNAMIC"
 
