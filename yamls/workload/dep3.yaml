@@ -51,6 +51,8 @@ spec:
         env:
         - name: MODEL_DATA_FILE
           value: "/etc/config/model-data.json"
+        - name: DEFAULT_MAX_QUEUE_SIZE
+          value: "0"
         volumeMounts:
         - name: model-data
           mountPath: /etc/config

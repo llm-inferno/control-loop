@@ -1,30 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: premium-llama-13b
+  name: qa-granite-8b
   namespace: infer
   labels:
     inferno.server.managed: "true"
-    inferno.server.name: vllm-001
-    inferno.server.model: llama_13b
+    inferno.server.name: qa-granite
+    inferno.server.model: granite_8b
     inferno.server.class: Premium
-    inferno.server.allocation.accelerator: MI250
-    inferno.server.allocation.maxbatchsize: "8"
-    inferno.server.load.rpm: "30"
-    inferno.server.load.intokens: "128"
+    inferno.server.allocation.accelerator: H100
+    inferno.server.allocation.maxbatchsize: "256"
+    inferno.server.load.rpm: "60"
+    inferno.server.load.intokens: "2048"
     inferno.server.load.outtokens: "1024"
-    inferno.server.load.nominal.rpm: "30"
-    inferno.server.load.nominal.intokens: "128"
+    inferno.server.load.nominal.rpm: "60"
+    inferno.server.load.nominal.intokens: "2048"
     inferno.server.load.nominal.outtokens: "1024"
 spec:
-  replicas: 4
+  replicas: 2
   selector:
     matchLabels:
-      app: vllm-001
+      app: qa-granite
   template:
     metadata:
       labels:
-        app: vllm-001
+        app: qa-granite
     spec:
       containers:
       - name: server-sim
@@ -35,10 +35,6 @@ spec:
         env:
         - name: EVALUATOR_URL
           value: "http://localhost:8081"
-        - name: NOISE_ENABLED
-          value: "true"
-        - name: NOISE_STD_FRACTION
-          value: "0.01"
         resources:
           requests:
             memory: "128Mi"
@@ -54,12 +50,12 @@ spec:
         - containerPort: 8081
         env:
         - name: MODEL_DATA_FILE
-          value: "/etc/config/model-data.json"
+          value: "/app/config/model-data.json"
         - name: DEFAULT_MAX_QUEUE_SIZE
           value: "0"
         volumeMounts:
         - name: model-data
-          mountPath: /etc/config
+          mountPath: /app/config
         resources:
           requests:
             memory: "128Mi"
@@ -70,4 +66,4 @@ spec:
       volumes:
       - name: model-data
         configMap:
-          name: server-sim-model-data
+          name: server-sim-qa-small
