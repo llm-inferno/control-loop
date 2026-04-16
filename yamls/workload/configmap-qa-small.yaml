@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: server-sim-qa-small
+  namespace: infer
+data:
+  # model-data.json: perfParms used by the queue-analysis evaluator to simulate
+  # M/G/1 server latency. These are the "true" server parameters that the
+  # inferno EKF will observe and converge to from a cold start (no perfParms
+  # in the inferno-static-data ConfigMap).
+  #
+  # Values are calibrated from blis/trained-physics EKF convergence (Run 2)
+  # and scaled to match the queue-analysis M/G/1 model conventions:
+  #   alpha: base ITL (ms, no-load)
+  #   beta:  linear token-count coefficient (ms/token)
+  #   gamma: quadratic token-count coefficient (ms/token²)
+  model-data.json: |
+    {
+      "models": [
+        {
+          "name": "granite_8b",
+          "acc": "H100",
+          "accCount": 1,
+          "maxBatchSize": 256,
+          "atTokens": 512,
+          "perfParms": {
+            "alpha": 8.0,
+            "beta": 0.016,
+            "gamma": 0.0005
+          }
+        },
+        {
+          "name": "llama_13b",
+          "acc": "H100",
+          "accCount": 1,
+          "maxBatchSize": 256,
+          "atTokens": 512,
+          "perfParms": {
+            "alpha": 12.0,
+            "beta": 0.024,
+            "gamma": 0.00075
+          }
+        }
+      ]
+    }
