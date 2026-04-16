@@ -11,8 +11,8 @@ data:
     # duration uses Go time.ParseDuration syntax: 2m, 90s, 1h30m, etc.
     # duration: 0s on the last phase means hold the final value forever.
     phases:
-      - duration: 3m
-        ratio: 1.0    # hold flat at baseline for 3 minutes
+      - duration: 6m
+        ratio: 1.0    # hold flat at baseline for 6 minutes
       - duration: 5m
         ratio: 5.0    # ramp up to 5x baseline over 5 minutes
       - duration: 5m

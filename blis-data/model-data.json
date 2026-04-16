@@ -20,6 +20,6 @@
       "accCount": 1,
       "maxBatchSize": 256,
       "atTokens": 512
-    },
+    }
   ]
 }
