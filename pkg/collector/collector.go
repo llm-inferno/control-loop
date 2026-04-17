@@ -8,13 +8,17 @@ import (
 )
 
 const (
-	// overloadSaturationThreshold is the ratio of Throughput/MaxRPS above which a pod is
-	// considered near saturation and its simulation results are not useful for EKF tuning.
-	overloadSaturationThreshold = float32(0.95)
-
-	// overloadTargetUtilization is the fraction of MaxRPS used for the re-simulation when
-	// a pod is detected as overloaded, targeting a stable ~90% utilization operating point.
+	// overloadTargetUtilization is the initial fraction of MaxRPS for the first re-simulation
+	// attempt when a pod reports saturation, targeting a stable ~90% utilization operating point.
 	overloadTargetUtilization = float32(0.90)
+
+	// overloadRetryStep is the utilization reduction applied on each successive re-simulation
+	// attempt (0.90 → 0.75 → 0.60 of MaxRPS).
+	overloadRetryStep = float32(0.15)
+
+	// overloadMaxRetries is the maximum number of re-simulation attempts before the pod is
+	// skipped entirely when saturation persists.
+	overloadMaxRetries = 3
 )
 
 // Kube client as global variable, used by handler functions

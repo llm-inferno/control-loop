@@ -31,6 +31,7 @@ type simResult struct {
 	AvgTTFT     float32 `json:"avgTTFT"`
 	AvgITL      float32 `json:"avgITL"`
 	MaxRPS      float32 `json:"maxRPS"`
+	Saturation  string  `json:"saturation,omitempty"`
 }
 
 type simJobResponse struct {

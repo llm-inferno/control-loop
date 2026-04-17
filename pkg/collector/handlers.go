@@ -188,27 +188,39 @@ func collect(c *gin.Context) {
 					}
 					sim := simResults[i]
 
-					// If the pod is near saturation (throughput ≈ maxRPS), the queueing model
-					// operates in the unstable region and the resulting metrics (very high TTFT/ITL)
-					// are not useful for EKF tuning. Re-simulate at a stable operating point
-					// (~overloadTargetUtilization of maxRPS) so the tuner receives well-conditioned
-					// observations. Both ArrivalRate and Throughput are set to the adjusted rate.
-					if sim.MaxRPS > 0 && sim.Throughput/sim.MaxRPS >= overloadSaturationThreshold {
-						adjustedRPS := sim.MaxRPS * overloadTargetUtilization
-						fmt.Printf("pod %s: overloaded (throughput=%.2freq/s ≥ %.0f%% of maxRPS=%.2f); re-simulating at %.2freq/s\n",
-							pe.pod.Name, sim.Throughput, overloadSaturationThreshold*100, sim.MaxRPS, adjustedRPS)
-						adjReq := simRequest{
-							RPS:             adjustedRPS,
-							MaxConcurrency:  maxBatchSize,
-							AvgInputTokens:  float32(pe.inTok),
-							AvgOutputTokens: float32(pe.outTok),
-							Accelerator:     d.Labels[ctrl.KeyAccelerator],
-							Model:           d.Labels[ctrl.KeyServerModel],
-						}
-						if adjSim, adjErr := simulatePod(KubeClient, pe.pod.Namespace, pe.pod.Name, ctrl.ServerSimPort, adjReq); adjErr == nil {
+					// If the pod reports saturation, its metrics (very high TTFT/ITL) are not
+					// useful for EKF tuning. Re-simulate at progressively lower load until
+					// unsaturated or overloadMaxRetries is reached; skip pod if still saturated.
+					if sim.Saturation != "" {
+						utilization := overloadTargetUtilization
+						resolved := false
+						for attempt := 1; attempt <= overloadMaxRetries; attempt++ {
+							adjustedRPS := sim.MaxRPS * utilization
+							fmt.Printf("pod %s: saturated (%s), attempt %d/%d; re-simulating at %.2freq/s\n",
+								pe.pod.Name, sim.Saturation, attempt, overloadMaxRetries, adjustedRPS)
+							adjReq := simRequest{
+								RPS:             adjustedRPS,
+								MaxConcurrency:  maxBatchSize,
+								AvgInputTokens:  float32(pe.inTok),
+								AvgOutputTokens: float32(pe.outTok),
+								Accelerator:     d.Labels[ctrl.KeyAccelerator],
+								Model:           d.Labels[ctrl.KeyServerModel],
+							}
+							adjSim, adjErr := simulatePod(KubeClient, pe.pod.Namespace, pe.pod.Name, ctrl.ServerSimPort, adjReq)
+							if adjErr != nil {
+								fmt.Printf("pod %s: re-simulation error: %v; skipping pod\n", pe.pod.Name, adjErr)
+								break
+							}
 							sim = adjSim
-						} else {
-							fmt.Printf("pod %s: re-simulation error: %v; using original results\n", pe.pod.Name, adjErr)
+							if sim.Saturation == "" {
+								resolved = true
+								break
+							}
+							utilization -= overloadRetryStep
+						}
+						if !resolved {
+							fmt.Printf("pod %s: still saturated after %d attempts; skipping\n", pe.pod.Name, overloadMaxRetries)
+							continue
 						}
 					}
 
