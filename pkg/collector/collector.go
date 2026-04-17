@@ -8,12 +8,8 @@ import (
 )
 
 const (
-	// overloadSaturationThreshold is the ratio of Throughput/MaxRPS above which a pod is
-	// considered near saturation and its simulation results are not useful for EKF tuning.
-	overloadSaturationThreshold = float32(0.95)
-
 	// overloadTargetUtilization is the fraction of MaxRPS used for the re-simulation when
-	// a pod is detected as overloaded, targeting a stable ~90% utilization operating point.
+	// a pod reports saturation, targeting a stable ~90% utilization operating point.
 	overloadTargetUtilization = float32(0.90)
 )
 

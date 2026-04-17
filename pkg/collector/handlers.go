@@ -188,15 +188,14 @@ func collect(c *gin.Context) {
 					}
 					sim := simResults[i]
 
-					// If the pod is near saturation (throughput ≈ maxRPS), the queueing model
-					// operates in the unstable region and the resulting metrics (very high TTFT/ITL)
-					// are not useful for EKF tuning. Re-simulate at a stable operating point
+					// If the pod reports saturation, its metrics (very high TTFT/ITL) are not
+					// useful for EKF tuning. Re-simulate at a stable operating point
 					// (~overloadTargetUtilization of maxRPS) so the tuner receives well-conditioned
 					// observations. Both ArrivalRate and Throughput are set to the adjusted rate.
-					if sim.MaxRPS > 0 && sim.Throughput/sim.MaxRPS >= overloadSaturationThreshold {
+					if sim.Saturation != "" {
 						adjustedRPS := sim.MaxRPS * overloadTargetUtilization
-						fmt.Printf("pod %s: overloaded (throughput=%.2freq/s ≥ %.0f%% of maxRPS=%.2f); re-simulating at %.2freq/s\n",
-							pe.pod.Name, sim.Throughput, overloadSaturationThreshold*100, sim.MaxRPS, adjustedRPS)
+						fmt.Printf("pod %s: saturated (%s); re-simulating at %.2freq/s\n",
+							pe.pod.Name, sim.Saturation, adjustedRPS)
 						adjReq := simRequest{
 							RPS:             adjustedRPS,
 							MaxConcurrency:  maxBatchSize,
