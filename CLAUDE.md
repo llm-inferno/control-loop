@@ -108,7 +108,7 @@ Data/config types (`config.SystemData`, `config.AllocationData`, etc.) and `util
 
 Sample data is in the `sample-data/` git submodule (`sample-data/large/` has realistic-scale data).
 
-The load emulator phase sequence is configured separately: see `sample-data/load-phases.yaml` for the format; it is delivered to the pod as the `load-phases-config` ConfigMap mounted at `/etc/loadphases/`.
+The load emulator phase sequence is configured via `yamls/deploy/configmap-load-phases.yaml`, delivered to the pod as the `load-phases-config` ConfigMap mounted at `/etc/loadphases/`.
 
 ## Known Behaviours and Operational Notes
 
@@ -181,16 +181,23 @@ See `scripts/kind-deploy.sh` for the full deploy sequence (load images → names
 
 ### Workloads
 
-Two managed deployments are used for testing:
+**queue-analysis workloads** (`scripts/kind-deploy.sh`):
 
-| Deployment | Model | Accelerator | Evaluator |
-|---|---|---|---|
-| `dep1.yaml` (`premium-llama-13b`) | `llama_13b` | MI250 | queue-analysis |
-| `dep2.yaml` (`bronze-granite-13b`) | `granite_13b` | H100 | queue-analysis |
+| Deployment | Model | Accelerator | Evaluator | Class |
+|---|---|---|---|---|
+| `dep1.yaml` (`premium-llama-13b`) | `llama_13b` | MI250 | queue-analysis | Premium |
+| `dep2.yaml` (`bronze-granite-13b`) | `granite_13b` | H100 | queue-analysis | Bronze |
 
-Both share the `server-sim-model-data` ConfigMap (from `sample-data/large/model-data.json`), which contains entries for both model+accelerator pairs.
+Both share the `server-sim-model-data` ConfigMap (from `sample-data/large/model-data.json`).
 
-`dep2-blis.yaml` (blis evaluator variant) is available but requires additional ConfigMap setup — use `dep2.yaml` for standard testing.
+**blis/trained-physics workloads** (`scripts/kind-deploy-blis.sh`):
+
+| Deployment | Model | Accelerator | Evaluator | Class |
+|---|---|---|---|---|
+| `dep-blis-granite.yaml` | `granite_8b` | H100 | blis/trained-physics | Premium |
+| `dep-blis-llama.yaml` | `llama_13b` | H100 | blis/trained-physics | Bronze |
+
+Both use `configmap-blis-small.yaml` (betaCoeffs/alphaCoeffs for trained-physics) and `blis-data/` for optimizer/SLO config. `INFERNO_WARM_UP_TIMEOUT=0` is set so the optimizer waits for full EKF convergence before running.
 
 ### Useful commands after deploy
 

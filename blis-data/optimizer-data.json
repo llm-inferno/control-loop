@@ -1,10 +1,10 @@
 {
   "optimizer": {
-    "unlimited": false,
+    "unlimited": true,
     "heterogeneous": false,
     "milpsolver": false,
     "useCplex": false,
     "delayedBestEffort": false,
-    "saturationPolicy": "RoundRobin"
+    "saturationPolicy": "PriorityExhaustive"
   }
 }

@@ -1,30 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: blis-mixtral-8x7b
+  name: qa-granite-8b
   namespace: infer
   labels:
     inferno.server.managed: "true"
-    inferno.server.name: blis-mixtral
-    inferno.server.model: mixtral_8_7b
-    inferno.server.class: Bronze
+    inferno.server.name: qa-granite
+    inferno.server.model: granite_8b
+    inferno.server.class: Premium
     inferno.server.allocation.accelerator: H100
     inferno.server.allocation.maxbatchsize: "256"
-    inferno.server.load.rpm: "20"
-    inferno.server.load.intokens: "512"
-    inferno.server.load.outtokens: "512"
-    inferno.server.load.nominal.rpm: "20"
-    inferno.server.load.nominal.intokens: "512"
-    inferno.server.load.nominal.outtokens: "512"
+    inferno.server.load.rpm: "60"
+    inferno.server.load.intokens: "2048"
+    inferno.server.load.outtokens: "1024"
+    inferno.server.load.nominal.rpm: "60"
+    inferno.server.load.nominal.intokens: "2048"
+    inferno.server.load.nominal.outtokens: "1024"
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: blis-mixtral
+      app: qa-granite
   template:
     metadata:
       labels:
-        app: blis-mixtral
+        app: qa-granite
     spec:
       containers:
       - name: server-sim
@@ -45,18 +45,16 @@ spec:
       - name: evaluator
         image: quay.io/atantawi/inferno-evaluator:latest
         imagePullPolicy: IfNotPresent
-        args: ["blis"]
+        args: ["queue-analysis"]
         ports:
         - containerPort: 8081
         env:
-        - name: BLIS_CONFIG_FILE
-          value: "/app/config/blis-config.json"
-        - name: HW_CONFIG_FILE
-          value: "/app/config/hardware_config.json"
-        - name: LATENCY_BACKEND
-          value: "roofline"
+        - name: MODEL_DATA_FILE
+          value: "/app/config/model-data.json"
+        - name: DEFAULT_MAX_QUEUE_SIZE
+          value: "0"
         volumeMounts:
-        - name: blis-config
+        - name: model-data
           mountPath: /app/config
         resources:
           requests:
@@ -66,6 +64,6 @@ spec:
             memory: "256Mi"
             cpu: "500m"
       volumes:
-      - name: blis-config
+      - name: model-data
         configMap:
-          name: server-sim-blis-small
+          name: server-sim-qa-small

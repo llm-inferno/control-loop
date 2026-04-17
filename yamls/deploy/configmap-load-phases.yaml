@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: load-phases-config
+  namespace: inferno
+data:
+  phases.yaml: |
+    # Load emulator phase sequence.
+    # Each phase linearly ramps the nominal RPM from its start value to ratio * start value.
+    # Ratios are chained: each ratio is relative to the nominal at the START of that phase.
+    # duration uses Go time.ParseDuration syntax: 2m, 90s, 1h30m, etc.
+    # duration: 0s on the last phase means hold the final value forever.
+    phases:
+      - duration: 6m
+        ratio: 1.0    # hold flat at baseline for 6 minutes
+      - duration: 5m
+        ratio: 5.0    # ramp up to 5x baseline over 5 minutes
+      - duration: 5m
+        ratio: 1.0    # hold at 5x for 5 minutes
+      - duration: 5m
+        ratio: 0.2    # ramp back down to 1x (0.2 * 5x = 1x) over 5 minutes
+      - duration: 0s  # hold at final value forever
