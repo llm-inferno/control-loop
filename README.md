@@ -259,8 +259,11 @@ Following are the steps to run the optimization control loop within a cluster.
         inferno.server.allocation.accelerator: MI250
     ```
 
-    Each pod must run two sidecars: **server-sim** (port 8080) and **evaluator** (port 8081, `queue-analysis` mode).
+    Each pod must run two sidecars: **server-sim** (port 8080) and **evaluator** (port 8081).
     The Collector calls `server-sim /simulate` on each running pod to obtain ITL and TTFT latency estimates.
+    Two evaluator backends are supported:
+    - **`queue-analysis`** (default) — queueing-model latency estimator; requires a `server-sim-model-data` ConfigMap with `perfParms` for each model/accelerator pair.
+    - **`blis`/`trained-physics`** — physics-based latency estimator; requires a ConfigMap with `betaCoeffs` and `alphaCoeffs` per model entry. When using this backend, set `INFERNO_WARM_UP_TIMEOUT=0` so the controller waits for full EKF convergence before invoking the optimizer (model `perfParms` are learned from scratch by the tuner).
 
     Optional static fallback labels for load metrics (used only if Prometheus is unavailable; ITL/TTFT always come from server-sim):
 
@@ -316,6 +319,54 @@ Following are the steps to run the optimization control loop within a cluster.
     kubectl delete configmap server-sim-model-data -n infer
     kubectl delete -f ns.yaml
     ```
+
+## III. Local kind cluster (quick start)
+
+For local development and testing with a [kind](https://kind.sigs.k8s.io/) cluster.
+
+### Prerequisites
+
+- `kind create cluster --name kind-cluster`
+- Sibling repos checked out under the same parent: `../optimizer`, `../model-tuner`, `../server-sim`
+- `sample-data` submodule initialized: `git submodule update --init`
+
+### Step 1: Build images
+
+```bash
+# From control-loop/
+docker build -t quay.io/atantawi/inferno-loop:latest .
+
+# From ../optimizer/, ../model-tuner/, ../server-sim/
+docker build -t quay.io/atantawi/inferno-optimizer:latest .
+docker build -t quay.io/atantawi/inferno-tuner:latest .
+docker build -f Dockerfile.server-sim -t quay.io/atantawi/inferno-server-sim:latest .
+docker build -f Dockerfile.evaluator  -t quay.io/atantawi/inferno-evaluator:latest .
+```
+
+All YAML files use `imagePullPolicy: IfNotPresent`; kind uses locally-loaded images and never pulls from quay.io.
+
+### Step 2: Deploy
+
+Two workload configurations are provided:
+
+**queue-analysis** (`dep-qa-granite`, `dep-qa-llama` — `queue-analysis` evaluator, `sample-data/large/` model data):
+
+```bash
+scripts/kind-deploy-qa.sh
+```
+
+**blis/trained-physics** (`dep-blis-granite`, `dep-blis-llama` — `trained-physics` evaluator, `blis-data/` config):
+
+```bash
+scripts/kind-deploy-blis.sh
+```
+
+| Script | Deployments | Models | Accelerator | Evaluator |
+|---|---|---|---|---|
+| `kind-deploy-qa.sh` | `dep-qa-granite`, `dep-qa-llama` | `granite_8b`, `llama_13b` | H100 | queue-analysis |
+| `kind-deploy-blis.sh` | `dep-blis-granite`, `dep-blis-llama` | `granite_8b`, `llama_13b` | H100 | blis/trained-physics |
+
+Each script handles: load images → namespaces → ConfigMaps → inferno pod → workloads → load-emulator.
 
 ## (Optional) Run the visualization dashboard
 
