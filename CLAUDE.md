@@ -197,7 +197,7 @@ Both share the `server-sim-model-data` ConfigMap (from `sample-data/large/model-
 | `dep-blis-granite.yaml` | `granite_8b` | H100 | blis/trained-physics | Premium |
 | `dep-blis-llama.yaml` | `llama_13b` | H100 | blis/trained-physics | Bronze |
 
-Both use `configmap-blis-small.yaml` (betaCoeffs/alphaCoeffs for trained-physics) and `blis-data/` for optimizer/SLO config. `INFERNO_WARM_UP_TIMEOUT=0` is set so the optimizer waits for full EKF convergence before running.
+Both use `configmap-blis-small.yaml` (betaCoeffs/alphaCoeffs for trained-physics) and `inferno-data/` for optimizer/SLO config. `INFERNO_WARM_UP_TIMEOUT=0` is set so the optimizer waits for full EKF convergence before running.
 
 ### Useful commands after deploy
 

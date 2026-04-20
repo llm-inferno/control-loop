@@ -124,7 +124,7 @@ kubectl cp inferno/$(kubectl get pod -n inferno -l app=inferno \
   -o jsonpath='{.items[0].metadata.name}'):inferno-cycles.jsonl /tmp/inferno-cycles.jsonl
 
 # Generate figures
-python3 scripts/gen_report_figs.py
+python3 gen_report_figs.py
 
-# Figures written to docs/figs/exp_*.png
+# Figures written to figs/exp_*.png
 ```

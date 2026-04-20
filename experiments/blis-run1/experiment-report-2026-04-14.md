@@ -28,11 +28,11 @@ All other blis configuration parameters (SLOs, capacity, optimizer policy) are u
 
 | File | Parameter | Value |
 |---|---|---|
-| `blis-data/serviceclass-data.json` | Premium all-models slo-itl | 15ms |
-| `blis-data/serviceclass-data.json` | Premium all-models slo-ttft | 100ms |
-| `blis-data/serviceclass-data.json` | Bronze llama_13b slo-itl | 50ms |
-| `blis-data/capacity-data.json` | H100 count | 16 |
-| `blis-data/optimizer-data.json` | saturationPolicy | PriorityExhaustive |
+| `inferno-data/serviceclass-data.json` | Premium all-models slo-itl | 15ms |
+| `inferno-data/serviceclass-data.json` | Premium all-models slo-ttft | 100ms |
+| `inferno-data/serviceclass-data.json` | Bronze llama_13b slo-itl | 50ms |
+| `inferno-data/capacity-data.json` | H100 count | 16 |
+| `inferno-data/optimizer-data.json` | saturationPolicy | PriorityExhaustive |
 | `yamls/deploy/deploy-loop.yaml` | INFERNO_WARM_UP_TIMEOUT | 0 (disabled) |
 | `yamls/deploy/deploy-loop.yaml` | INFERNO_STARTUP_DELAY | 60s |
 | tuner | TUNER_INIT_OBS | 3 |
@@ -240,10 +240,10 @@ bash scripts/kind-deploy-blis.sh
 
 # Copy cycle log from running pod
 kubectl cp inferno/$(kubectl get pod -n inferno -l app=inferno \
-  -o jsonpath='{.items[0].metadata.name}'):inferno-cycles.jsonl /tmp/inferno-cycles.jsonl
+  -o jsonpath='{.items[0].metadata.name}'):inferno-cycles.jsonl experiments/blis-run1/inferno-cycles.jsonl
 
 # Generate figures (if cycle log available)
-python3 scripts/gen_report_figs.py
+python3 experiments/blis-run1/gen_report_figs.py
 
 # Watch controller and tuner during experiment
 kubectl logs -f -n inferno deployment/inferno -c controller

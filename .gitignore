@@ -21,3 +21,4 @@ memory/
 dashboard/.venv/
 dashboard/__pycache__/
 inferno-cycles.jsonl
+!experiments/**/inferno-cycles.jsonl

@@ -1,0 +1,466 @@
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /optimizeOne              --> github.com/llm-inferno/optimizer/rest-server.optimizeOne (3 handlers)
+[GIN-debug] GET    /getAccelerators          --> github.com/llm-inferno/optimizer/rest-server.getAccelerators (3 handlers)
+[GIN-debug] GET    /getAccelerator/:name     --> github.com/llm-inferno/optimizer/rest-server.getAccelerator (3 handlers)
+[GIN-debug] GET    /getCapacities            --> github.com/llm-inferno/optimizer/rest-server.getCapacities (3 handlers)
+[GIN-debug] GET    /getCapacity/:type        --> github.com/llm-inferno/optimizer/rest-server.getCapacity (3 handlers)
+[GIN-debug] GET    /getModels                --> github.com/llm-inferno/optimizer/rest-server.getModels (3 handlers)
+[GIN-debug] GET    /getModel/:name           --> github.com/llm-inferno/optimizer/rest-server.getModel (3 handlers)
+[GIN-debug] GET    /getServiceClasses        --> github.com/llm-inferno/optimizer/rest-server.getServiceClasses (3 handlers)
+[GIN-debug] GET    /getServiceClass/:name    --> github.com/llm-inferno/optimizer/rest-server.getServiceClass (3 handlers)
+[GIN-debug] GET    /getServiceClassModelTarget/:name/:model --> github.com/llm-inferno/optimizer/rest-server.getServiceClassModelTarget (3 handlers)
+[GIN-debug] GET    /getServers               --> github.com/llm-inferno/optimizer/rest-server.getServers (3 handlers)
+[GIN-debug] GET    /getServer/:name          --> github.com/llm-inferno/optimizer/rest-server.getServer (3 handlers)
+[GIN-debug] GET    /getModelAcceleratorPerf/:name/:acc --> github.com/llm-inferno/optimizer/rest-server.getModelAcceleratorPerf (3 handlers)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://github.com/gin-gonic/gin/blob/master/docs/doc.md#dont-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :3302
+[GIN] 2026/04/18 - 15:26:48 | 404 |     382.208µs |             ::1 | POST     "/optimizeOne"
+[GIN] 2026/04/18 - 15:27:18 | 404 |     352.459µs |             ::1 | POST     "/optimizeOne"
+[GIN] 2026/04/18 - 15:27:48 | 404 |         405µs |             ::1 | POST     "/optimizeOne"
+[GIN] 2026/04/18 - 15:28:18 | 404 |     405.417µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=54.3407; inTk=1907; outTk=1015; sol=1, sat=false, alloc={acc=H100; numRep=3; maxBatch=32; cost=225, val=225, itl=17.02876, ttft=60.583572, rho=0.16347255, maxRPM=22.506441}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=29.1592; inTk=773; outTk=761; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=43; cost=75, val=75, itl=20.692444, ttft=59.01957, rho=0.17840543, maxRPM=59.31757}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=4, limit=16, cost=300 
+totalCost=300 
+
+[GIN] 2026/04/18 - 15:29:48 | 200 |     773.209µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=61.9962; inTk=1809; outTk=990; sol=1, sat=false, alloc={acc=H100; numRep=3; maxBatch=33; cost=225, val=0, itl=17.629366, ttft=60.476303, rho=0.18260612, maxRPM=24.256561}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=28.3241; inTk=831; outTk=713; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=45; cost=75, val=0, itl=20.261335, ttft=59.557083, rho=0.15196013, maxRPM=62.7765}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=4, limit=16, cost=300 
+totalCost=300 
+
+[GIN] 2026/04/18 - 15:30:18 | 200 |    1.115128ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=62.1301; inTk=2163; outTk=1241; sol=1, sat=false, alloc={acc=H100; numRep=5; maxBatch=26; cost=375, val=375, itl=17.342863, ttft=64.87335, rho=0.17181382, maxRPM=15.217487}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=30.7127; inTk=757; outTk=667; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=49; cost=75, val=0, itl=19.543858, ttft=56.412098, rho=0.13656308, maxRPM=73.59058}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=6, limit=16, cost=450 
+totalCost=450 
+
+[GIN] 2026/04/18 - 15:30:48 | 200 |    1.155379ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-llama; c=Bronze; m=llama_13b; rate=32.8795; inTk=800; outTk=717; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=45; cost=75, val=0, itl=21.758692, ttft=61.814438, rho=0.1904702, maxRPM=63.10336}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+s=qa-granite; c=Premium; m=granite_8b; rate=58.7996; inTk=2266; outTk=1100; sol=1, sat=false, alloc={acc=H100; numRep=4; maxBatch=29; cost=300, val=300, itl=17.827013, ttft=67.41448, rho=0.16608606, maxRPM=17.173107}; slo-itl=20, slo-ttft=200, slo-tps=0 
+AllocationByType: 
+name=H100, count=5, limit=16, cost=375 
+totalCost=375 
+
+[GIN] 2026/04/18 - 15:31:18 | 200 |      665.21µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=55.0925; inTk=1864; outTk=1053; sol=1, sat=false, alloc={acc=H100; numRep=3; maxBatch=31; cost=225, val=225, itl=17.44164, ttft=61.01528, rho=0.18176202, maxRPM=21.891575}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=34.7142; inTk=811; outTk=800; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=40; cost=75, val=0, itl=24.895647, ttft=68.30415, rho=0.28870526, maxRPM=52.32986}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=4, limit=16, cost=300 
+totalCost=300 
+
+[GIN] 2026/04/18 - 15:31:48 | 200 |    1.206461ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=55.6388; inTk=1888; outTk=1080; sol=1, sat=false, alloc={acc=H100; numRep=3; maxBatch=30; cost=225, val=0, itl=18.05603, ttft=62.734787, rho=0.20138349, maxRPM=21.035114}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=35.2127; inTk=1000; outTk=781; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=41; cost=75, val=0, itl=28.599644, ttft=80.27408, rho=0.32046258, maxRPM=48.222744}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=4, limit=16, cost=300 
+totalCost=300 
+
+[GIN] 2026/04/18 - 15:32:18 | 200 |     628.669µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=73.8192; inTk=1588; outTk=905; sol=1, sat=false, alloc={acc=H100; numRep=3; maxBatch=36; cost=225, val=0, itl=16.77493, ttft=55.970627, rho=0.17338975, maxRPM=30.649706}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=41.3599; inTk=919; outTk=822; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=39; cost=75, val=0, itl=33.900093, ttft=126.206375, rho=0.49350503, maxRPM=46.842525}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=4, limit=16, cost=300 
+totalCost=300 
+
+[GIN] 2026/04/18 - 15:32:48 | 200 |      312.71µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-llama; c=Bronze; m=llama_13b; rate=34.6937; inTk=740; outTk=871; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=37; cost=75, val=0, itl=25.77911, ttft=68.64818, rho=0.3515651, maxRPM=47.630047}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+s=qa-granite; c=Premium; m=granite_8b; rate=78.3453; inTk=2220; outTk=929; sol=1, sat=false, alloc={acc=H100; numRep=4; maxBatch=35; cost=300, val=300, itl=18.499043, ttft=68.70584, rho=0.1607554, maxRPM=21.615242}; slo-itl=20, slo-ttft=200, slo-tps=0 
+AllocationByType: 
+name=H100, count=5, limit=16, cost=375 
+totalCost=375 
+
+[GIN] 2026/04/18 - 15:33:18 | 200 |     938.794µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=112.099; inTk=2513; outTk=983; sol=1, sat=false, alloc={acc=H100; numRep=6; maxBatch=33; cost=450, val=450, itl=19.984432, ttft=75.75513, rho=0.18589246, maxRPM=18.699856}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=56.1292; inTk=806; outTk=863; sol=1, sat=false, alloc={acc=H100; numRep=2; maxBatch=37; cost=150, val=150, itl=23.924871, ttft=66.08994, rho=0.26154852, maxRPM=44.407738}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=8, limit=16, cost=600 
+totalCost=600 
+
+[GIN] 2026/04/18 - 15:33:48 | 200 |     833.044µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=124.2431; inTk=2436; outTk=942; sol=1, sat=false, alloc={acc=H100; numRep=7; maxBatch=34; cost=525, val=525, itl=19.56672, ttft=73.84571, rho=0.1608385, maxRPM=18.203445}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=64.4444; inTk=694; outTk=779; sol=1, sat=false, alloc={acc=H100; numRep=2; maxBatch=42; cost=150, val=0, itl=21.955883, ttft=59.56641, rho=0.21917802, maxRPM=57.46296}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=9, limit=16, cost=675 
+totalCost=675 
+
+[GIN] 2026/04/18 - 15:34:18 | 200 |     497.585µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=155.0892; inTk=2053; outTk=924; sol=1, sat=false, alloc={acc=H100; numRep=7; maxBatch=35; cost=525, val=0, itl=18.006641, ttft=64.69673, rho=0.17602965, maxRPM=24.370611}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=90.456; inTk=656; outTk=722; sol=1, sat=false, alloc={acc=H100; numRep=2; maxBatch=45; cost=150, val=0, itl=27.057325, ttft=69.0417, rho=0.32794207, maxRPM=62.84646}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=9, limit=16, cost=675 
+totalCost=675 
+
+[GIN] 2026/04/18 - 15:34:49 | 200 |      868.92µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=190.7921; inTk=2008; outTk=854; sol=1, sat=false, alloc={acc=H100; numRep=7; maxBatch=38; cost=525, val=0, itl=19.43266, ttft=67.0535, rho=0.19895817, maxRPM=27.928526}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=94.8318; inTk=873; outTk=796; sol=1, sat=false, alloc={acc=H100; numRep=2; maxBatch=41; cost=150, val=0, itl=39.947563, ttft=529.6285, rho=0.6140619, maxRPM=48.718884}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=9, limit=16, cost=675 
+totalCost=675 
+
+[GIN] 2026/04/18 - 15:35:20 | 200 |     942.046µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=241.4618; inTk=2238; outTk=1013; sol=1, sat=false, alloc={acc=H100; numRep=12; maxBatch=32; cost=900, val=900, itl=19.793255, ttft=71.52359, rho=0.21067356, maxRPM=20.309002}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=99.0896; inTk=766; outTk=640; sol=1, sat=false, alloc={acc=H100; numRep=2; maxBatch=51; cost=150, val=0, itl=25.440006, ttft=68.50879, rho=0.26431456, maxRPM=73.45806}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=14, limit=16, cost=1050 
+totalCost=1050 
+
+[GIN] 2026/04/18 - 15:35:50 | 200 |    1.082755ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=222.35; inTk=2005; outTk=987; sol=1, sat=false, alloc={acc=H100; numRep=10; maxBatch=33; cost=750, val=750, itl=18.637356, ttft=65.73175, rho=0.2071015, maxRPM=23.713045}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=107.088; inTk=830; outTk=632; sol=1, sat=false, alloc={acc=H100; numRep=2; maxBatch=51; cost=150, val=0, itl=29.588802, ttft=78.38672, rho=0.3280684, maxRPM=70.65995}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=12, limit=16, cost=900 
+totalCost=900 
+
+[GIN] 2026/04/18 - 15:36:20 | 200 |    1.041087ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=296.1517; inTk=1614; outTk=930; sol=1, sat=false, alloc={acc=H100; numRep=10; maxBatch=35; cost=750, val=0, itl=18.628395, ttft=60.39919, rho=0.24490508, maxRPM=31.562944}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=131.5472; inTk=734; outTk=584; sol=1, sat=false, alloc={acc=H100; numRep=2; maxBatch=56; cost=150, val=0, itl=29.028355, ttft=74.98181, rho=0.33275345, maxRPM=86.965004}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=12, limit=16, cost=900 
+totalCost=900 
+
+[GIN] 2026/04/18 - 15:36:50 | 200 |      679.92µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=273.198; inTk=2147; outTk=1280; sol=1, sat=false, alloc={acc=H100; numRep=18; maxBatch=25; cost=1350, val=1350, itl=19.383873, ttft=72.43143, rho=0.25157532, maxRPM=15.645565}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=125.6734; inTk=877; outTk=652; sol=1, sat=false, alloc={acc=H100; numRep=2; maxBatch=50; cost=150, val=0, itl=40.765617, ttft=212.10638, rho=0.5579949, maxRPM=67.033325}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=20, limit=16, cost=1500 
+totalCost=1500 
+
+[GIN] 2026/04/18 - 15:37:21 | 200 |      774.42µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=299.1004; inTk=2107; outTk=1049; sol=1, sat=false, alloc={acc=H100; numRep=15; maxBatch=31; cost=1125, val=1125, itl=19.72682, ttft=70.61626, rho=0.22238676, maxRPM=20.185862}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=178.4924; inTk=761; outTk=854; sol=1, sat=false, alloc={acc=H100; numRep=4; maxBatch=38; cost=300, val=300, itl=39.12102, ttft=925.6691, rho=0.6549756, maxRPM=44.773563}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=19, limit=16, cost=1425 
+totalCost=1425 
+
+[GIN] 2026/04/18 - 15:37:51 | 200 |     502.919µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-llama; c=Bronze; m=llama_13b; rate=140.4563; inTk=744; outTk=727; sol=1, sat=false, alloc={acc=H100; numRep=3; maxBatch=45; cost=225, val=225, itl=27.68306, ttft=72.415695, rho=0.3497538, maxRPM=60.627644}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+s=qa-granite; c=Premium; m=granite_8b; rate=370.0653; inTk=2305; outTk=868; sol=1, sat=false, alloc={acc=H100; numRep=16; maxBatch=37; cost=1200, val=1200, itl=19.460009, ttft=69.71174, rho=0.17650545, maxRPM=23.663208}; slo-itl=20, slo-ttft=200, slo-tps=0 
+AllocationByType: 
+name=H100, count=19, limit=16, cost=1425 
+totalCost=1425 
+
+[GIN] 2026/04/18 - 15:38:21 | 200 |    1.206922ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=286.7499; inTk=1978; outTk=1002; sol=1, sat=false, alloc={acc=H100; numRep=13; maxBatch=32; cost=975, val=975, itl=18.418295, ttft=64.62011, rho=0.21254973, maxRPM=23.738968}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=140.6411; inTk=717; outTk=694; sol=1, sat=false, alloc={acc=H100; numRep=3; maxBatch=47; cost=225, val=0, itl=25.447758, ttft=66.9756, rho=0.29428664, maxRPM=65.50649}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=16, limit=16, cost=1200 
+totalCost=1200 
+
+[GIN] 2026/04/18 - 15:38:52 | 200 |    1.151129ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=246.7826; inTk=2501; outTk=1114; sol=1, sat=false, alloc={acc=H100; numRep=16; maxBatch=29; cost=1200, val=1200, itl=19.361378, ttft=75.4702, rho=0.1916878, maxRPM=15.9832945}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=145.486; inTk=661; outTk=814; sol=1, sat=false, alloc={acc=H100; numRep=3; maxBatch=40; cost=225, val=0, itl=33.492283, ttft=215.59848, rho=0.55185515, maxRPM=52.145496}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=19, limit=16, cost=1425 
+totalCost=1425 
+
+[GIN] 2026/04/18 - 15:39:22 | 200 |    1.113838ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=274.0647; inTk=1949; outTk=1225; sol=1, sat=false, alloc={acc=H100; numRep=16; maxBatch=26; cost=1200, val=0, itl=19.948362, ttft=69.1521, rho=0.26884645, maxRPM=17.175858}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=152.0679; inTk=667; outTk=834; sol=1, sat=false, alloc={acc=H100; numRep=4; maxBatch=39; cost=300, val=300, itl=27.06476, ttft=70.06445, rho=0.3673973, maxRPM=48.621613}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=20, limit=16, cost=1500 
+totalCost=1500 
+
+[GIN] 2026/04/18 - 15:39:52 | 200 |     1.54309ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=261.1993; inTk=1952; outTk=1074; sol=1, sat=false, alloc={acc=H100; numRep=13; maxBatch=30; cost=975, val=975, itl=19.490261, ttft=67.418884, rho=0.23419055, maxRPM=20.653463}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=163.5592; inTk=843; outTk=821; sol=1, sat=false, alloc={acc=H100; numRep=4; maxBatch=39; cost=300, val=0, itl=35.439865, ttft=178.80513, rho=0.5093834, maxRPM=44.591133}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=17, limit=16, cost=1275 
+totalCost=1275 
+
+[GIN] 2026/04/18 - 15:40:22 | 200 |    1.442423ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-llama; c=Bronze; m=llama_13b; rate=159.4058; inTk=801; outTk=825; sol=1, sat=false, alloc={acc=H100; numRep=4; maxBatch=39; cost=300, val=0, itl=32.943153, ttft=114.75417, rho=0.4637235, maxRPM=45.19558}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+s=qa-granite; c=Premium; m=granite_8b; rate=300.2319; inTk=1935; outTk=1165; sol=1, sat=false, alloc={acc=H100; numRep=16; maxBatch=28; cost=1200, val=1200, itl=19.989449, ttft=68.83028, rho=0.2606478, maxRPM=18.774841}; slo-itl=20, slo-ttft=200, slo-tps=0 
+AllocationByType: 
+name=H100, count=20, limit=16, cost=1500 
+totalCost=1500 
+
+[GIN] 2026/04/18 - 15:40:52 | 200 |    1.561424ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=373.8582; inTk=2018; outTk=1020; sol=1, sat=false, alloc={acc=H100; numRep=16; maxBatch=32; cost=1200, val=0, itl=19.104397, ttft=67.927216, rho=0.2377415, maxRPM=24.566307}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=143.2295; inTk=654; outTk=745; sol=1, sat=false, alloc={acc=H100; numRep=3; maxBatch=43; cost=225, val=225, itl=28.075705, ttft=72.08701, rho=0.38784918, maxRPM=59.698177}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=19, limit=16, cost=1425 
+totalCost=1425 
+
+[GIN] 2026/04/18 - 15:41:22 | 200 |    1.160005ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=256.9355; inTk=2021; outTk=1093; sol=1, sat=false, alloc={acc=H100; numRep=14; maxBatch=29; cost=1050, val=1050, itl=19.601467, ttft=71.16249, rho=0.22651544, maxRPM=18.77239}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=153.0706; inTk=621; outTk=785; sol=1, sat=false, alloc={acc=H100; numRep=3; maxBatch=41; cost=225, val=0, itl=31.047012, ttft=119.09155, rho=0.5064344, maxRPM=57.162968}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=17, limit=16, cost=1275 
+totalCost=1275 
+
+[GIN] 2026/04/18 - 15:41:52 | 200 |    1.065921ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=279.9526; inTk=1922; outTk=1048; sol=1, sat=false, alloc={acc=H100; numRep=14; maxBatch=31; cost=1050, val=0, itl=19.184595, ttft=68.090744, rho=0.2166766, maxRPM=20.946999}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=165.738; inTk=825; outTk=779; sol=1, sat=false, alloc={acc=H100; numRep=4; maxBatch=42; cost=300, val=300, itl=32.40065, ttft=92.21933, rho=0.4158416, maxRPM=48.48421}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=18, limit=16, cost=1350 
+totalCost=1350 
+
+[GIN] 2026/04/18 - 15:42:22 | 200 |     736.628µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=303.125; inTk=1988; outTk=966; sol=1, sat=false, alloc={acc=H100; numRep=14; maxBatch=33; cost=1050, val=0, itl=18.786674, ttft=67.91674, rho=0.19898924, maxRPM=23.205784}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=120.6376; inTk=769; outTk=866; sol=1, sat=false, alloc={acc=H100; numRep=3; maxBatch=37; cost=225, val=225, itl=31.423079, ttft=142.77794, rho=0.49380198, maxRPM=44.688744}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=17, limit=16, cost=1275 
+totalCost=1275 
+
+[GIN] 2026/04/18 - 15:42:52 | 200 |     687.711µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=277.3389; inTk=2049; outTk=1067; sol=1, sat=false, alloc={acc=H100; numRep=13; maxBatch=30; cost=975, val=975, itl=18.953259, ttft=69.458984, rho=0.24028438, maxRPM=22.788246}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=128.2098; inTk=873; outTk=867; sol=1, sat=false, alloc={acc=H100; numRep=4; maxBatch=37; cost=300, val=300, itl=27.795246, ttft=76.76279, rho=0.3486212, maxRPM=40.805885}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=17, limit=16, cost=1275 
+totalCost=1275 
+
+[GIN] 2026/04/18 - 15:43:22 | 200 |    1.266254ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=226.1738; inTk=2286; outTk=1064; sol=1, sat=false, alloc={acc=H100; numRep=14; maxBatch=30; cost=1050, val=1050, itl=19.117872, ttft=74.633446, rho=0.18306547, maxRPM=17.06637}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=123.1746; inTk=925; outTk=802; sol=1, sat=false, alloc={acc=H100; numRep=3; maxBatch=40; cost=225, val=225, itl=34.542995, ttft=137.46165, rho=0.47489032, maxRPM=45.634422}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=17, limit=16, cost=1275 
+totalCost=1275 
+
+[GIN] 2026/04/18 - 15:43:52 | 200 |    1.291004ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=228.444; inTk=2188; outTk=1090; sol=1, sat=false, alloc={acc=H100; numRep=13; maxBatch=30; cost=975, val=975, itl=19.447912, ttft=73.51831, rho=0.20747666, maxRPM=18.15101}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=106.7144; inTk=799; outTk=989; sol=1, sat=false, alloc={acc=H100; numRep=4; maxBatch=33; cost=300, val=300, itl=26.246727, ttft=72.571625, rho=0.3503518, maxRPM=34.184307}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=17, limit=16, cost=1275 
+totalCost=1275 
+
+[GIN] 2026/04/18 - 15:44:22 | 200 |     304.668µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=198.9301; inTk=2062; outTk=1149; sol=1, sat=false, alloc={acc=H100; numRep=12; maxBatch=28; cost=900, val=900, itl=18.901424, ttft=69.982864, rho=0.2148049, maxRPM=17.788828}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=100.5247; inTk=780; outTk=690; sol=1, sat=false, alloc={acc=H100; numRep=2; maxBatch=47; cost=150, val=150, itl=27.770187, ttft=73.07773, rho=0.3423241, maxRPM=63.16031}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=14, limit=16, cost=1050 
+totalCost=1050 
+
+[GIN] 2026/04/18 - 15:44:52 | 200 |    1.098212ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-llama; c=Bronze; m=llama_13b; rate=75.0686; inTk=663; outTk=771; sol=1, sat=false, alloc={acc=H100; numRep=2; maxBatch=42; cost=150, val=0, itl=21.483608, ttft=57.273712, rho=0.24724454, maxRPM=57.75874}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+s=qa-granite; c=Premium; m=granite_8b; rate=165.3067; inTk=1984; outTk=980; sol=1, sat=false, alloc={acc=H100; numRep=8; maxBatch=33; cost=600, val=600, itl=18.578384, ttft=67.88929, rho=0.19052146, maxRPM=22.616007}; slo-itl=20, slo-ttft=200, slo-tps=0 
+AllocationByType: 
+name=H100, count=10, limit=16, cost=750 
+totalCost=750 
+
+[GIN] 2026/04/18 - 15:45:22 | 200 |    1.555588ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-llama; c=Bronze; m=llama_13b; rate=64.3029; inTk=681; outTk=904; sol=1, sat=false, alloc={acc=H100; numRep=2; maxBatch=36; cost=150, val=0, itl=23.505707, ttft=61.880886, rho=0.31685913, maxRPM=43.80414}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+s=qa-granite; c=Premium; m=granite_8b; rate=148.4127; inTk=2026; outTk=1016; sol=1, sat=false, alloc={acc=H100; numRep=8; maxBatch=32; cost=600, val=0, itl=18.057058, ttft=67.45313, rho=0.17774129, maxRPM=21.155582}; slo-itl=20, slo-ttft=200, slo-tps=0 
+AllocationByType: 
+name=H100, count=10, limit=16, cost=750 
+totalCost=750 
+
+[GIN] 2026/04/18 - 15:45:50 | 200 |    1.095628ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=112.747; inTk=1946; outTk=992; sol=1, sat=false, alloc={acc=H100; numRep=5; maxBatch=33; cost=375, val=375, itl=19.810417, ttft=69.72238, rho=0.22437593, maxRPM=22.792007}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=48.7796; inTk=943; outTk=712; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=46; cost=75, val=75, itl=38.852077, ttft=156.00775, rho=0.4899569, maxRPM=53.16085}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=6, limit=16, cost=450 
+totalCost=450 
+
+[GIN] 2026/04/18 - 15:46:20 | 200 |     697.668µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=84.3008; inTk=1756; outTk=941; sol=1, sat=false, alloc={acc=H100; numRep=4; maxBatch=34; cost=300, val=300, itl=16.609829, ttft=60.272408, rho=0.16192275, maxRPM=26.922848}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=50.8707; inTk=782; outTk=817; sol=1, sat=false, alloc={acc=H100; numRep=2; maxBatch=40; cost=150, val=150, itl=19.672613, ttft=56.36136, rho=0.17072645, maxRPM=48.922924}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=6, limit=16, cost=450 
+totalCost=450 
+
+[GIN] 2026/04/18 - 15:46:48 | 200 |    1.297295ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=68.414; inTk=1948; outTk=1014; sol=1, sat=false, alloc={acc=H100; numRep=4; maxBatch=32; cost=300, val=0, itl=16.708502, ttft=63.34684, rho=0.15133978, maxRPM=21.975668}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=37.2998; inTk=772; outTk=751; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=43; cost=75, val=75, itl=23.79456, ttft=64.44577, rho=0.25893527, maxRPM=55.921837}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=5, limit=16, cost=375 
+totalCost=375 
+
+[GIN] 2026/04/18 - 15:47:18 | 200 |    1.049086ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=58.9023; inTk=2125; outTk=1028; sol=1, sat=false, alloc={acc=H100; numRep=4; maxBatch=31; cost=300, val=0, itl=16.50333, ttft=65.69216, rho=0.13470428, maxRPM=19.617071}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=38.5771; inTk=782; outTk=780; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=42; cost=75, val=0, itl=26.041975, ttft=69.19495, rho=0.31161425, maxRPM=52.514435}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=5, limit=16, cost=375 
+totalCost=375 
+
+[GIN] 2026/04/18 - 15:47:48 | 200 |    1.143045ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=67.0693; inTk=1986; outTk=1018; sol=1, sat=false, alloc={acc=H100; numRep=4; maxBatch=32; cost=300, val=0, itl=16.792683, ttft=63.946205, rho=0.14970168, maxRPM=21.409494}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=34.7945; inTk=818; outTk=683; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=47; cost=75, val=0, itl=21.386286, ttft=60.675797, rho=0.1807108, maxRPM=62.49621}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=5, limit=16, cost=375 
+totalCost=375 
+
+[GIN] 2026/04/18 - 15:48:18 | 200 |     465.418µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=66.9634; inTk=1902; outTk=1158; sol=1, sat=false, alloc={acc=H100; numRep=4; maxBatch=28; cost=300, val=0, itl=18.037817, ttft=65.00021, rho=0.20861031, maxRPM=19.085487}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=32.273; inTk=858; outTk=759; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=43; cost=75, val=0, itl=23.150507, ttft=65.051926, rho=0.22032121, maxRPM=51.881794}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=5, limit=16, cost=375 
+totalCost=375 
+
+[GIN] 2026/04/18 - 15:48:48 | 200 |     527.377µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=58.0995; inTk=2238; outTk=1027; sol=1, sat=false, alloc={acc=H100; numRep=4; maxBatch=31; cost=300, val=0, itl=16.865643, ttft=67.792114, rho=0.13565874, maxRPM=18.68517}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=32.8726; inTk=633; outTk=897; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=36; cost=75, val=0, itl=23.588213, ttft=60.883698, rho=0.32257342, maxRPM=45.884}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=5, limit=16, cost=375 
+totalCost=375 
+
+[GIN] 2026/04/18 - 15:49:18 | 200 |    1.193795ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=55.4058; inTk=1920; outTk=904; sol=1, sat=false, alloc={acc=H100; numRep=3; maxBatch=36; cost=225, val=225, itl=16.096478, ttft=61.4983, rho=0.12480512, maxRPM=25.397558}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=34.507; inTk=786; outTk=733; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=44; cost=75, val=0, itl=22.343107, ttft=61.763298, rho=0.21458282, maxRPM=57.20136}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=4, limit=16, cost=300 
+totalCost=300 
+
+[GIN] 2026/04/18 - 15:49:48 | 200 |    1.303587ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=67.4686; inTk=1956; outTk=1071; sol=1, sat=false, alloc={acc=H100; numRep=4; maxBatch=30; cost=300, val=300, itl=17.587336, ttft=64.81888, rho=0.17694828, maxRPM=20.062365}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=31.7318; inTk=757; outTk=828; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=39; cost=75, val=0, itl=23.064062, ttft=62.46988, rho=0.2595016, maxRPM=48.307323}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=5, limit=16, cost=375 
+totalCost=375 
+
+[GIN] 2026/04/18 - 15:50:18 | 200 |     565.293µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-llama; c=Bronze; m=llama_13b; rate=27.5121; inTk=809; outTk=753; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=43; cost=75, val=0, itl=20.186464, ttft=57.88935, rho=0.1624932, maxRPM=54.07803}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+s=qa-granite; c=Premium; m=granite_8b; rate=67.7846; inTk=1882; outTk=1225; sol=1, sat=false, alloc={acc=H100; numRep=4; maxBatch=26; cost=300, val=0, itl=19.708387, ttft=68.74149, rho=0.2627877, maxRPM=17.246922}; slo-itl=20, slo-ttft=200, slo-tps=0 
+AllocationByType: 
+name=H100, count=5, limit=16, cost=375 
+totalCost=375 
+
+[GIN] 2026/04/18 - 15:50:48 | 200 |     853.336µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=60.7961; inTk=2508; outTk=1088; sol=1, sat=false, alloc={acc=H100; numRep=4; maxBatch=30; cost=300, val=0, itl=19.852737, ttft=78.71114, rho=0.1828834, maxRPM=15.343789}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=32.5563; inTk=828; outTk=784; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=41; cost=75, val=0, itl=23.727686, ttft=65.41416, rho=0.24674222, maxRPM=49.98562}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=5, limit=16, cost=375 
+totalCost=375 
+
+[GIN] 2026/04/18 - 15:51:18 | 200 |    1.298754ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-llama; c=Bronze; m=llama_13b; rate=26.681; inTk=706; outTk=648; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=50; cost=75, val=0, itl=17.385376, ttft=50.111668, rho=0.10048465, maxRPM=73.3676}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+s=qa-granite; c=Premium; m=granite_8b; rate=57.2573; inTk=2265; outTk=999; sol=1, sat=false, alloc={acc=H100; numRep=4; maxBatch=32; cost=300, val=0, itl=16.667673, ttft=68.29885, rho=0.12452447, maxRPM=18.89922}; slo-itl=20, slo-ttft=200, slo-tps=0 
+AllocationByType: 
+name=H100, count=5, limit=16, cost=375 
+totalCost=375 
+
+[GIN] 2026/04/18 - 15:51:48 | 200 |      864.46µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=68.0913; inTk=2256; outTk=979; sol=1, sat=false, alloc={acc=H100; numRep=4; maxBatch=33; cost=300, val=0, itl=18.155334, ttft=71.10115, rho=0.15326574, maxRPM=19.4057}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=26.0192; inTk=726; outTk=686; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=47; cost=75, val=0, itl=17.989386, ttft=51.757988, rho=0.11417527, maxRPM=65.97689}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=5, limit=16, cost=375 
+totalCost=375 
+
+[GIN] 2026/04/18 - 15:52:18 | 200 |     454.834µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=64.1649; inTk=1865; outTk=1167; sol=1, sat=false, alloc={acc=H100; numRep=4; maxBatch=28; cost=300, val=0, itl=17.617584, ttft=63.789196, rho=0.19675218, maxRPM=18.964363}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=26.7253; inTk=706; outTk=704; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=46; cost=75, val=0, itl=18.439833, ttft=52.17672, rho=0.12602897, maxRPM=64.14827}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=5, limit=16, cost=375 
+totalCost=375 
+
+[GIN] 2026/04/18 - 15:52:48 | 200 |     541.834µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=52.9024; inTk=1848; outTk=1021; sol=1, sat=false, alloc={acc=H100; numRep=3; maxBatch=32; cost=225, val=225, itl=16.763308, ttft=61.84365, rho=0.1576089, maxRPM=22.532663}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=30.2519; inTk=704; outTk=800; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=40; cost=75, val=0, itl=21.251032, ttft=57.6855, rho=0.21475394, maxRPM=52.4688}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=4, limit=16, cost=300 
+totalCost=300 
+
+[GIN] 2026/04/18 - 15:53:18 | 200 |     927.335µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=52.6008; inTk=1628; outTk=828; sol=1, sat=false, alloc={acc=H100; numRep=2; maxBatch=39; cost=150, val=150, itl=16.63184, ttft=58.254776, rho=0.15524864, maxRPM=33.29487}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=30.3984; inTk=702; outTk=821; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=39; cost=75, val=0, itl=21.77406, ttft=58.688545, rho=0.23270905, maxRPM=50.392105}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=3, limit=16, cost=225 
+totalCost=225 
+
+[GIN] 2026/04/18 - 15:53:48 | 200 |      740.21µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=58.6209; inTk=1737; outTk=867; sol=1, sat=false, alloc={acc=H100; numRep=2; maxBatch=37; cost=150, val=0, itl=19.96356, ttft=66.576096, rho=0.22913657, maxRPM=29.367771}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=26.0548; inTk=866; outTk=617; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=53; cost=75, val=0, itl=18.246305, ttft=55.511948, rho=0.092545636, maxRPM=70.34168}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=3, limit=16, cost=225 
+totalCost=225 
+
+[GIN] 2026/04/18 - 15:54:18 | 200 |    1.277294ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=66.8301; inTk=2001; outTk=1273; sol=1, sat=false, alloc={acc=H100; numRep=5; maxBatch=25; cost=375, val=375, itl=18.434628, ttft=67.425446, rho=0.20954528, maxRPM=14.83512}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=30.9567; inTk=833; outTk=678; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=48; cost=75, val=0, itl=20.44418, ttft=59.10366, rho=0.14940706, maxRPM=62.62095}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=6, limit=16, cost=450 
+totalCost=450 
+
+[GIN] 2026/04/18 - 15:54:48 | 200 |     788.876µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=55.2045; inTk=2404; outTk=1091; sol=1, sat=false, alloc={acc=H100; numRep=4; maxBatch=30; cost=300, val=300, itl=19.568108, ttft=76.07973, rho=0.16412076, maxRPM=14.163517}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=33.5485; inTk=770; outTk=866; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=37; cost=75, val=0, itl=26.19532, ttft=69.68782, rho=0.34346458, maxRPM=44.404823}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=5, limit=16, cost=375 
+totalCost=375 
+
+[GIN] 2026/04/18 - 15:55:18 | 200 |    1.040877ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=57.4894; inTk=1964; outTk=847; sol=1, sat=false, alloc={acc=H100; numRep=3; maxBatch=38; cost=225, val=225, itl=15.343986, ttft=60.237873, rho=0.10961017, maxRPM=26.178776}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=29.6039; inTk=799; outTk=774; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=42; cost=75, val=0, itl=21.55331, ttft=60.5025, rho=0.19643375, maxRPM=52.419647}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=4, limit=16, cost=300 
+totalCost=300 
+
+[GIN] 2026/04/18 - 15:55:48 | 200 |    1.238502ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=50.0709; inTk=2340; outTk=864; sol=1, sat=false, alloc={acc=H100; numRep=3; maxBatch=37; cost=225, val=0, itl=16.333061, ttft=67.981255, rho=0.106482714, maxRPM=21.278244}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=26.3276; inTk=803; outTk=853; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=38; cost=75, val=0, itl=21.82566, ttft=61.106678, rho=0.21543102, maxRPM=44.723976}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=4, limit=16, cost=300 
+totalCost=300 
+
+[GIN] 2026/04/18 - 15:56:18 | 200 |    1.275836ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=qa-granite; c=Premium; m=granite_8b; rate=59.8664; inTk=2170; outTk=949; sol=1, sat=false, alloc={acc=H100; numRep=3; maxBatch=34; cost=225, val=0, itl=19.247007, ttft=71.253815, rho=0.17918259, maxRPM=20.708498}; slo-itl=20, slo-ttft=200, slo-tps=0 
+s=qa-llama; c=Bronze; m=llama_13b; rate=25.2354; inTk=847; outTk=863; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=37; cost=75, val=0, itl=21.87329, ttft=62.233162, rho=0.21503524, maxRPM=42.701096}; slo-itl=60, slo-ttft=1000, slo-tps=0 
+AllocationByType: 
+name=H100, count=4, limit=16, cost=300 
+totalCost=300 
+
+[GIN] 2026/04/18 - 15:56:48 | 200 |     792.752µs |             ::1 | POST     "/optimizeOne"

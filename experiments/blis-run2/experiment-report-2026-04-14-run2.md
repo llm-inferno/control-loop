@@ -1,6 +1,6 @@
 # Experiment Report — blis/trained-physics Run 2: 10-Minute Horizon, 768-Token Llama, 6-Minute Phase 1
 **Date:** 2026-04-14  
-**Run:** 2 (Run 1 report: `experiment-report-2026-04-14.md`)  
+**Run:** 2 (Run 1 report: `../blis-run1/experiment-report-2026-04-14.md`)  
 **Cluster:** kind (kind-cluster), Docker Desktop, macOS arm64, single node  
 **Control period:** 30s  
 **Workloads:** `blis-granite-8b` (granite_8b/H100, Premium, nominal 60 RPM), `blis-llama-13b` (llama_13b/H100, Bronze, nominal 30 RPM)  
@@ -41,11 +41,11 @@ All other parameters carried over from Run 1:
 
 | File | Parameter | Value |
 |---|---|---|
-| `blis-data/serviceclass-data.json` | Premium all-models slo-itl | 15 ms |
-| `blis-data/serviceclass-data.json` | Premium all-models slo-ttft | 100 ms |
-| `blis-data/serviceclass-data.json` | Bronze llama_13b slo-itl | 50 ms |
-| `blis-data/capacity-data.json` | H100 count | 16 |
-| `blis-data/optimizer-data.json` | saturationPolicy | PriorityExhaustive |
+| `inferno-data/serviceclass-data.json` | Premium all-models slo-itl | 15 ms |
+| `inferno-data/serviceclass-data.json` | Premium all-models slo-ttft | 100 ms |
+| `inferno-data/serviceclass-data.json` | Bronze llama_13b slo-itl | 50 ms |
+| `inferno-data/capacity-data.json` | H100 count | 16 |
+| `inferno-data/optimizer-data.json` | saturationPolicy | PriorityExhaustive |
 | `yamls/deploy/load-emulator.yaml` | INFERNO_LOAD_THETA | 0.7 |
 | `yamls/deploy/deploy-loop.yaml` | INFERNO_WARM_UP_TIMEOUT | 0 (disabled) |
 | `yamls/deploy/deploy-loop.yaml` | INFERNO_STARTUP_DELAY | 60 s |

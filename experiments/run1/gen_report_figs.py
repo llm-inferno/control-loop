@@ -4,14 +4,16 @@
 import json
 import sys
 from datetime import datetime, timezone
+from pathlib import Path
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import numpy as np
 
-JSONL = '/tmp/inferno-cycles.jsonl'
-OUT   = '/Users/tantawi/Projects/llm-inferno/control-loop/docs/figs'
+HERE  = Path(__file__).parent
+JSONL = HERE / 'inferno-cycles.jsonl'
+OUT   = HERE / 'figs'
 
 records = []
 with open(JSONL) as f:

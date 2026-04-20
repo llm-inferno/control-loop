@@ -305,6 +305,16 @@ Following are the steps to run the optimization control loop within a cluster.
     curl http://localhost:8080/invoke
     ```
 
+- To get the logs.
+
+    ```bash
+    POD=$(kubectl get pod -n inferno -l app=inferno -o jsonpath='{.items[0].metadata.name}')
+    for c in controller collector optimizer actuator tuner; do
+        kubectl logs -n inferno $POD -c $c > inferno-${c}.log
+        echo "Saved inferno-${c}.log"
+    done
+    ```
+
 - Cleanup
 
     ```bash
@@ -355,7 +365,7 @@ Two workload configurations are provided:
 scripts/kind-deploy-qa.sh
 ```
 
-**blis/trained-physics** (`dep-blis-granite`, `dep-blis-llama` — `trained-physics` evaluator, `blis-data/` config):
+**blis/trained-physics** (`dep-blis-granite`, `dep-blis-llama` — `trained-physics` evaluator, `inferno-data/` config):
 
 ```bash
 scripts/kind-deploy-blis.sh

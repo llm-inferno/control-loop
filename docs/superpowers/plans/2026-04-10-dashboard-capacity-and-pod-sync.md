@@ -91,7 +91,7 @@ type TimingRecord struct {
 - [ ] **Step 2: Verify it compiles**
 
 ```bash
-cd /Users/tantawi/Projects/llm-inferno/control-loop
+cd <repo-root>
 go build ./pkg/monitor/...
 ```
 
@@ -268,7 +268,7 @@ Replace with:
 - [ ] **Step 3: Verify it compiles**
 
 ```bash
-cd /Users/tantawi/Projects/llm-inferno/control-loop
+cd <repo-root>
 go build ./...
 ```
 
@@ -431,7 +431,7 @@ def update(_n):
 - [ ] **Step 5: Verify dashboard runs without error**
 
 ```bash
-cd /Users/tantawi/Projects/llm-inferno/control-loop/dashboard
+cd <repo-root>/dashboard
 INFERNO_CYCLE_LOG=../inferno-cycles.jsonl python dashboard.py
 ```
 
@@ -536,7 +536,7 @@ With:
 With the cluster running, test:
 
 ```bash
-cd /Users/tantawi/Projects/llm-inferno/control-loop/dashboard
+cd <repo-root>/dashboard
 INFERNO_POD_SYNC=1 INFERNO_CYCLE_LOG=/tmp/inferno-cycles.jsonl python dashboard.py
 ```
 
@@ -554,7 +554,7 @@ Expected: pretty-printed JSON with `ts`, `cycle`, `servers`, `capacity`, etc.
 - [ ] **Step 5: Update `dashboard/requirements.txt` if needed**
 
 ```bash
-cd /Users/tantawi/Projects/llm-inferno/control-loop/dashboard
+cd <repo-root>/dashboard
 cat requirements.txt
 ```
 
@@ -579,7 +579,7 @@ The Go changes (Tasks 1–2) require rebuilding the `inferno-loop` image and rel
 - [ ] **Step 1: Build the updated image**
 
 ```bash
-cd /Users/tantawi/Projects/llm-inferno/control-loop
+cd <repo-root>
 docker build -t quay.io/atantawi/inferno-loop:latest .
 ```
 

@@ -481,4 +481,4 @@ Expected: solution printed with allocations for all servers (no error), same as 
 
 To validate the guard fires: temporarily zero out a model's perfParms in `sample-data/large/model-data.json` and re-run. Expected: error printed for the affected server(s).
 
-After deploying to kind (Task 3/4), delete `perfParms` from `blis-data/model-data.json` and run `scripts/kind-deploy-blis.sh`. With `TUNER_INIT_HOLD_BACK=true`, the controller skips optimize+actuate during warm-up. After warm-up, the tuner merges real params and the optimizer proceeds normally. If warm-up fails for any reason, the controller will now get a clean error from the optimizer instead of a silent bad allocation.
+After deploying to kind (Task 3/4), delete `perfParms` from `inferno-data/model-data.json` and run `scripts/kind-deploy-blis.sh`. With `TUNER_INIT_HOLD_BACK=true`, the controller skips optimize+actuate during warm-up. After warm-up, the tuner merges real params and the optimizer proceeds normally. If warm-up fails for any reason, the controller will now get a clean error from the optimizer instead of a silent bad allocation.

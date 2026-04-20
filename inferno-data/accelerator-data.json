@@ -1,0 +1,32 @@
+{
+  "accelerators": [
+    {
+      "name": "A100",
+      "type": "A100",
+      "multiplicity": 1,
+      "memSize": 80,
+      "memBW": 2000,
+      "power": {
+        "idle": 150,
+        "full": 400,
+        "midPower": 320,
+        "midUtil": 0.6
+      },
+      "cost": 40.0
+    },
+    {
+      "name": "H100",
+      "type": "H100",
+      "multiplicity": 1,
+      "memSize": 80,
+      "memBW": 3350,
+      "power": {
+        "idle": 200,
+        "full": 700,
+        "midPower": 600,
+        "midUtil": 0.6
+      },
+      "cost": 75.0
+    }
+  ]
+}
