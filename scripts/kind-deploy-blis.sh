@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Deploy the inferno control loop + blis/trained-physics workloads to a local kind cluster.
-# Uses blis-data/ for optimizer config and blis evaluator for all workloads.
+# Uses inferno-data/ for optimizer config and blis evaluator for all workloads.
 # Run from the control-loop/ repo root.
 # Prerequisites: images already built and Docker available (see CLAUDE.md Step 1).
 
@@ -8,8 +8,7 @@ set -euo pipefail
 
 CLUSTER=${KIND_CLUSTER:-kind-cluster}
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-DATA_DIR="$REPO_ROOT/blis-data"
-MODEL_TUNER_DIR="$REPO_ROOT/../model-tuner"
+DATA_DIR="$REPO_ROOT/inferno-data"
 
 echo "==> Loading images into kind cluster: $CLUSTER"
 kind load docker-image quay.io/atantawi/inferno-loop:latest       --name "$CLUSTER"
@@ -34,7 +33,7 @@ kubectl create configmap inferno-dynamic-data -n inferno \
   --from-file=capacity-data.json="$DATA_DIR/capacity-data.json" \
   --save-config --dry-run=client -o yaml | kubectl apply -f -
 
-kubectl apply -f "$MODEL_TUNER_DIR/deploy/configmap.yaml"
+kubectl apply -f "$REPO_ROOT/yamls/deploy/configmap-tuner.yaml"
 
 echo "==> Deploying inferno pod (controller, collector, optimizer, actuator, tuner)"
 kubectl apply -f "$REPO_ROOT/yamls/deploy/deploy-loop.yaml"

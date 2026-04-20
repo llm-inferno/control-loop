@@ -80,8 +80,8 @@ github.com/llm-inferno/lpsolve v0.1.0 h1:V7FyFOxCEZyYoP2ppapqw0frzQS1ZbXF7YSSaVL
 github.com/llm-inferno/lpsolve v0.1.0/go.mod h1:FzxR0cEKOAYgb2gO55vEv8SyCnDkAqGm+xZNQl2gb5E=
 github.com/llm-inferno/optimizer v0.7.2 h1:0kVNNnx10c2IG20Gxmfgk5UefPFXPrzdbx2lPKqumc8=
 github.com/llm-inferno/optimizer v0.7.2/go.mod h1:yXAKbx/8ipqes+0+t0tDnsGdALIemVbz0S8qTURI304=
-github.com/llm-inferno/optimizer-light v0.7.4 h1:MeKOoe69Su5Pi8u9ZJp/fD1eXVe9Zu4ioAKC13dmRhA=
-github.com/llm-inferno/optimizer-light v0.7.4/go.mod h1:9ModtI62ZX9sA88D9iD/SKmNjM+Kz4iLUBmpTTeZcfY=
+github.com/llm-inferno/optimizer-light v0.7.5 h1:iVKpllEZhu9bmvGq0DnWAJkQcscnExixiCVSjKW17jA=
+github.com/llm-inferno/optimizer-light v0.7.5/go.mod h1:9ModtI62ZX9sA88D9iD/SKmNjM+Kz4iLUBmpTTeZcfY=
 github.com/llm-inferno/queue-analysis v0.4.0 h1:dEePOCFg82Yge5Onp0Z9I1QsSWmYSLzskC+14ShpNCQ=
 github.com/llm-inferno/queue-analysis v0.4.0/go.mod h1:18cK7006sgMuEci090V6kbCJVwQ7kf82UeRMcDr/cxQ=
 github.com/mailru/easyjson v0.9.0 h1:PrnmzHw7262yW8sTBwxi1PdJA3Iw/EKBa8psRf7d9a4=

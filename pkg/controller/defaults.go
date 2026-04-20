@@ -103,6 +103,7 @@ const (
 
 	KeyAccelerator  = KeyAllocationPrefix + "accelerator"
 	KeyMaxBatchSize = KeyAllocationPrefix + "maxbatchsize"
+	KeyMaxQueueSize = KeyAllocationPrefix + "maxqueuesize"
 
 	KeyArrivalRate = KeyLoadPrefix + "rpm"
 	KeyInTokens    = KeyLoadPrefix + "intokens"

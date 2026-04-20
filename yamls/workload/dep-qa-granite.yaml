@@ -9,7 +9,8 @@ metadata:
     inferno.server.model: granite_8b
     inferno.server.class: Premium
     inferno.server.allocation.accelerator: H100
-    inferno.server.allocation.maxbatchsize: "256"
+    inferno.server.allocation.maxbatchsize: "64"
+    inferno.server.allocation.maxqueuesize: "128"
     inferno.server.load.rpm: "60"
     inferno.server.load.intokens: "2048"
     inferno.server.load.outtokens: "1024"
@@ -17,7 +18,7 @@ metadata:
     inferno.server.load.nominal.intokens: "2048"
     inferno.server.load.nominal.outtokens: "1024"
 spec:
-  replicas: 2
+  replicas: 4
   selector:
     matchLabels:
       app: qa-granite
@@ -35,6 +36,10 @@ spec:
         env:
         - name: EVALUATOR_URL
           value: "http://localhost:8081"
+        - name: NOISE_ENABLED
+          value: "true"
+        - name: NOISE_STD_FRACTION
+          value: "0.02"
         resources:
           requests:
             memory: "128Mi"
@@ -52,7 +57,7 @@ spec:
         - name: MODEL_DATA_FILE
           value: "/app/config/model-data.json"
         - name: DEFAULT_MAX_QUEUE_SIZE
-          value: "0"
+          value: "128"
         volumeMounts:
         - name: model-data
           mountPath: /app/config

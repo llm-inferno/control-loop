@@ -52,6 +52,7 @@ func collect(c *gin.Context) {
 		}
 
 		maxBatchSize, _ := strconv.Atoi(d.Labels[ctrl.KeyMaxBatchSize])
+		maxQueueSize, _ := strconv.Atoi(d.Labels[ctrl.KeyMaxQueueSize])
 
 		var arrvRate float64
 		var inTokens float64
@@ -233,9 +234,10 @@ func collect(c *gin.Context) {
 					weightedTTFT += float64(podTTFT) * podThroughputRPM
 					totalThroughputRPM += podThroughputRPM
 					replicaSpecs = append(replicaSpecs, config.ServerSpec{
-						Name:  serverName + ctrl.ReplicaNameSeparator + pe.pod.Name,
-						Class: d.Labels[ctrl.KeyServerClass],
-						Model: d.Labels[ctrl.KeyServerModel],
+						Name:         serverName + ctrl.ReplicaNameSeparator + pe.pod.Name,
+						Class:        d.Labels[ctrl.KeyServerClass],
+						Model:        d.Labels[ctrl.KeyServerModel],
+						MaxQueueSize: maxQueueSize,
 						CurrentAlloc: config.AllocationData{
 							Accelerator: d.Labels[ctrl.KeyAccelerator],
 							MaxBatch:    maxBatchSize,
@@ -285,6 +287,7 @@ func collect(c *gin.Context) {
 			Name:         serverName,
 			Class:        d.Labels[ctrl.KeyServerClass],
 			Model:        d.Labels[ctrl.KeyServerModel],
+			MaxQueueSize: maxQueueSize,
 			CurrentAlloc: curAlloc,
 		}
 		serverSpecs = append(serverSpecs, serverSpec)

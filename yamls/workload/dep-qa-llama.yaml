@@ -9,7 +9,8 @@ metadata:
     inferno.server.model: llama_13b
     inferno.server.class: Bronze
     inferno.server.allocation.accelerator: H100
-    inferno.server.allocation.maxbatchsize: "256"
+    inferno.server.allocation.maxbatchsize: "64"
+    inferno.server.allocation.maxqueuesize: "128"
     inferno.server.load.rpm: "30"
     inferno.server.load.intokens: "768"
     inferno.server.load.outtokens: "768"
@@ -35,6 +36,10 @@ spec:
         env:
         - name: EVALUATOR_URL
           value: "http://localhost:8081"
+        - name: NOISE_ENABLED
+          value: "true"
+        - name: NOISE_STD_FRACTION
+          value: "0.02"
         resources:
           requests:
             memory: "128Mi"
@@ -52,7 +57,7 @@ spec:
         - name: MODEL_DATA_FILE
           value: "/app/config/model-data.json"
         - name: DEFAULT_MAX_QUEUE_SIZE
-          value: "0"
+          value: "128"
         volumeMounts:
         - name: model-data
           mountPath: /app/config
