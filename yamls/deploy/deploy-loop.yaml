@@ -90,13 +90,15 @@ spec:
             value: "3304"
           - name: INFERNO_WARM_UP_TIMEOUT
             value: "10"
+          - name: DEFAULT_MAX_BATCH_SIZE
+            value: "128"
         ports:
         - containerPort: 3300
         command: ["controller"]
         resources:
           requests:
             memory: "512Mi"
-            cpu: "200m"
+            cpu: "100m"
           limits:
             memory: "1Gi"
             cpu: "1"
@@ -109,14 +111,14 @@ spec:
           - name: KUBECONFIG
             value: ""
           - name: INFERNO_STARTUP_DELAY
-            value: "60"
+            value: "20"
         ports:
         - containerPort: 3301
         command: ["collector"]
         resources:
           requests:
             memory: "512Mi"
-            cpu: "200m"
+            cpu: "100m"
           limits:
             memory: "1Gi"
             cpu: "1"
@@ -150,7 +152,7 @@ spec:
         resources:
           requests:
             memory: "512Mi"
-            cpu: "200m"
+            cpu: "100m"
           limits:
             memory: "1Gi"
             cpu: "1"
@@ -171,6 +173,8 @@ spec:
             value: "3"
           - name: TUNER_INIT_HOLD_BACK
             value: "true"
+          - name: TUNER_ESTIMATOR_MODE
+            value: "sliding-window"
         ports:
         - containerPort: 3304
         command: ["/app/tuner"]

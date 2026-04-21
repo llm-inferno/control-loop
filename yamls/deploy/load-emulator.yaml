@@ -14,11 +14,11 @@ spec:
     - name: INFERNO_LOAD_INTERVAL
       value: "20"
     - name: INFERNO_LOAD_ALPHA
-      value: "0.1"
+      value: "0.05"
     - name: INFERNO_LOAD_THETA
-      value: "0.7"
+      value: "0.8"
     - name: INFERNO_LOAD_SKEW
-      value: "0.1"
+      value: "0.05"
     - name: INFERNO_STARTUP_DELAY
       value: "60"
     - name: INFERNO_LOAD_PHASES

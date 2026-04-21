@@ -1,0 +1,712 @@
+2026/04/21 11:33:33 INFO Starting TunerService host=0.0.0.0 port=3304 warmUpCycles=3 initObs=3 holdBack=true estimatorMode=sliding-window windowSize=10 residualThreshold=0.5
+2026/04/21 11:33:33 INFO starting TunerServer addr=0.0.0.0:3304
+2026/04/21 11:35:03 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=14.318961143493652 maxBatch=128 avgInTokens=1984 avgOutTokens=1082 avgTTFT=63.148136138916016 avgITL=16.256372451782227
+2026/04/21 11:35:03 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=14.133099555969238 maxBatch=128 avgInTokens=1984 avgOutTokens=1082 avgTTFT=62.81925582885742 avgITL=16.12529182434082
+2026/04/21 11:35:03 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=13.53835391998291 maxBatch=128 avgInTokens=1984 avgOutTokens=1082 avgTTFT=61.43626403808594 avgITL=15.696958541870117
+2026/04/21 11:35:03 INFO replica environment model=granite_8b accelerator=H100 replica=3 arrivalRateRPM=14.961799621582031 maxBatch=128 avgInTokens=1984 avgOutTokens=1082 avgTTFT=62.652801513671875 avgITL=16.664926528930664
+2026/04/21 11:35:03 INFO collecting initial observations model=granite_8b accelerator=H100 count=1 minObs=3
+2026/04/21 11:35:03 WARN tuning failed for group key=granite_8b/H100 err="collecting initial observations for granite_8b/H100 (1/3)"
+2026/04/21 11:35:03 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=14.549917221069336 maxBatch=128 avgInTokens=752 avgOutTokens=715 avgTTFT=49.332305908203125 avgITL=16.296167373657227
+2026/04/21 11:35:03 INFO replica environment model=llama_13b accelerator=H100 replica=1 arrivalRateRPM=14.550110816955566 maxBatch=128 avgInTokens=752 avgOutTokens=715 avgTTFT=49.41165542602539 avgITL=16.298343658447266
+2026/04/21 11:35:03 INFO collecting initial observations model=llama_13b accelerator=H100 count=1 minObs=3
+2026/04/21 11:35:03 WARN tuning failed for group key=llama_13b/H100 err="collecting initial observations for llama_13b/H100 (1/3)"
+[GIN] 2026/04/21 - 11:35:03 | 422 |     829.748µs |             ::1 | POST     "/tune"
+2026/04/21 11:35:33 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=15.342500686645508 maxBatch=128 avgInTokens=1993 avgOutTokens=1152 avgTTFT=66.11800384521484 avgITL=17.502397537231445
+2026/04/21 11:35:33 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=15.469270706176758 maxBatch=128 avgInTokens=1993 avgOutTokens=1152 avgTTFT=66.90298461914062 avgITL=17.86423683166504
+2026/04/21 11:35:33 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=16.423900604248047 maxBatch=128 avgInTokens=1993 avgOutTokens=1152 avgTTFT=67.2479248046875 avgITL=18.252058029174805
+2026/04/21 11:35:33 INFO replica environment model=granite_8b accelerator=H100 replica=3 arrivalRateRPM=16.412500381469727 maxBatch=128 avgInTokens=1993 avgOutTokens=1152 avgTTFT=66.70780181884766 avgITL=18.3040828704834
+2026/04/21 11:35:33 INFO collecting initial observations model=granite_8b accelerator=H100 count=2 minObs=3
+2026/04/21 11:35:33 WARN tuning failed for group key=granite_8b/H100 err="collecting initial observations for granite_8b/H100 (2/3)"
+2026/04/21 11:35:33 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=14.832099914550781 maxBatch=128 avgInTokens=773 avgOutTokens=769 avgTTFT=51.17487716674805 avgITL=16.37078094482422
+2026/04/21 11:35:33 INFO replica environment model=llama_13b accelerator=H100 replica=1 arrivalRateRPM=15.533300399780273 maxBatch=128 avgInTokens=773 avgOutTokens=769 avgTTFT=50.9156608581543 avgITL=16.906850814819336
+2026/04/21 11:35:33 INFO collecting initial observations model=llama_13b accelerator=H100 count=2 minObs=3
+[GIN] 2026/04/21 - 11:35:33 | 422 |     405.999µs |             ::1 | POST     "/tune"
+2026/04/21 11:35:33 WARN tuning failed for group key=llama_13b/H100 err="collecting initial observations for llama_13b/H100 (2/3)"
+2026/04/21 11:36:03 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=15.035799980163574 maxBatch=128 avgInTokens=820 avgOutTokens=799 avgTTFT=53.165802001953125 avgITL=17.076379776000977
+2026/04/21 11:36:03 INFO replica environment model=llama_13b accelerator=H100 replica=1 arrivalRateRPM=14.940699577331543 maxBatch=128 avgInTokens=820 avgOutTokens=799 avgTTFT=52.715248107910156 avgITL=16.900182723999023
+2026/04/21 11:36:03 INFO InitEstimator: Fit complete alpha=12.346686153755844 beta=0.024525442336953987 gamma=0.0006701815335434358 observations=3 funcValue=0.0003348437251706168
+2026/04/21 11:36:03 INFO SlidingWindowEstimator: Fit complete alpha=12.346616373451731 beta=0.02452542516383369 gamma=0.0006701964320180659 observations=3 funcValue=0.0003348433402894396
+2026/04/21 11:36:03 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=12.346616373451731 beta=0.02452542516383369 gamma=0.0006701964320180659 updateCount=1
+2026/04/21 11:36:03 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=13.51054573059082 maxBatch=128 avgInTokens=1915 avgOutTokens=1029 avgTTFT=59.22352600097656 avgITL=15.080451011657715
+2026/04/21 11:36:03 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=13.141599655151367 maxBatch=128 avgInTokens=1915 avgOutTokens=1029 avgTTFT=58.25845718383789 avgITL=14.873263359069824
+2026/04/21 11:36:03 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=14.90308666229248 maxBatch=128 avgInTokens=1915 avgOutTokens=1029 avgTTFT=60.003257751464844 avgITL=15.604546546936035
+2026/04/21 11:36:03 INFO replica environment model=granite_8b accelerator=H100 replica=3 arrivalRateRPM=13.830516815185547 maxBatch=128 avgInTokens=1915 avgOutTokens=1029 avgTTFT=57.49578857421875 avgITL=14.990667343139648
+2026/04/21 11:36:03 INFO InitEstimator: Fit complete alpha=8.445132798251596 beta=0.016174566270868083 gamma=0.00047897509476567716 observations=3 funcValue=0.0001215505985827325
+2026/04/21 11:36:04 INFO SlidingWindowEstimator: Fit complete alpha=8.445119548360365 beta=0.016174576426606507 gamma=0.000478975937218261 observations=3 funcValue=0.00012154965677095458
+2026/04/21 11:36:04 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.445119548360365 beta=0.016174576426606507 gamma=0.000478975937218261 updateCount=1
+[GIN] 2026/04/21 - 11:36:04 | 200 |    50.26227ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:36:04 | 200 |           7µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:36:04 | 200 |      40.458µs |             ::1 | POST     "/merge"
+2026/04/21 11:36:33 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=28.80780029296875 maxBatch=128 avgInTokens=2172 avgOutTokens=1032 avgTTFT=102.34173583984375 avgITL=34.972198486328125
+2026/04/21 11:36:33 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=29.467697143554688 maxBatch=128 avgInTokens=2172 avgOutTokens=1032 avgTTFT=108.72019958496094 avgITL=37.46904754638672
+2026/04/21 11:36:33 INFO SlidingWindowEstimator: Fit complete alpha=8.194918961610208 beta=0.01613959908995736 gamma=0.0004954477170247763 observations=4 funcValue=0.00023576569277620888
+2026/04/21 11:36:33 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.194918961610208 beta=0.01613959908995736 gamma=0.0004954477170247763 updateCount=2
+2026/04/21 11:36:33 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=30.049699783325195 maxBatch=128 avgInTokens=754 avgOutTokens=767 avgTTFT=59.52348709106445 avgITL=21.00871467590332
+2026/04/21 11:36:33 INFO SlidingWindowEstimator: Fit complete alpha=11.80843777834025 beta=0.024728464335175677 gamma=0.0007603510403012321 observations=4 funcValue=0.00038776340903035365
+2026/04/21 11:36:33 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=11.80843777834025 beta=0.024728464335175677 gamma=0.0007603510403012321 updateCount=2
+[GIN] 2026/04/21 - 11:36:33 | 200 |   30.526286ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:36:33 | 200 |      12.166µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:36:33 | 200 |      57.416µs |             ::1 | POST     "/merge"
+2026/04/21 11:37:03 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=31.811599731445312 maxBatch=128 avgInTokens=2221 avgOutTokens=966 avgTTFT=110.58819580078125 avgITL=38.72526550292969
+2026/04/21 11:37:03 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=29.5396785736084 maxBatch=128 avgInTokens=2221 avgOutTokens=966 avgTTFT=104.28336334228516 avgITL=33.52667999267578
+2026/04/21 11:37:03 INFO SlidingWindowEstimator: Fit complete alpha=8.188801821946662 beta=0.016096898587274814 gamma=0.0004961795216863884 observations=5 funcValue=0.00030440797252913126
+2026/04/21 11:37:03 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.188801821946662 beta=0.016096898587274814 gamma=0.0004961795216863884 updateCount=3
+2026/04/21 11:37:03 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=26.971750259399414 maxBatch=128 avgInTokens=822 avgOutTokens=766 avgTTFT=59.86474609375 avgITL=20.83837127685547
+[GIN] 2026/04/21 - 11:37:03 | 200 |   36.542275ms |             ::1 | POST     "/tune"
+2026/04/21 11:37:03 INFO SlidingWindowEstimator: Fit complete alpha=11.795076218346182 beta=0.024560142831990327 gamma=0.0007659474291430305 observations=5 funcValue=0.0005217729855287205
+2026/04/21 11:37:03 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=11.795076218346182 beta=0.024560142831990327 gamma=0.0007659474291430305 updateCount=3
+[GIN] 2026/04/21 - 11:37:03 | 200 |       5.667µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:37:03 | 200 |      39.666µs |             ::1 | POST     "/merge"
+2026/04/21 11:37:33 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=29.950164794921875 maxBatch=128 avgInTokens=2198 avgOutTokens=1021 avgTTFT=111.79523468017578 avgITL=38.97174072265625
+2026/04/21 11:37:33 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=28.37339973449707 maxBatch=128 avgInTokens=2198 avgOutTokens=1021 avgTTFT=100.02953338623047 avgITL=34.407806396484375
+2026/04/21 11:37:33 INFO SlidingWindowEstimator: Fit complete alpha=8.146282409023474 beta=0.01610391728874618 gamma=0.0004985898349546735 observations=6 funcValue=0.0009157277484330806
+2026/04/21 11:37:33 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.146282409023474 beta=0.01610391728874618 gamma=0.0004985898349546735 updateCount=4
+2026/04/21 11:37:33 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=28.520099639892578 maxBatch=128 avgInTokens=759 avgOutTokens=836 avgTTFT=60.5905876159668 avgITL=21.446468353271484
+2026/04/21 11:37:33 INFO SlidingWindowEstimator: Fit complete alpha=11.933441704421064 beta=0.024581153457938883 gamma=0.000743945894223874 observations=6 funcValue=0.0009164520997418753
+2026/04/21 11:37:33 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=11.933441704421064 beta=0.024581153457938883 gamma=0.000743945894223874 updateCount=4
+[GIN] 2026/04/21 - 11:37:33 | 200 |   29.759501ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:37:33 | 200 |       6.208µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:37:33 | 200 |      47.167µs |             ::1 | POST     "/merge"
+2026/04/21 11:38:03 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=18.020000457763672 maxBatch=128 avgInTokens=2045 avgOutTokens=1071 avgTTFT=67.81964111328125 avgITL=18.616832733154297
+2026/04/21 11:38:03 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=19.30389976501465 maxBatch=128 avgInTokens=2045 avgOutTokens=1071 avgTTFT=70.76242065429688 avgITL=20.033382415771484
+2026/04/21 11:38:03 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=18.050100326538086 maxBatch=128 avgInTokens=2045 avgOutTokens=1071 avgTTFT=69.37675476074219 avgITL=18.912866592407227
+2026/04/21 11:38:03 INFO SlidingWindowEstimator: Fit complete alpha=8.08623912069552 beta=0.01604016293585134 gamma=0.0004997181687041934 observations=7 funcValue=0.0014280691805414012
+2026/04/21 11:38:03 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.08623912069552 beta=0.01604016293585134 gamma=0.0004997181687041934 updateCount=5
+2026/04/21 11:38:03 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=29.019800186157227 maxBatch=128 avgInTokens=796 avgOutTokens=835 avgTTFT=63.71720504760742 avgITL=22.624267578125
+2026/04/21 11:38:03 INFO SlidingWindowEstimator: Fit complete alpha=11.8803060545677 beta=0.024624702777849415 gamma=0.0007510456074853931 observations=7 funcValue=0.0009981520389984923
+2026/04/21 11:38:03 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=11.8803060545677 beta=0.024624702777849415 gamma=0.0007510456074853931 updateCount=5
+[GIN] 2026/04/21 - 11:38:03 | 200 |   45.097168ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:38:03 | 200 |       6.083µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:38:03 | 200 |      42.291µs |             ::1 | POST     "/merge"
+2026/04/21 11:38:33 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=20.114839553833008 maxBatch=128 avgInTokens=1827 avgOutTokens=1056 avgTTFT=65.94010162353516 avgITL=18.695409774780273
+2026/04/21 11:38:33 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=20.981399536132812 maxBatch=128 avgInTokens=1827 avgOutTokens=1056 avgTTFT=66.11925506591797 avgITL=18.813459396362305
+2026/04/21 11:38:33 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=21.48699951171875 maxBatch=128 avgInTokens=1827 avgOutTokens=1056 avgTTFT=66.36097717285156 avgITL=19.6704044342041
+2026/04/21 11:38:33 INFO SlidingWindowEstimator: Fit complete alpha=8.118913360459066 beta=0.016090075057465365 gamma=0.0004990537994553413 observations=8 funcValue=0.0017242365570578474
+2026/04/21 11:38:33 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.118913360459066 beta=0.016090075057465365 gamma=0.0004990537994553413 updateCount=6
+2026/04/21 11:38:33 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=30.33049774169922 maxBatch=128 avgInTokens=747 avgOutTokens=776 avgTTFT=58.96680450439453 avgITL=21.541784286499023
+2026/04/21 11:38:33 INFO SlidingWindowEstimator: Fit complete alpha=11.884856284840401 beta=0.024453874791054837 gamma=0.0007538430528692443 observations=8 funcValue=0.0013555583101349936
+2026/04/21 11:38:33 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=11.884856284840401 beta=0.024453874791054837 gamma=0.0007538430528692443 updateCount=6
+[GIN] 2026/04/21 - 11:38:33 | 200 |   42.732883ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:38:33 | 200 |       5.791µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:38:33 | 200 |       50.25µs |             ::1 | POST     "/merge"
+2026/04/21 11:39:03 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=21.92889976501465 maxBatch=128 avgInTokens=2112 avgOutTokens=1096 avgTTFT=81.08391571044922 avgITL=23.84133529663086
+2026/04/21 11:39:03 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=20.878982543945312 maxBatch=128 avgInTokens=2112 avgOutTokens=1096 avgTTFT=78.33277893066406 avgITL=23.220726013183594
+2026/04/21 11:39:03 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=20.164098739624023 maxBatch=128 avgInTokens=2112 avgOutTokens=1096 avgTTFT=77.02522277832031 avgITL=22.091880798339844
+2026/04/21 11:39:03 INFO SlidingWindowEstimator: Fit complete alpha=8.098734722126128 beta=0.016143653976378732 gamma=0.0004990966331719754 observations=9 funcValue=0.001927108640247582
+2026/04/21 11:39:03 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.098734722126128 beta=0.016143653976378732 gamma=0.0004990966331719754 updateCount=7
+2026/04/21 11:39:03 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=32.44129943847656 maxBatch=128 avgInTokens=815 avgOutTokens=828 avgTTFT=66.7520523071289 avgITL=24.96803092956543
+2026/04/21 11:39:03 INFO SlidingWindowEstimator: Fit complete alpha=11.88152617860982 beta=0.024275725771062403 gamma=0.0007565188060852347 observations=9 funcValue=0.0017975827212345673
+2026/04/21 11:39:03 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=11.88152617860982 beta=0.024275725771062403 gamma=0.0007565188060852347 updateCount=7
+[GIN] 2026/04/21 - 11:39:03 | 200 |    49.83378ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:39:03 | 200 |       8.208µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:39:03 | 200 |      34.333µs |             ::1 | POST     "/merge"
+2026/04/21 11:39:33 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=20.530630111694336 maxBatch=128 avgInTokens=1956 avgOutTokens=1115 avgTTFT=71.2461929321289 avgITL=21.04701042175293
+2026/04/21 11:39:33 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=19.11199951171875 maxBatch=128 avgInTokens=1956 avgOutTokens=1115 avgTTFT=68.13150024414062 avgITL=19.503450393676758
+2026/04/21 11:39:33 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=21.540700912475586 maxBatch=128 avgInTokens=1956 avgOutTokens=1115 avgTTFT=74.85440063476562 avgITL=22.54787826538086
+2026/04/21 11:39:33 INFO SlidingWindowEstimator: Fit complete alpha=8.082313422689777 beta=0.016101550802175527 gamma=0.0004994131124097096 observations=10 funcValue=0.002196347275834125
+2026/04/21 11:39:33 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.082313422689777 beta=0.016101550802175527 gamma=0.0004994131124097096 updateCount=8
+2026/04/21 11:39:33 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=30.309202194213867 maxBatch=128 avgInTokens=782 avgOutTokens=794 avgTTFT=60.600250244140625 avgITL=22.24593734741211
+2026/04/21 11:39:33 INFO SlidingWindowEstimator: Fit complete alpha=11.907631636152573 beta=0.0240902533814877 gamma=0.0007551179743398894 observations=10 funcValue=0.0022543787562849015
+2026/04/21 11:39:33 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=11.907631636152573 beta=0.0240902533814877 gamma=0.0007551179743398894 updateCount=8
+[GIN] 2026/04/21 - 11:39:33 | 200 |   56.523428ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:39:33 | 200 |       9.958µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:39:33 | 200 |      40.916µs |             ::1 | POST     "/merge"
+2026/04/21 11:40:03 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=40.89939880371094 maxBatch=128 avgInTokens=781 avgOutTokens=818 avgTTFT=75.82723999023438 avgITL=29.641780853271484
+2026/04/21 11:40:03 INFO SlidingWindowEstimator: Fit complete alpha=11.79068687287541 beta=0.024074007514381247 gamma=0.0007649634119079274 observations=10 funcValue=0.0022419466517464995
+2026/04/21 11:40:03 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=11.79068687287541 beta=0.024074007514381247 gamma=0.0007649634119079274 updateCount=9
+2026/04/21 11:40:03 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=23.064186096191406 maxBatch=128 avgInTokens=1931 avgOutTokens=1053 avgTTFT=73.7217788696289 avgITL=21.801233291625977
+2026/04/21 11:40:03 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=21.586200714111328 maxBatch=128 avgInTokens=1931 avgOutTokens=1053 avgTTFT=69.91361999511719 avgITL=19.937307357788086
+2026/04/21 11:40:03 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=21.61199951171875 maxBatch=128 avgInTokens=1931 avgOutTokens=1053 avgTTFT=69.20626831054688 avgITL=20.636384963989258
+2026/04/21 11:40:03 INFO SlidingWindowEstimator: Fit complete alpha=8.04679878041433 beta=0.01610911658439528 gamma=0.0005000866813272956 observations=10 funcValue=0.0020675512842463504
+2026/04/21 11:40:03 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.04679878041433 beta=0.01610911658439528 gamma=0.0005000866813272956 updateCount=9
+[GIN] 2026/04/21 - 11:40:03 | 200 |   61.137207ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:40:03 | 200 |       6.792µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:40:03 | 200 |      47.708µs |             ::1 | POST     "/merge"
+2026/04/21 11:40:33 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=29.10059928894043 maxBatch=128 avgInTokens=1981 avgOutTokens=1108 avgTTFT=102.5349349975586 avgITL=36.12504196166992
+2026/04/21 11:40:33 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=30.703800201416016 maxBatch=128 avgInTokens=1981 avgOutTokens=1108 avgTTFT=111.64434051513672 avgITL=41.48556137084961
+2026/04/21 11:40:33 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=30.669801712036133 maxBatch=128 avgInTokens=1981 avgOutTokens=1108 avgTTFT=114.54456329345703 avgITL=41.16593933105469
+2026/04/21 11:40:33 INFO SlidingWindowEstimator: Fit complete alpha=8.059382176634774 beta=0.016062481401719387 gamma=0.0004998087984560094 observations=10 funcValue=0.0020039074072749677
+2026/04/21 11:40:33 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.059382176634774 beta=0.016062481401719387 gamma=0.0004998087984560094 updateCount=10
+2026/04/21 11:40:33 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=45.25100326538086 maxBatch=128 avgInTokens=727 avgOutTokens=806 avgTTFT=75.16249084472656 avgITL=30.181745529174805
+2026/04/21 11:40:33 INFO SlidingWindowEstimator: Fit complete alpha=11.986122946135916 beta=0.023720056231549904 gamma=0.0007519710770772657 observations=10 funcValue=0.0023031126054461294
+2026/04/21 11:40:33 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=11.986122946135916 beta=0.023720056231549904 gamma=0.0007519710770772657 updateCount=10
+[GIN] 2026/04/21 - 11:40:33 | 200 |   53.486103ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:40:33 | 200 |       7.375µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:40:33 | 200 |      39.624µs |             ::1 | POST     "/merge"
+2026/04/21 11:41:04 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=38.21390151977539 maxBatch=128 avgInTokens=2061 avgOutTokens=1078 avgTTFT=12990.76953125 avgITL=137.37367248535156
+2026/04/21 11:41:04 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=37.1760368347168 maxBatch=128 avgInTokens=2061 avgOutTokens=1078 avgTTFT=1324.2061767578125 avgITL=106.30419158935547
+2026/04/21 11:41:04 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=37.1760368347168 maxBatch=128 avgInTokens=2061 avgOutTokens=1078 avgTTFT=1319.661376953125 avgITL=105.5516357421875
+2026/04/21 11:41:04 INFO SlidingWindowEstimator: Fit complete alpha=8.050062143799611 beta=0.016078685071921155 gamma=0.0004996618111342614 observations=10 funcValue=0.0019219067844833228
+2026/04/21 11:41:04 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.050062143799611 beta=0.016078685071921155 gamma=0.0004996618111342614 updateCount=11
+2026/04/21 11:41:04 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=63.40370178222656 maxBatch=128 avgInTokens=746 avgOutTokens=707 avgTTFT=95.1549072265625 avgITL=39.449989318847656
+2026/04/21 11:41:04 INFO SlidingWindowEstimator: Fit complete alpha=12.086136612497477 beta=0.02349806231533082 gamma=0.0007467286705161344 observations=10 funcValue=0.0021120428239406663
+2026/04/21 11:41:04 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=12.086136612497477 beta=0.02349806231533082 gamma=0.0007467286705161344 updateCount=11
+[GIN] 2026/04/21 - 11:41:04 | 200 |   61.346164ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:41:04 | 200 |      12.791µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:41:04 | 200 |      52.666µs |             ::1 | POST     "/merge"
+2026/04/21 11:41:35 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=33.03525924682617 maxBatch=128 avgInTokens=2078 avgOutTokens=1172 avgTTFT=1414.90283203125 avgITL=108.32640075683594
+2026/04/21 11:41:35 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=33.48876190185547 maxBatch=128 avgInTokens=2078 avgOutTokens=1172 avgTTFT=1449.7857666015625 avgITL=109.5520248413086
+2026/04/21 11:41:35 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=33.48876190185547 maxBatch=128 avgInTokens=2078 avgOutTokens=1172 avgTTFT=1445.250732421875 avgITL=107.79285430908203
+2026/04/21 11:41:35 INFO SlidingWindowEstimator: Fit complete alpha=8.433282396387085 beta=0.014954915129799944 gamma=0.0005006383082923786 observations=10 funcValue=0.34477098297493824
+2026/04/21 11:41:35 INFO SlidingWindowEstimator: outliers removed, refitting total=10 kept=9
+2026/04/21 11:41:35 INFO SlidingWindowEstimator: Fit complete alpha=8.053657352940675 beta=0.016111526105157835 gamma=0.0004996138767551135 observations=9 funcValue=0.0018239086313816884
+2026/04/21 11:41:35 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.053657352940675 beta=0.016111526105157835 gamma=0.0004996138767551135 updateCount=12
+2026/04/21 11:41:35 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=65.19187927246094 maxBatch=128 avgInTokens=742 avgOutTokens=763 avgTTFT=123.06956481933594 avgITL=52.36311721801758
+2026/04/21 11:41:35 INFO SlidingWindowEstimator: Fit complete alpha=12.040969496670236 beta=0.023404366220785316 gamma=0.0007499458222217499 observations=10 funcValue=0.0021375324539344973
+2026/04/21 11:41:35 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=12.040969496670236 beta=0.023404366220785316 gamma=0.0007499458222217499 updateCount=12
+[GIN] 2026/04/21 - 11:41:35 | 200 |   72.717592ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:41:35 | 200 |      11.292µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:41:35 | 200 |      44.125µs |             ::1 | POST     "/merge"
+2026/04/21 11:42:06 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=35.45123291015625 maxBatch=128 avgInTokens=2054 avgOutTokens=1125 avgTTFT=1390.2982177734375 avgITL=106.17637634277344
+2026/04/21 11:42:06 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=34.97087478637695 maxBatch=128 avgInTokens=2054 avgOutTokens=1125 avgTTFT=1390.182861328125 avgITL=107.2888412475586
+2026/04/21 11:42:06 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=35.45123291015625 maxBatch=128 avgInTokens=2054 avgOutTokens=1125 avgTTFT=1384.84423828125 avgITL=107.28336334228516
+2026/04/21 11:42:06 INFO replica environment model=granite_8b accelerator=H100 replica=3 arrivalRateRPM=35.08645248413086 maxBatch=128 avgInTokens=2054 avgOutTokens=1125 avgTTFT=1375.994140625 avgITL=106.67938995361328
+2026/04/21 11:42:06 INFO SlidingWindowEstimator: Fit complete alpha=8.351125296605202 beta=0.015325134520465451 gamma=0.000500011645508596 observations=10 funcValue=0.36090364620520127
+2026/04/21 11:42:06 INFO SlidingWindowEstimator: outliers removed, refitting total=10 kept=9
+2026/04/21 11:42:06 INFO SlidingWindowEstimator: Fit complete alpha=8.055942554199069 beta=0.01614146347632401 gamma=0.0004995960667214302 observations=9 funcValue=0.0018425852170488501
+2026/04/21 11:42:06 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.055942554199069 beta=0.01614146347632401 gamma=0.0004995960667214302 updateCount=13
+2026/04/21 11:42:06 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=79.3069839477539 maxBatch=128 avgInTokens=765 avgOutTokens=717 avgTTFT=1383.740478515625 avgITL=93.53324890136719
+2026/04/21 11:42:06 INFO SlidingWindowEstimator: Fit complete alpha=11.84576960231336 beta=0.023448960356154708 gamma=0.0007585889643647935 observations=10 funcValue=0.0029251431001378874
+2026/04/21 11:42:06 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=11.84576960231336 beta=0.023448960356154708 gamma=0.0007585889643647935 updateCount=13
+[GIN] 2026/04/21 - 11:42:06 | 200 |   87.593676ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:42:06 | 200 |       5.166µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:42:06 | 200 |      47.792µs |             ::1 | POST     "/merge"
+2026/04/21 11:42:36 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=36.765071868896484 maxBatch=128 avgInTokens=2052 avgOutTokens=1047 avgTTFT=223.75067138671875 avgITL=80.24736022949219
+2026/04/21 11:42:36 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=37.34870147705078 maxBatch=128 avgInTokens=2052 avgOutTokens=1047 avgTTFT=246.05943298339844 avgITL=80.85302734375
+2026/04/21 11:42:36 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=38.59033203125 maxBatch=128 avgInTokens=2052 avgOutTokens=1047 avgTTFT=1299.075439453125 avgITL=106.51899719238281
+2026/04/21 11:42:36 INFO replica environment model=granite_8b accelerator=H100 replica=3 arrivalRateRPM=36.53058624267578 maxBatch=128 avgInTokens=2052 avgOutTokens=1047 avgTTFT=187.28050231933594 avgITL=72.6573257446289
+2026/04/21 11:42:36 INFO replica environment model=granite_8b accelerator=H100 replica=4 arrivalRateRPM=38.28156661987305 maxBatch=128 avgInTokens=2052 avgOutTokens=1047 avgTTFT=1299.261474609375 avgITL=107.01209259033203
+2026/04/21 11:42:36 INFO SlidingWindowEstimator: Fit complete alpha=8.44987878077428 beta=0.015358764153810931 gamma=0.0004996648107985315 observations=10 funcValue=0.3784758303625525
+2026/04/21 11:42:36 INFO SlidingWindowEstimator: outliers removed, refitting total=10 kept=9
+2026/04/21 11:42:36 INFO SlidingWindowEstimator: Fit complete alpha=8.1495129568708 beta=0.01623597358771204 gamma=0.0004992132727929705 observations=9 funcValue=0.025035187495643877
+2026/04/21 11:42:36 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.1495129568708 beta=0.01623597358771204 gamma=0.0004992132727929705 updateCount=14
+2026/04/21 11:42:36 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=72.15564727783203 maxBatch=128 avgInTokens=737 avgOutTokens=791 avgTTFT=1478.5531005859375 avgITL=92.06668090820312
+2026/04/21 11:42:36 INFO SlidingWindowEstimator: Fit complete alpha=11.827564542892707 beta=0.025959768089736504 gamma=0.0007497731640658451 observations=10 funcValue=0.10225169682857108
+2026/04/21 11:42:36 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=11.827564542892707 beta=0.025959768089736504 gamma=0.0007497731640658451 updateCount=14
+[GIN] 2026/04/21 - 11:42:36 | 200 |   71.147763ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:42:36 | 200 |       6.875µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:42:36 | 200 |        38.5µs |             ::1 | POST     "/merge"
+2026/04/21 11:43:06 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=37.31159973144531 maxBatch=128 avgInTokens=1968 avgOutTokens=1022 avgTTFT=145.89682006835938 avgITL=58.109928131103516
+2026/04/21 11:43:06 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=32.62799835205078 maxBatch=128 avgInTokens=1968 avgOutTokens=1022 avgTTFT=103.36239624023438 avgITL=37.88723373413086
+2026/04/21 11:43:06 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=40.22134780883789 maxBatch=128 avgInTokens=1968 avgOutTokens=1022 avgTTFT=433.85699462890625 avgITL=90.43806457519531
+2026/04/21 11:43:06 INFO replica environment model=granite_8b accelerator=H100 replica=3 arrivalRateRPM=40.68430709838867 maxBatch=128 avgInTokens=1968 avgOutTokens=1022 avgTTFT=1273.3365478515625 avgITL=105.12128448486328
+2026/04/21 11:43:06 INFO replica environment model=granite_8b accelerator=H100 replica=4 arrivalRateRPM=34.0348014831543 maxBatch=128 avgInTokens=1968 avgOutTokens=1022 avgTTFT=112.60826873779297 avgITL=41.48210906982422
+2026/04/21 11:43:06 INFO replica environment model=granite_8b accelerator=H100 replica=5 arrivalRateRPM=36.90911865234375 maxBatch=128 avgInTokens=1968 avgOutTokens=1022 avgTTFT=140.55055236816406 avgITL=55.708858489990234
+2026/04/21 11:43:06 INFO SlidingWindowEstimator: Fit complete alpha=8.473371180660774 beta=0.015391591194015258 gamma=0.0004995439739532323 observations=10 funcValue=0.37771702909699567
+2026/04/21 11:43:06 INFO SlidingWindowEstimator: outliers removed, refitting total=10 kept=9
+2026/04/21 11:43:06 INFO SlidingWindowEstimator: Fit complete alpha=8.16328820522078 beta=0.016352815401366707 gamma=0.0004990245536888889 observations=9 funcValue=0.02431880616915758
+2026/04/21 11:43:06 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.16328820522078 beta=0.016352815401366707 gamma=0.0004990245536888889 updateCount=15
+2026/04/21 11:43:06 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=68.46564483642578 maxBatch=128 avgInTokens=829 avgOutTokens=770 avgTTFT=1450.61376953125 avgITL=99.0803451538086
+2026/04/21 11:43:06 INFO SlidingWindowEstimator: Fit complete alpha=11.800938095751324 beta=0.02598788242426016 gamma=0.0007513042072351145 observations=10 funcValue=0.4040616972547707
+2026/04/21 11:43:06 INFO SlidingWindowEstimator: outliers removed, refitting total=10 kept=9
+2026/04/21 11:43:06 INFO SlidingWindowEstimator: Fit complete alpha=11.805195733509876 beta=0.026189478040536212 gamma=0.0007495502325032093 observations=9 funcValue=0.10214186017854533
+2026/04/21 11:43:06 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=11.805195733509876 beta=0.026189478040536212 gamma=0.0007495502325032093 updateCount=15
+[GIN] 2026/04/21 - 11:43:06 | 200 |  108.141786ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:43:06 | 200 |      12.084µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:43:06 | 200 |          47µs |             ::1 | POST     "/merge"
+2026/04/21 11:43:35 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=32.3515625 maxBatch=128 avgInTokens=1978 avgOutTokens=1033 avgTTFT=110.34138488769531 avgITL=38.80261993408203
+2026/04/21 11:43:35 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=32.666778564453125 maxBatch=128 avgInTokens=1978 avgOutTokens=1033 avgTTFT=110.77372741699219 avgITL=39.86625671386719
+2026/04/21 11:43:35 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=28.131715774536133 maxBatch=128 avgInTokens=1978 avgOutTokens=1033 avgTTFT=88.88958740234375 avgITL=28.69382667541504
+2026/04/21 11:43:35 INFO replica environment model=granite_8b accelerator=H100 replica=3 arrivalRateRPM=28.903865814208984 maxBatch=128 avgInTokens=1978 avgOutTokens=1033 avgTTFT=89.98728942871094 avgITL=29.949996948242188
+2026/04/21 11:43:35 INFO replica environment model=granite_8b accelerator=H100 replica=4 arrivalRateRPM=34.514591217041016 maxBatch=128 avgInTokens=1978 avgOutTokens=1033 avgTTFT=121.62653350830078 avgITL=46.29534912109375
+2026/04/21 11:43:35 INFO replica environment model=granite_8b accelerator=H100 replica=5 arrivalRateRPM=31.37662124633789 maxBatch=128 avgInTokens=1978 avgOutTokens=1033 avgTTFT=102.12848663330078 avgITL=35.72439193725586
+2026/04/21 11:43:35 INFO replica environment model=granite_8b accelerator=H100 replica=6 arrivalRateRPM=32.98035430908203 maxBatch=128 avgInTokens=1978 avgOutTokens=1033 avgTTFT=115.07710266113281 avgITL=42.76496887207031
+2026/04/21 11:43:35 INFO SlidingWindowEstimator: Fit complete alpha=8.51244554596198 beta=0.015279127605809987 gamma=0.000499526003856827 observations=10 funcValue=0.3775797444223284
+2026/04/21 11:43:35 INFO SlidingWindowEstimator: outliers removed, refitting total=10 kept=9
+2026/04/21 11:43:35 INFO SlidingWindowEstimator: Fit complete alpha=8.171885155571225 beta=0.016436395437966513 gamma=0.0004989170508821083 observations=9 funcValue=0.024934009068920873
+2026/04/21 11:43:35 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.171885155571225 beta=0.016436395437966513 gamma=0.0004989170508821083 updateCount=16
+2026/04/21 11:43:35 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=57.35969924926758 maxBatch=128 avgInTokens=831 avgOutTokens=762 avgTTFT=112.0682601928711 avgITL=45.93439483642578
+2026/04/21 11:43:35 INFO replica environment model=llama_13b accelerator=H100 replica=1 arrivalRateRPM=60.19349670410156 maxBatch=128 avgInTokens=831 avgOutTokens=762 avgTTFT=124.40743255615234 avgITL=52.2257194519043
+2026/04/21 11:43:35 INFO SlidingWindowEstimator: Fit complete alpha=11.716075325937673 beta=0.026691155113071505 gamma=0.0007507534887164479 observations=10 funcValue=0.4029263371157591
+2026/04/21 11:43:35 INFO SlidingWindowEstimator: outliers removed, refitting total=10 kept=9
+[GIN] 2026/04/21 - 11:43:35 | 200 |  105.526794ms |             ::1 | POST     "/tune"
+2026/04/21 11:43:35 INFO SlidingWindowEstimator: Fit complete alpha=11.715096396354989 beta=0.027273005784049065 gamma=0.0007483974833206938 observations=9 funcValue=0.10102530791385508
+2026/04/21 11:43:35 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=11.715096396354989 beta=0.027273005784049065 gamma=0.0007483974833206938 updateCount=16
+[GIN] 2026/04/21 - 11:43:35 | 200 |       6.625µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:43:35 | 200 |          56µs |             ::1 | POST     "/merge"
+2026/04/21 11:44:05 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=62.164798736572266 maxBatch=128 avgInTokens=799 avgOutTokens=731 avgTTFT=110.5895767211914 avgITL=46.57594680786133
+2026/04/21 11:44:05 INFO replica environment model=llama_13b accelerator=H100 replica=1 arrivalRateRPM=58.37434768676758 maxBatch=128 avgInTokens=799 avgOutTokens=731 avgTTFT=98.35335540771484 avgITL=40.500736236572266
+2026/04/21 11:44:05 INFO SlidingWindowEstimator: Fit complete alpha=11.610579182313147 beta=0.0279770110386928 gamma=0.0007493444054313311 observations=10 funcValue=0.4011604889535891
+2026/04/21 11:44:05 INFO SlidingWindowEstimator: outliers removed, refitting total=10 kept=9
+2026/04/21 11:44:05 INFO SlidingWindowEstimator: Fit complete alpha=11.693732583103795 beta=0.0276737463285962 gamma=0.000747870696770765 observations=9 funcValue=0.09901817188649133
+2026/04/21 11:44:05 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=11.693732583103795 beta=0.0276737463285962 gamma=0.000747870696770765 updateCount=17
+2026/04/21 11:44:05 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=38.4208984375 maxBatch=128 avgInTokens=2129 avgOutTokens=1052 avgTTFT=14735.55859375 avgITL=142.50704956054688
+2026/04/21 11:44:05 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=28.34819984436035 maxBatch=128 avgInTokens=2129 avgOutTokens=1052 avgTTFT=100.5742416381836 avgITL=34.44070816040039
+2026/04/21 11:44:05 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=32.16590118408203 maxBatch=128 avgInTokens=2129 avgOutTokens=1052 avgTTFT=128.1471710205078 avgITL=47.827396392822266
+2026/04/21 11:44:05 INFO replica environment model=granite_8b accelerator=H100 replica=3 arrivalRateRPM=34.94060134887695 maxBatch=128 avgInTokens=2129 avgOutTokens=1052 avgTTFT=172.1639404296875 avgITL=69.28256225585938
+2026/04/21 11:44:05 INFO replica environment model=granite_8b accelerator=H100 replica=4 arrivalRateRPM=32.532630920410156 maxBatch=128 avgInTokens=2129 avgOutTokens=1052 avgTTFT=136.13284301757812 avgITL=51.55543518066406
+2026/04/21 11:44:05 INFO replica environment model=granite_8b accelerator=H100 replica=5 arrivalRateRPM=35.6327018737793 maxBatch=128 avgInTokens=2129 avgOutTokens=1052 avgTTFT=198.034912109375 avgITL=75.64527893066406
+2026/04/21 11:44:05 INFO replica environment model=granite_8b accelerator=H100 replica=6 arrivalRateRPM=38.08300018310547 maxBatch=128 avgInTokens=2129 avgOutTokens=1052 avgTTFT=6902.60791015625 avgITL=129.0653533935547
+2026/04/21 11:44:05 INFO replica environment model=granite_8b accelerator=H100 replica=7 arrivalRateRPM=33.60210037231445 maxBatch=128 avgInTokens=2129 avgOutTokens=1052 avgTTFT=145.67359924316406 avgITL=56.949913024902344
+2026/04/21 11:44:05 INFO SlidingWindowEstimator: Fit complete alpha=8.680482732377298 beta=0.014775105238554614 gamma=0.0004993729872080105 observations=10 funcValue=0.37679042688499326
+2026/04/21 11:44:05 INFO SlidingWindowEstimator: outliers removed, refitting total=10 kept=9
+[GIN] 2026/04/21 - 11:44:05 | 200 |  111.259653ms |             ::1 | POST     "/tune"
+2026/04/21 11:44:05 INFO SlidingWindowEstimator: Fit complete alpha=8.213280386321868 beta=0.01644966833769594 gamma=0.0004987460438322881 observations=9 funcValue=0.024418898450331183
+2026/04/21 11:44:05 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.213280386321868 beta=0.01644966833769594 gamma=0.0004987460438322881 updateCount=17
+[GIN] 2026/04/21 - 11:44:05 | 200 |        6.25µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:44:05 | 200 |      42.167µs |             ::1 | POST     "/merge"
+2026/04/21 11:44:36 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=31.334646224975586 maxBatch=128 avgInTokens=2005 avgOutTokens=1081 avgTTFT=117.21392059326172 avgITL=42.739871978759766
+2026/04/21 11:44:36 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=33.29169845581055 maxBatch=128 avgInTokens=2005 avgOutTokens=1081 avgTTFT=131.58184814453125 avgITL=51.005882263183594
+2026/04/21 11:44:36 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=36.5284538269043 maxBatch=128 avgInTokens=2005 avgOutTokens=1081 avgTTFT=236.12159729003906 avgITL=82.58045959472656
+2026/04/21 11:44:36 INFO replica environment model=granite_8b accelerator=H100 replica=3 arrivalRateRPM=35.6663818359375 maxBatch=128 avgInTokens=2005 avgOutTokens=1081 avgTTFT=181.7436981201172 avgITL=73.1836166381836
+2026/04/21 11:44:36 INFO replica environment model=granite_8b accelerator=H100 replica=4 arrivalRateRPM=28.192691802978516 maxBatch=128 avgInTokens=2005 avgOutTokens=1081 avgTTFT=94.31639099121094 avgITL=32.62171936035156
+2026/04/21 11:44:36 INFO replica environment model=granite_8b accelerator=H100 replica=5 arrivalRateRPM=36.35517501831055 maxBatch=128 avgInTokens=2005 avgOutTokens=1081 avgTTFT=221.9037628173828 avgITL=78.40877532958984
+2026/04/21 11:44:36 INFO replica environment model=granite_8b accelerator=H100 replica=6 arrivalRateRPM=30.01936912536621 maxBatch=128 avgInTokens=2005 avgOutTokens=1081 avgTTFT=107.13934326171875 avgITL=37.26647186279297
+2026/04/21 11:44:36 INFO replica environment model=granite_8b accelerator=H100 replica=7 arrivalRateRPM=27.30139923095703 maxBatch=128 avgInTokens=2005 avgOutTokens=1081 avgTTFT=90.9252700805664 avgITL=29.959590911865234
+2026/04/21 11:44:36 INFO SlidingWindowEstimator: Fit complete alpha=8.763626270470994 beta=0.014770830148931071 gamma=0.0004990873942135723 observations=10 funcValue=0.3736195641090686
+2026/04/21 11:44:36 INFO SlidingWindowEstimator: outliers removed, refitting total=10 kept=9
+2026/04/21 11:44:36 INFO SlidingWindowEstimator: Fit complete alpha=8.26017502891185 beta=0.016702524253143697 gamma=0.0004983040709287158 observations=9 funcValue=0.022825743529520704
+2026/04/21 11:44:36 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.26017502891185 beta=0.016702524253143697 gamma=0.0004983040709287158 updateCount=18
+2026/04/21 11:44:36 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=72.25357818603516 maxBatch=128 avgInTokens=807 avgOutTokens=724 avgTTFT=181.47276306152344 avgITL=73.81292724609375
+2026/04/21 11:44:36 INFO replica environment model=llama_13b accelerator=H100 replica=1 arrivalRateRPM=67.65171813964844 maxBatch=128 avgInTokens=807 avgOutTokens=724 avgTTFT=135.99510192871094 avgITL=59.670387268066406
+2026/04/21 11:44:36 INFO SlidingWindowEstimator: Fit complete alpha=11.498935821208574 beta=0.029127962734576015 gamma=0.0007481984018711931 observations=10 funcValue=0.3988512530969157
+2026/04/21 11:44:36 INFO SlidingWindowEstimator: outliers removed, refitting total=10 kept=9
+2026/04/21 11:44:36 INFO SlidingWindowEstimator: Fit complete alpha=11.57043606259219 beta=0.02958891573951069 gamma=0.0007454949263214797 observations=9 funcValue=0.09533707527872648
+2026/04/21 11:44:36 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=11.57043606259219 beta=0.02958891573951069 gamma=0.0007454949263214797 updateCount=18
+[GIN] 2026/04/21 - 11:44:36 | 200 |  106.712249ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:44:36 | 200 |       5.667µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:44:36 | 200 |       36.75µs |             ::1 | POST     "/merge"
+2026/04/21 11:45:08 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=34.54710006713867 maxBatch=128 avgInTokens=1904 avgOutTokens=1081 avgTTFT=128.24755859375 avgITL=49.462974548339844
+2026/04/21 11:45:08 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=38.84156799316406 maxBatch=128 avgInTokens=1904 avgOutTokens=1081 avgTTFT=690.0785522460938 avgITL=93.9347152709961
+2026/04/21 11:45:08 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=35.047203063964844 maxBatch=128 avgInTokens=1904 avgOutTokens=1081 avgTTFT=141.89283752441406 avgITL=57.02880859375
+2026/04/21 11:45:08 INFO replica environment model=granite_8b accelerator=H100 replica=3 arrivalRateRPM=39.3099479675293 maxBatch=128 avgInTokens=1904 avgOutTokens=1081 avgTTFT=1348.7496337890625 avgITL=101.28243255615234
+2026/04/21 11:45:08 INFO replica environment model=granite_8b accelerator=H100 replica=4 arrivalRateRPM=33.56946563720703 maxBatch=128 avgInTokens=1904 avgOutTokens=1081 avgTTFT=120.74962615966797 avgITL=45.961265563964844
+2026/04/21 11:45:08 INFO replica environment model=granite_8b accelerator=H100 replica=5 arrivalRateRPM=39.3099479675293 maxBatch=128 avgInTokens=1904 avgOutTokens=1081 avgTTFT=1345.7081298828125 avgITL=102.39946746826172
+2026/04/21 11:45:08 INFO replica environment model=granite_8b accelerator=H100 replica=6 arrivalRateRPM=34.3560905456543 maxBatch=128 avgInTokens=1904 avgOutTokens=1081 avgTTFT=127.61568450927734 avgITL=48.70969009399414
+2026/04/21 11:45:08 INFO replica environment model=granite_8b accelerator=H100 replica=7 arrivalRateRPM=38.28512191772461 maxBatch=128 avgInTokens=1904 avgOutTokens=1081 avgTTFT=1342.162353515625 avgITL=101.36750793457031
+2026/04/21 11:45:08 INFO SlidingWindowEstimator: Fit complete alpha=8.804912872248408 beta=0.01436509775392617 gamma=0.0004993905084319043 observations=10 funcValue=0.3738513641936377
+2026/04/21 11:45:08 INFO SlidingWindowEstimator: outliers removed, refitting total=10 kept=9
+2026/04/21 11:45:08 INFO SlidingWindowEstimator: Fit complete alpha=8.237859814373667 beta=0.01695496912098237 gamma=0.0004980912218728747 observations=9 funcValue=0.023320114418282842
+2026/04/21 11:45:08 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.237859814373667 beta=0.01695496912098237 gamma=0.0004980912218728747 updateCount=19
+2026/04/21 11:45:08 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=64.89888763427734 maxBatch=128 avgInTokens=814 avgOutTokens=821 avgTTFT=1564.512939453125 avgITL=96.15086364746094
+2026/04/21 11:45:08 INFO replica environment model=llama_13b accelerator=H100 replica=1 arrivalRateRPM=64.89888763427734 maxBatch=128 avgInTokens=814 avgOutTokens=821 avgTTFT=1547.7493896484375 avgITL=97.29729461669922
+2026/04/21 11:45:08 INFO SlidingWindowEstimator: Fit complete alpha=11.365186412489521 beta=0.034179635611147945 gamma=0.0007396185868993309 observations=10 funcValue=0.4230276078335209
+2026/04/21 11:45:08 INFO SlidingWindowEstimator: outliers removed, refitting total=10 kept=9
+2026/04/21 11:45:08 INFO SlidingWindowEstimator: Fit complete alpha=11.394257753929798 beta=0.03298152943359073 gamma=0.0007405652034455072 observations=9 funcValue=0.09685187698446596
+2026/04/21 11:45:08 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=11.394257753929798 beta=0.03298152943359073 gamma=0.0007405652034455072 updateCount=19
+[GIN] 2026/04/21 - 11:45:08 | 200 |  115.569432ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:45:08 | 200 |       6.875µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:45:08 | 200 |      51.208µs |             ::1 | POST     "/merge"
+2026/04/21 11:45:37 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=29.08769989013672 maxBatch=128 avgInTokens=1887 avgOutTokens=989 avgTTFT=80.07976531982422 avgITL=26.06227684020996
+2026/04/21 11:45:37 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=26.414499282836914 maxBatch=128 avgInTokens=1887 avgOutTokens=989 avgTTFT=74.083251953125 avgITL=22.503128051757812
+2026/04/21 11:45:37 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=27.20549964904785 maxBatch=128 avgInTokens=1887 avgOutTokens=989 avgTTFT=75.29630279541016 avgITL=23.57699203491211
+2026/04/21 11:45:37 INFO replica environment model=granite_8b accelerator=H100 replica=3 arrivalRateRPM=36.577152252197266 maxBatch=128 avgInTokens=1887 avgOutTokens=989 avgTTFT=111.50118255615234 avgITL=41.17098617553711
+2026/04/21 11:45:37 INFO replica environment model=granite_8b accelerator=H100 replica=4 arrivalRateRPM=34.036598205566406 maxBatch=128 avgInTokens=1887 avgOutTokens=989 avgTTFT=96.80635070800781 avgITL=33.89638137817383
+2026/04/21 11:45:37 INFO replica environment model=granite_8b accelerator=H100 replica=5 arrivalRateRPM=27.221237182617188 maxBatch=128 avgInTokens=1887 avgOutTokens=989 avgTTFT=77.39990234375 avgITL=23.777658462524414
+2026/04/21 11:45:37 INFO replica environment model=granite_8b accelerator=H100 replica=6 arrivalRateRPM=33.84400177001953 maxBatch=128 avgInTokens=1887 avgOutTokens=989 avgTTFT=94.80936431884766 avgITL=33.55230712890625
+2026/04/21 11:45:37 INFO replica environment model=granite_8b accelerator=H100 replica=7 arrivalRateRPM=28.61460304260254 maxBatch=128 avgInTokens=1887 avgOutTokens=989 avgTTFT=78.94624328613281 avgITL=25.501192092895508
+2026/04/21 11:45:37 INFO replica environment model=granite_8b accelerator=H100 replica=8 arrivalRateRPM=33.42365646362305 maxBatch=128 avgInTokens=1887 avgOutTokens=989 avgTTFT=94.7136001586914 avgITL=33.09141159057617
+2026/04/21 11:45:37 INFO replica environment model=granite_8b accelerator=H100 replica=9 arrivalRateRPM=30.67530059814453 maxBatch=128 avgInTokens=1887 avgOutTokens=989 avgTTFT=85.2718276977539 avgITL=28.016992568969727
+2026/04/21 11:45:37 INFO SlidingWindowEstimator: Fit complete alpha=8.816676001748636 beta=0.014343001377070659 gamma=0.0004993706800433273 observations=10 funcValue=0.37311075391203696
+2026/04/21 11:45:37 INFO SlidingWindowEstimator: outliers removed, refitting total=10 kept=9
+2026/04/21 11:45:37 INFO SlidingWindowEstimator: Fit complete alpha=8.270415186899745 beta=0.016681858580451278 gamma=0.000498286143404634 observations=9 funcValue=0.02361624129374312
+2026/04/21 11:45:37 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.270415186899745 beta=0.016681858580451278 gamma=0.000498286143404634 updateCount=20
+2026/04/21 11:45:37 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=64.29042053222656 maxBatch=128 avgInTokens=808 avgOutTokens=830 avgTTFT=1591.4317626953125 avgITL=98.76600646972656
+2026/04/21 11:45:37 INFO replica environment model=llama_13b accelerator=H100 replica=1 arrivalRateRPM=63.94997024536133 maxBatch=128 avgInTokens=808 avgOutTokens=830 avgTTFT=1569.9312744140625 avgITL=98.1706314086914
+2026/04/21 11:45:38 INFO SlidingWindowEstimator: Fit complete alpha=11.13758723841656 beta=0.038933397425647456 gamma=0.0007330763541177624 observations=10 funcValue=0.41563625000835264
+2026/04/21 11:45:38 INFO SlidingWindowEstimator: outliers removed, refitting total=10 kept=9
+[GIN] 2026/04/21 - 11:45:38 | 200 |   89.649379ms |             ::1 | POST     "/tune"
+2026/04/21 11:45:38 INFO SlidingWindowEstimator: Fit complete alpha=11.133318207212298 beta=0.0369384932319772 gamma=0.0007358251022673499 observations=9 funcValue=0.08773082754022397
+2026/04/21 11:45:38 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=11.133318207212298 beta=0.0369384932319772 gamma=0.0007358251022673499 updateCount=20
+[GIN] 2026/04/21 - 11:45:38 | 200 |       6.292µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:45:38 | 200 |      40.875µs |             ::1 | POST     "/merge"
+2026/04/21 11:46:06 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=31.716699600219727 maxBatch=128 avgInTokens=2324 avgOutTokens=1063 avgTTFT=163.00653076171875 avgITL=65.1556396484375
+2026/04/21 11:46:06 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=30.12190055847168 maxBatch=128 avgInTokens=2324 avgOutTokens=1063 avgTTFT=142.37631225585938 avgITL=51.7719612121582
+2026/04/21 11:46:06 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=31.918598175048828 maxBatch=128 avgInTokens=2324 avgOutTokens=1063 avgTTFT=169.93638610839844 avgITL=66.59913635253906
+2026/04/21 11:46:06 INFO replica environment model=granite_8b accelerator=H100 replica=3 arrivalRateRPM=29.276443481445312 maxBatch=128 avgInTokens=2324 avgOutTokens=1063 avgTTFT=132.18125915527344 avgITL=47.99803161621094
+2026/04/21 11:46:06 INFO replica environment model=granite_8b accelerator=H100 replica=4 arrivalRateRPM=29.63080406188965 maxBatch=128 avgInTokens=2324 avgOutTokens=1063 avgTTFT=133.91419982910156 avgITL=50.137298583984375
+2026/04/21 11:46:06 INFO replica environment model=granite_8b accelerator=H100 replica=5 arrivalRateRPM=29.520362854003906 maxBatch=128 avgInTokens=2324 avgOutTokens=1063 avgTTFT=136.36349487304688 avgITL=49.51017761230469
+2026/04/21 11:46:06 INFO replica environment model=granite_8b accelerator=H100 replica=6 arrivalRateRPM=27.825767517089844 maxBatch=128 avgInTokens=2324 avgOutTokens=1063 avgTTFT=119.38045501708984 avgITL=41.120147705078125
+2026/04/21 11:46:06 INFO replica environment model=granite_8b accelerator=H100 replica=7 arrivalRateRPM=26.524770736694336 maxBatch=128 avgInTokens=2324 avgOutTokens=1063 avgTTFT=105.62078094482422 avgITL=36.38135528564453
+2026/04/21 11:46:06 INFO replica environment model=granite_8b accelerator=H100 replica=8 arrivalRateRPM=31.118398666381836 maxBatch=128 avgInTokens=2324 avgOutTokens=1063 avgTTFT=154.8805694580078 avgITL=58.720909118652344
+2026/04/21 11:46:06 INFO replica environment model=granite_8b accelerator=H100 replica=9 arrivalRateRPM=31.58406639099121 maxBatch=128 avgInTokens=2078 avgOutTokens=1044 avgTTFT=115.71427154541016 avgITL=41.72462844848633
+2026/04/21 11:46:06 INFO SlidingWindowEstimator: Fit complete alpha=8.690522482348468 beta=0.01439316252952162 gamma=0.0004999255780633603 observations=10 funcValue=0.3711214410033115
+2026/04/21 11:46:06 INFO SlidingWindowEstimator: outliers removed, refitting total=10 kept=9
+2026/04/21 11:46:06 INFO SlidingWindowEstimator: Fit complete alpha=8.237577254948539 beta=0.016489382186170146 gamma=0.0004986388268569455 observations=9 funcValue=0.02499180045865665
+2026/04/21 11:46:06 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.237577254948539 beta=0.016489382186170146 gamma=0.0004986388268569455 updateCount=21
+2026/04/21 11:46:06 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=52.27330017089844 maxBatch=128 avgInTokens=755 avgOutTokens=768 avgTTFT=86.44024658203125 avgITL=34.92340087890625
+2026/04/21 11:46:06 INFO replica environment model=llama_13b accelerator=H100 replica=1 arrivalRateRPM=51.71560287475586 maxBatch=128 avgInTokens=755 avgOutTokens=768 avgTTFT=87.17794036865234 avgITL=35.118995666503906
+2026/04/21 11:46:06 INFO replica environment model=llama_13b accelerator=H100 replica=2 arrivalRateRPM=51.95349884033203 maxBatch=128 avgInTokens=755 avgOutTokens=768 avgTTFT=85.06694030761719 avgITL=33.9869384765625
+2026/04/21 11:46:06 INFO SlidingWindowEstimator: Fit complete alpha=11.316109290045796 beta=0.037563884059410114 gamma=0.0007340139915684781 observations=10 funcValue=0.41669925489837645
+2026/04/21 11:46:06 INFO SlidingWindowEstimator: outliers removed, refitting total=10 kept=9
+2026/04/21 11:46:06 INFO SlidingWindowEstimator: Fit complete alpha=11.287382694590578 beta=0.03604674859273017 gamma=0.000736138610195568 observations=9 funcValue=0.08847176611624126
+2026/04/21 11:46:06 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=11.287382694590578 beta=0.03604674859273017 gamma=0.000736138610195568 updateCount=21
+[GIN] 2026/04/21 - 11:46:06 | 200 |  107.189413ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:46:06 | 200 |           6µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:46:06 | 200 |      40.624µs |             ::1 | POST     "/merge"
+2026/04/21 11:46:37 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=33.736663818359375 maxBatch=128 avgInTokens=2146 avgOutTokens=1015 avgTTFT=135.54541015625 avgITL=52.11530303955078
+2026/04/21 11:46:37 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=34.620582580566406 maxBatch=128 avgInTokens=2146 avgOutTokens=1015 avgTTFT=143.80538940429688 avgITL=57.17641067504883
+2026/04/21 11:46:37 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=30.288297653198242 maxBatch=128 avgInTokens=2146 avgOutTokens=1015 avgTTFT=107.04631042480469 avgITL=35.593177795410156
+2026/04/21 11:46:37 INFO replica environment model=granite_8b accelerator=H100 replica=3 arrivalRateRPM=26.631000518798828 maxBatch=128 avgInTokens=2146 avgOutTokens=1015 avgTTFT=89.27240753173828 avgITL=28.115116119384766
+2026/04/21 11:46:37 INFO replica environment model=granite_8b accelerator=H100 replica=4 arrivalRateRPM=33.39055633544922 maxBatch=128 avgInTokens=2146 avgOutTokens=1015 avgTTFT=130.1047821044922 avgITL=48.812583923339844
+2026/04/21 11:46:37 INFO replica environment model=granite_8b accelerator=H100 replica=5 arrivalRateRPM=27.416379928588867 maxBatch=128 avgInTokens=2146 avgOutTokens=1015 avgTTFT=94.54352569580078 avgITL=30.69890022277832
+2026/04/21 11:46:37 INFO replica environment model=granite_8b accelerator=H100 replica=6 arrivalRateRPM=29.8887996673584 maxBatch=128 avgInTokens=2146 avgOutTokens=1015 avgTTFT=103.49036407470703 avgITL=35.331974029541016
+2026/04/21 11:46:37 INFO replica environment model=granite_8b accelerator=H100 replica=7 arrivalRateRPM=25.459657669067383 maxBatch=128 avgInTokens=2146 avgOutTokens=1015 avgTTFT=86.91569519042969 avgITL=26.628429412841797
+2026/04/21 11:46:37 INFO replica environment model=granite_8b accelerator=H100 replica=8 arrivalRateRPM=27.613800048828125 maxBatch=128 avgInTokens=2146 avgOutTokens=1015 avgTTFT=94.34107971191406 avgITL=29.949275970458984
+2026/04/21 11:46:37 INFO replica environment model=granite_8b accelerator=H100 replica=9 arrivalRateRPM=31.355510711669922 maxBatch=128 avgInTokens=2146 avgOutTokens=1015 avgTTFT=118.6011962890625 avgITL=42.71611785888672
+2026/04/21 11:46:37 INFO SlidingWindowEstimator: Fit complete alpha=8.268437356496017 beta=0.016370418294963374 gamma=0.0004986661065256097 observations=10 funcValue=0.02532929706432451
+2026/04/21 11:46:37 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.268437356496017 beta=0.016370418294963374 gamma=0.0004986661065256097 updateCount=22
+2026/04/21 11:46:37 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=51.31169891357422 maxBatch=128 avgInTokens=772 avgOutTokens=723 avgTTFT=79.15010833740234 avgITL=31.20940589904785
+2026/04/21 11:46:37 INFO replica environment model=llama_13b accelerator=H100 replica=1 arrivalRateRPM=51.81529998779297 maxBatch=128 avgInTokens=772 avgOutTokens=723 avgTTFT=81.59451293945312 avgITL=31.663705825805664
+2026/04/21 11:46:37 INFO replica environment model=llama_13b accelerator=H100 replica=2 arrivalRateRPM=54.65800094604492 maxBatch=128 avgInTokens=772 avgOutTokens=723 avgTTFT=87.56803894042969 avgITL=33.424842834472656
+2026/04/21 11:46:38 INFO SlidingWindowEstimator: Fit complete alpha=11.428431682889514 beta=0.03561236625886918 gamma=0.0007364302547469647 observations=10 funcValue=0.4258940250402317
+2026/04/21 11:46:38 INFO SlidingWindowEstimator: outliers removed, refitting total=10 kept=9
+[GIN] 2026/04/21 - 11:46:38 | 200 |   86.870386ms |             ::1 | POST     "/tune"
+2026/04/21 11:46:38 INFO SlidingWindowEstimator: Fit complete alpha=11.455300491733109 beta=0.03365133833599056 gamma=0.0007388552380226632 observations=9 funcValue=0.0951940090677783
+2026/04/21 11:46:38 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=11.455300491733109 beta=0.03365133833599056 gamma=0.0007388552380226632 updateCount=22
+[GIN] 2026/04/21 - 11:46:38 | 200 |       6.875µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:46:38 | 200 |     191.958µs |             ::1 | POST     "/merge"
+2026/04/21 11:47:07 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=26.944530487060547 maxBatch=128 avgInTokens=2115 avgOutTokens=1082 avgTTFT=97.90657806396484 avgITL=33.03390884399414
+2026/04/21 11:47:07 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=27.583635330200195 maxBatch=128 avgInTokens=2115 avgOutTokens=1082 avgTTFT=101.80267333984375 avgITL=34.68081283569336
+2026/04/21 11:47:07 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=31.037500381469727 maxBatch=128 avgInTokens=2115 avgOutTokens=1082 avgTTFT=124.90913391113281 avgITL=45.79076385498047
+2026/04/21 11:47:07 INFO replica environment model=granite_8b accelerator=H100 replica=3 arrivalRateRPM=31.494447708129883 maxBatch=128 avgInTokens=2115 avgOutTokens=1082 avgTTFT=134.44346618652344 avgITL=51.732784271240234
+2026/04/21 11:47:07 INFO replica environment model=granite_8b accelerator=H100 replica=4 arrivalRateRPM=37.13759994506836 maxBatch=128 avgInTokens=2115 avgOutTokens=1082 avgTTFT=9049.9375 avgITL=135.13951110839844
+2026/04/21 11:47:07 INFO replica environment model=granite_8b accelerator=H100 replica=5 arrivalRateRPM=27.392885208129883 maxBatch=128 avgInTokens=2115 avgOutTokens=1082 avgTTFT=99.46708679199219 avgITL=32.99818801879883
+2026/04/21 11:47:07 INFO replica environment model=granite_8b accelerator=H100 replica=6 arrivalRateRPM=28.66189956665039 maxBatch=128 avgInTokens=2115 avgOutTokens=1082 avgTTFT=107.87239837646484 avgITL=37.255611419677734
+2026/04/21 11:47:07 INFO replica environment model=granite_8b accelerator=H100 replica=7 arrivalRateRPM=28.944747924804688 maxBatch=128 avgInTokens=2115 avgOutTokens=1082 avgTTFT=109.49481964111328 avgITL=38.540279388427734
+2026/04/21 11:47:07 INFO replica environment model=granite_8b accelerator=H100 replica=8 arrivalRateRPM=34.74272155761719 maxBatch=128 avgInTokens=2115 avgOutTokens=1082 avgTTFT=220.49539184570312 avgITL=81.00879669189453
+2026/04/21 11:47:07 INFO replica environment model=granite_8b accelerator=H100 replica=9 arrivalRateRPM=36.299495697021484 maxBatch=128 avgInTokens=2115 avgOutTokens=1082 avgTTFT=1372.536865234375 avgITL=110.35953521728516
+2026/04/21 11:47:07 INFO SlidingWindowEstimator: Fit complete alpha=8.298808151026044 beta=0.016136981717929978 gamma=0.0004989116759335609 observations=10 funcValue=0.02482022046489114
+2026/04/21 11:47:07 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.298808151026044 beta=0.016136981717929978 gamma=0.0004989116759335609 updateCount=23
+2026/04/21 11:47:07 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=55.278099060058594 maxBatch=128 avgInTokens=738 avgOutTokens=718 avgTTFT=81.1642074584961 avgITL=32.17036437988281
+2026/04/21 11:47:07 INFO replica environment model=llama_13b accelerator=H100 replica=1 arrivalRateRPM=55.14509963989258 maxBatch=128 avgInTokens=738 avgOutTokens=718 avgTTFT=81.03999328613281 avgITL=32.448123931884766
+2026/04/21 11:47:07 INFO replica environment model=llama_13b accelerator=H100 replica=2 arrivalRateRPM=55.8744010925293 maxBatch=128 avgInTokens=738 avgOutTokens=718 avgTTFT=82.2682876586914 avgITL=33.39291000366211
+2026/04/21 11:47:08 INFO SlidingWindowEstimator: Fit complete alpha=11.900689577437706 beta=0.026635837657582546 gamma=0.0007472214160524405 observations=10 funcValue=0.3660375567607165
+2026/04/21 11:47:08 INFO SlidingWindowEstimator: outliers removed, refitting total=10 kept=9
+2026/04/21 11:47:08 INFO SlidingWindowEstimator: Fit complete alpha=11.974139990705583 beta=0.023975736794888864 gamma=0.000750284904663337 observations=9 funcValue=0.001737303829918354
+2026/04/21 11:47:08 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=11.974139990705583 beta=0.023975736794888864 gamma=0.000750284904663337 updateCount=23
+[GIN] 2026/04/21 - 11:47:08 | 200 |   89.069714ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:47:08 | 200 |       9.792µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:47:08 | 200 |      44.875µs |             ::1 | POST     "/merge"
+2026/04/21 11:47:37 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=23.610002517700195 maxBatch=128 avgInTokens=2076 avgOutTokens=1089 avgTTFT=81.37528228759766 avgITL=25.337926864624023
+2026/04/21 11:47:37 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=21.041549682617188 maxBatch=128 avgInTokens=2076 avgOutTokens=1089 avgTTFT=76.61422729492188 avgITL=22.24114227294922
+2026/04/21 11:47:37 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=29.475353240966797 maxBatch=128 avgInTokens=2076 avgOutTokens=1089 avgTTFT=112.52909851074219 avgITL=40.4369010925293
+2026/04/21 11:47:37 INFO replica environment model=granite_8b accelerator=H100 replica=3 arrivalRateRPM=24.841800689697266 maxBatch=128 avgInTokens=2076 avgOutTokens=1089 avgTTFT=86.74325561523438 avgITL=27.72210693359375
+2026/04/21 11:47:37 INFO replica environment model=granite_8b accelerator=H100 replica=4 arrivalRateRPM=25.019399642944336 maxBatch=128 avgInTokens=2076 avgOutTokens=1089 avgTTFT=88.51750183105469 avgITL=28.30158042907715
+2026/04/21 11:47:37 INFO replica environment model=granite_8b accelerator=H100 replica=5 arrivalRateRPM=27.17889976501465 maxBatch=128 avgInTokens=2076 avgOutTokens=1089 avgTTFT=97.44566345214844 avgITL=32.46760177612305
+2026/04/21 11:47:37 INFO replica environment model=granite_8b accelerator=H100 replica=6 arrivalRateRPM=21.896499633789062 maxBatch=128 avgInTokens=2076 avgOutTokens=1089 avgTTFT=78.73681640625 avgITL=23.198076248168945
+2026/04/21 11:47:37 INFO replica environment model=granite_8b accelerator=H100 replica=7 arrivalRateRPM=29.943222045898438 maxBatch=128 avgInTokens=2076 avgOutTokens=1089 avgTTFT=114.80074310302734 avgITL=42.59568786621094
+2026/04/21 11:47:37 INFO replica environment model=granite_8b accelerator=H100 replica=8 arrivalRateRPM=20.749500274658203 maxBatch=128 avgInTokens=2076 avgOutTokens=1089 avgTTFT=74.76776123046875 avgITL=22.019895553588867
+2026/04/21 11:47:37 INFO replica environment model=granite_8b accelerator=H100 replica=9 arrivalRateRPM=27.790246963500977 maxBatch=128 avgInTokens=2076 avgOutTokens=1089 avgTTFT=98.94110107421875 avgITL=34.108978271484375
+2026/04/21 11:47:37 INFO replica environment model=granite_8b accelerator=H100 replica=10 arrivalRateRPM=31.307952880859375 maxBatch=128 avgInTokens=2076 avgOutTokens=1089 avgTTFT=127.84487915039062 avgITL=48.43651580810547
+2026/04/21 11:47:37 INFO replica environment model=granite_8b accelerator=H100 replica=11 arrivalRateRPM=29.30695915222168 maxBatch=128 avgInTokens=2076 avgOutTokens=1089 avgTTFT=109.8472671508789 avgITL=38.2391357421875
+2026/04/21 11:47:37 INFO SlidingWindowEstimator: Fit complete alpha=8.149183742287361 beta=0.01587327623546963 gamma=0.0004996216532003358 observations=10 funcValue=0.005013897001283107
+2026/04/21 11:47:37 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.149183742287361 beta=0.01587327623546963 gamma=0.0004996216532003358 updateCount=24
+2026/04/21 11:47:37 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=51.44869613647461 maxBatch=128 avgInTokens=765 avgOutTokens=803 avgTTFT=94.01358032226562 avgITL=38.30154800415039
+2026/04/21 11:47:37 INFO replica environment model=llama_13b accelerator=H100 replica=1 arrivalRateRPM=47.081199645996094 maxBatch=128 avgInTokens=765 avgOutTokens=803 avgTTFT=82.34310150146484 avgITL=32.82682800292969
+2026/04/21 11:47:37 INFO replica environment model=llama_13b accelerator=H100 replica=2 arrivalRateRPM=47.42570114135742 maxBatch=128 avgInTokens=765 avgOutTokens=803 avgTTFT=85.23699188232422 avgITL=33.36967849731445
+2026/04/21 11:47:38 INFO SlidingWindowEstimator: Fit complete alpha=11.940042922690973 beta=0.027365226095719165 gamma=0.0007462395282568956 observations=10 funcValue=0.3545099872083778
+2026/04/21 11:47:38 INFO SlidingWindowEstimator: outliers removed, refitting total=10 kept=9
+[GIN] 2026/04/21 - 11:47:38 | 200 |   80.084489ms |             ::1 | POST     "/tune"
+2026/04/21 11:47:38 INFO SlidingWindowEstimator: Fit complete alpha=12.014151726397564 beta=0.024120493892247286 gamma=0.0007498541968402032 observations=9 funcValue=0.0013434951414898885
+2026/04/21 11:47:38 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=12.014151726397564 beta=0.024120493892247286 gamma=0.0007498541968402032 updateCount=24
+[GIN] 2026/04/21 - 11:47:38 | 200 |      16.166µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:47:38 | 200 |      62.167µs |             ::1 | POST     "/merge"
+2026/04/21 11:48:07 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=32.45750045776367 maxBatch=128 avgInTokens=2114 avgOutTokens=1062 avgTTFT=132.95924377441406 avgITL=50.245418548583984
+2026/04/21 11:48:07 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=29.493175506591797 maxBatch=128 avgInTokens=2114 avgOutTokens=1062 avgTTFT=111.44116973876953 avgITL=40.8460578918457
+2026/04/21 11:48:07 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=21.802017211914062 maxBatch=128 avgInTokens=2114 avgOutTokens=1062 avgTTFT=78.44823455810547 avgITL=23.044761657714844
+2026/04/21 11:48:07 INFO replica environment model=granite_8b accelerator=H100 replica=3 arrivalRateRPM=30.675573348999023 maxBatch=128 avgInTokens=2114 avgOutTokens=1062 avgTTFT=117.02571105957031 avgITL=43.17896270751953
+2026/04/21 11:48:07 INFO replica environment model=granite_8b accelerator=H100 replica=4 arrivalRateRPM=20.70710563659668 maxBatch=128 avgInTokens=2114 avgOutTokens=1062 avgTTFT=76.35040283203125 avgITL=21.506174087524414
+2026/04/21 11:48:07 INFO replica environment model=granite_8b accelerator=H100 replica=5 arrivalRateRPM=23.713350296020508 maxBatch=128 avgInTokens=2114 avgOutTokens=1062 avgTTFT=83.26084899902344 avgITL=25.211387634277344
+2026/04/21 11:48:07 INFO replica environment model=granite_8b accelerator=H100 replica=6 arrivalRateRPM=27.405683517456055 maxBatch=128 avgInTokens=2114 avgOutTokens=1062 avgTTFT=99.94734191894531 avgITL=33.356689453125
+2026/04/21 11:48:07 INFO replica environment model=granite_8b accelerator=H100 replica=7 arrivalRateRPM=25.668054580688477 maxBatch=128 avgInTokens=2114 avgOutTokens=1062 avgTTFT=88.93516540527344 avgITL=28.5058536529541
+2026/04/21 11:48:07 INFO replica environment model=granite_8b accelerator=H100 replica=8 arrivalRateRPM=20.000499725341797 maxBatch=128 avgInTokens=2114 avgOutTokens=1062 avgTTFT=74.3195571899414 avgITL=20.53974723815918
+2026/04/21 11:48:07 INFO replica environment model=granite_8b accelerator=H100 replica=9 arrivalRateRPM=20.966699600219727 maxBatch=128 avgInTokens=2114 avgOutTokens=1062 avgTTFT=75.57195281982422 avgITL=21.901037216186523
+2026/04/21 11:48:07 INFO replica environment model=granite_8b accelerator=H100 replica=10 arrivalRateRPM=22.829259872436523 maxBatch=128 avgInTokens=2114 avgOutTokens=1062 avgTTFT=81.05644989013672 avgITL=24.240406036376953
+2026/04/21 11:48:07 INFO replica environment model=granite_8b accelerator=H100 replica=11 arrivalRateRPM=20.8358097076416 maxBatch=128 avgInTokens=2114 avgOutTokens=1062 avgTTFT=75.4900131225586 avgITL=21.64645004272461
+2026/04/21 11:48:07 INFO SlidingWindowEstimator: Fit complete alpha=8.138621189977902 beta=0.015893734183024796 gamma=0.0004996350236426086 observations=10 funcValue=0.005220287722685779
+2026/04/21 11:48:07 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.138621189977902 beta=0.015893734183024796 gamma=0.0004996350236426086 updateCount=25
+2026/04/21 11:48:07 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=49.18629837036133 maxBatch=128 avgInTokens=795 avgOutTokens=802 avgTTFT=90.39189147949219 avgITL=37.0456428527832
+2026/04/21 11:48:07 INFO replica environment model=llama_13b accelerator=H100 replica=1 arrivalRateRPM=49.761009216308594 maxBatch=128 avgInTokens=795 avgOutTokens=802 avgTTFT=93.66777038574219 avgITL=37.56162643432617
+2026/04/21 11:48:07 INFO replica environment model=llama_13b accelerator=H100 replica=2 arrivalRateRPM=48.04072952270508 maxBatch=128 avgInTokens=795 avgOutTokens=802 avgTTFT=88.74391174316406 avgITL=35.45454406738281
+2026/04/21 11:48:08 INFO SlidingWindowEstimator: Fit complete alpha=12.036930886095963 beta=0.023832475011025655 gamma=0.0007501553996830701 observations=10 funcValue=0.0015061584137913541
+2026/04/21 11:48:08 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=12.036930886095963 beta=0.023832475011025655 gamma=0.0007501553996830701 updateCount=25
+[GIN] 2026/04/21 - 11:48:08 | 200 |   72.310468ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:48:08 | 200 |       6.417µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:48:08 | 200 |      41.708µs |             ::1 | POST     "/merge"
+2026/04/21 11:48:37 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=20.282590866088867 maxBatch=128 avgInTokens=2087 avgOutTokens=908 avgTTFT=66.90677642822266 avgITL=17.985576629638672
+2026/04/21 11:48:37 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=20.623699188232422 maxBatch=128 avgInTokens=2087 avgOutTokens=908 avgTTFT=66.98661041259766 avgITL=18.134597778320312
+2026/04/21 11:48:37 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=27.993499755859375 maxBatch=128 avgInTokens=2087 avgOutTokens=908 avgTTFT=81.32833862304688 avgITL=23.988636016845703
+2026/04/21 11:48:37 INFO replica environment model=granite_8b accelerator=H100 replica=3 arrivalRateRPM=29.567832946777344 maxBatch=128 avgInTokens=2087 avgOutTokens=908 avgTTFT=85.22626495361328 avgITL=26.571760177612305
+2026/04/21 11:48:37 INFO replica environment model=granite_8b accelerator=H100 replica=4 arrivalRateRPM=20.62984848022461 maxBatch=128 avgInTokens=2087 avgOutTokens=908 avgTTFT=67.9017105102539 avgITL=18.31884002685547
+2026/04/21 11:48:37 INFO replica environment model=granite_8b accelerator=H100 replica=5 arrivalRateRPM=20.000822067260742 maxBatch=128 avgInTokens=2087 avgOutTokens=908 avgTTFT=67.61054229736328 avgITL=18.002277374267578
+2026/04/21 11:48:37 INFO replica environment model=granite_8b accelerator=H100 replica=6 arrivalRateRPM=27.689300537109375 maxBatch=128 avgInTokens=2087 avgOutTokens=908 avgTTFT=79.3771743774414 avgITL=24.02189064025879
+2026/04/21 11:48:37 INFO replica environment model=granite_8b accelerator=H100 replica=7 arrivalRateRPM=27.239599227905273 maxBatch=128 avgInTokens=2087 avgOutTokens=908 avgTTFT=78.03950500488281 avgITL=23.195165634155273
+2026/04/21 11:48:37 INFO replica environment model=granite_8b accelerator=H100 replica=8 arrivalRateRPM=19.7273006439209 maxBatch=128 avgInTokens=2087 avgOutTokens=908 avgTTFT=66.93955993652344 avgITL=17.584739685058594
+2026/04/21 11:48:37 INFO replica environment model=granite_8b accelerator=H100 replica=9 arrivalRateRPM=22.05866050720215 maxBatch=128 avgInTokens=2087 avgOutTokens=908 avgTTFT=70.54228210449219 avgITL=19.001497268676758
+2026/04/21 11:48:37 INFO replica environment model=granite_8b accelerator=H100 replica=10 arrivalRateRPM=25.077295303344727 maxBatch=128 avgInTokens=2087 avgOutTokens=908 avgTTFT=74.82266998291016 avgITL=21.54876708984375
+2026/04/21 11:48:37 INFO replica environment model=granite_8b accelerator=H100 replica=11 arrivalRateRPM=26.45840835571289 maxBatch=128 avgInTokens=2087 avgOutTokens=908 avgTTFT=77.76844024658203 avgITL=22.9405574798584
+2026/04/21 11:48:37 INFO SlidingWindowEstimator: Fit complete alpha=8.107253048315357 beta=0.015704815103912424 gamma=0.0004999566241418464 observations=10 funcValue=0.0038656062038960794
+2026/04/21 11:48:37 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.107253048315357 beta=0.015704815103912424 gamma=0.0004999566241418464 updateCount=26
+2026/04/21 11:48:37 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=45.07036590576172 maxBatch=128 avgInTokens=804 avgOutTokens=773 avgTTFT=79.43729400634766 avgITL=30.848758697509766
+2026/04/21 11:48:37 INFO replica environment model=llama_13b accelerator=H100 replica=1 arrivalRateRPM=41.96913528442383 maxBatch=128 avgInTokens=804 avgOutTokens=773 avgTTFT=76.08541107177734 avgITL=28.643274307250977
+2026/04/21 11:48:37 INFO replica environment model=llama_13b accelerator=H100 replica=2 arrivalRateRPM=45.53300094604492 maxBatch=128 avgInTokens=804 avgOutTokens=773 avgTTFT=79.63745880126953 avgITL=30.62211799621582
+2026/04/21 11:48:37 INFO SlidingWindowEstimator: Fit complete alpha=12.069104081779468 beta=0.02360658248324273 gamma=0.0007502855919903225 observations=10 funcValue=0.0013491486952306186
+2026/04/21 11:48:37 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=12.069104081779468 beta=0.02360658248324273 gamma=0.0007502855919903225 updateCount=26
+[GIN] 2026/04/21 - 11:48:37 | 200 |   67.839313ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:48:37 | 200 |      11.375µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:48:37 | 200 |      50.875µs |             ::1 | POST     "/merge"
+2026/04/21 11:49:06 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=35.6754150390625 maxBatch=128 avgInTokens=1953 avgOutTokens=1081 avgTTFT=159.60951232910156 avgITL=64.46822357177734
+2026/04/21 11:49:06 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=34.90140151977539 maxBatch=128 avgInTokens=1953 avgOutTokens=1081 avgTTFT=144.7371063232422 avgITL=56.310428619384766
+2026/04/21 11:49:06 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=32.8956184387207 maxBatch=128 avgInTokens=1953 avgOutTokens=1081 avgTTFT=122.81083679199219 avgITL=45.84864807128906
+2026/04/21 11:49:06 INFO replica environment model=granite_8b accelerator=H100 replica=3 arrivalRateRPM=24.75160026550293 maxBatch=128 avgInTokens=1953 avgOutTokens=1081 avgTTFT=78.9388656616211 avgITL=25.297136306762695
+2026/04/21 11:49:06 INFO replica environment model=granite_8b accelerator=H100 replica=4 arrivalRateRPM=31.680299758911133 maxBatch=128 avgInTokens=1953 avgOutTokens=1081 avgTTFT=110.45659637451172 avgITL=41.75896072387695
+2026/04/21 11:49:06 INFO replica environment model=granite_8b accelerator=H100 replica=5 arrivalRateRPM=26.748538970947266 maxBatch=128 avgInTokens=1953 avgOutTokens=1081 avgTTFT=85.53855895996094 avgITL=28.14626121520996
+2026/04/21 11:49:06 INFO replica environment model=granite_8b accelerator=H100 replica=6 arrivalRateRPM=36.2307014465332 maxBatch=128 avgInTokens=1953 avgOutTokens=1081 avgTTFT=169.37240600585938 avgITL=68.87630462646484
+2026/04/21 11:49:06 INFO replica environment model=granite_8b accelerator=H100 replica=7 arrivalRateRPM=25.19729995727539 maxBatch=128 avgInTokens=1953 avgOutTokens=1081 avgTTFT=81.554443359375 avgITL=25.679733276367188
+2026/04/21 11:49:06 INFO replica environment model=granite_8b accelerator=H100 replica=8 arrivalRateRPM=27.468564987182617 maxBatch=128 avgInTokens=1953 avgOutTokens=1081 avgTTFT=89.55806732177734 avgITL=30.093780517578125
+2026/04/21 11:49:06 INFO replica environment model=granite_8b accelerator=H100 replica=9 arrivalRateRPM=35.10417938232422 maxBatch=128 avgInTokens=1953 avgOutTokens=1081 avgTTFT=147.79461669921875 avgITL=60.00537872314453
+2026/04/21 11:49:06 INFO SlidingWindowEstimator: Fit complete alpha=8.040692483179875 beta=0.015704404102077064 gamma=0.0005014160269183111 observations=10 funcValue=0.00463933135896275
+2026/04/21 11:49:06 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.040692483179875 beta=0.015704404102077064 gamma=0.0005014160269183111 updateCount=27
+2026/04/21 11:49:06 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=46.47090148925781 maxBatch=128 avgInTokens=768 avgOutTokens=807 avgTTFT=82.4058609008789 avgITL=32.97079086303711
+2026/04/21 11:49:06 INFO replica environment model=llama_13b accelerator=H100 replica=1 arrivalRateRPM=45.10234069824219 maxBatch=128 avgInTokens=768 avgOutTokens=807 avgTTFT=79.2066421508789 avgITL=31.387296676635742
+2026/04/21 11:49:06 INFO replica environment model=llama_13b accelerator=H100 replica=2 arrivalRateRPM=42.260250091552734 maxBatch=128 avgInTokens=768 avgOutTokens=807 avgTTFT=78.6661148071289 avgITL=29.76582145690918
+2026/04/21 11:49:06 INFO SlidingWindowEstimator: Fit complete alpha=12.054052479147417 beta=0.023555023231060318 gamma=0.000750480825423921 observations=10 funcValue=0.0013541995631755875
+2026/04/21 11:49:06 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=12.054052479147417 beta=0.023555023231060318 gamma=0.000750480825423921 updateCount=27
+[GIN] 2026/04/21 - 11:49:06 | 200 |   56.264679ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:49:06 | 200 |      12.583µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:49:06 | 200 |      51.208µs |             ::1 | POST     "/merge"
+2026/04/21 11:49:37 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=28.396944046020508 maxBatch=128 avgInTokens=2067 avgOutTokens=986 avgTTFT=89.34095764160156 avgITL=28.411836624145508
+2026/04/21 11:49:37 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=25.219200134277344 maxBatch=128 avgInTokens=2067 avgOutTokens=986 avgTTFT=78.60478210449219 avgITL=23.697301864624023
+2026/04/21 11:49:37 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=34.28677749633789 maxBatch=128 avgInTokens=2067 avgOutTokens=986 avgTTFT=117.5466079711914 avgITL=43.4539909362793
+2026/04/21 11:49:37 INFO replica environment model=granite_8b accelerator=H100 replica=3 arrivalRateRPM=35.02439880371094 maxBatch=128 avgInTokens=2067 avgOutTokens=986 avgTTFT=124.06266021728516 avgITL=45.121978759765625
+2026/04/21 11:49:37 INFO replica environment model=granite_8b accelerator=H100 replica=4 arrivalRateRPM=31.124765396118164 maxBatch=128 avgInTokens=2067 avgOutTokens=986 avgTTFT=103.69036102294922 avgITL=34.71579360961914
+2026/04/21 11:49:37 INFO replica environment model=granite_8b accelerator=H100 replica=5 arrivalRateRPM=33.45851516723633 maxBatch=128 avgInTokens=2067 avgOutTokens=986 avgTTFT=115.00182342529297 avgITL=40.61874771118164
+2026/04/21 11:49:37 INFO replica environment model=granite_8b accelerator=H100 replica=6 arrivalRateRPM=30.273305892944336 maxBatch=128 avgInTokens=2067 avgOutTokens=986 avgTTFT=95.4298095703125 avgITL=32.52888870239258
+2026/04/21 11:49:37 INFO replica environment model=granite_8b accelerator=H100 replica=7 arrivalRateRPM=28.331872940063477 maxBatch=128 avgInTokens=2067 avgOutTokens=986 avgTTFT=88.67422485351562 avgITL=27.97540855407715
+2026/04/21 11:49:37 INFO replica environment model=granite_8b accelerator=H100 replica=8 arrivalRateRPM=27.03059959411621 maxBatch=128 avgInTokens=2067 avgOutTokens=986 avgTTFT=84.54131317138672 avgITL=26.47184944152832
+2026/04/21 11:49:37 INFO replica environment model=granite_8b accelerator=H100 replica=9 arrivalRateRPM=29.559602737426758 maxBatch=128 avgInTokens=2067 avgOutTokens=986 avgTTFT=91.09614562988281 avgITL=29.913354873657227
+2026/04/21 11:49:37 INFO SlidingWindowEstimator: Fit complete alpha=8.043122031467345 beta=0.015761690123867213 gamma=0.0005010129350433391 observations=10 funcValue=0.004120584572515687
+2026/04/21 11:49:37 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.043122031467345 beta=0.015761690123867213 gamma=0.0005010129350433391 updateCount=28
+2026/04/21 11:49:37 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=47.36688232421875 maxBatch=128 avgInTokens=761 avgOutTokens=775 avgTTFT=78.81090545654297 avgITL=31.168149948120117
+2026/04/21 11:49:37 INFO replica environment model=llama_13b accelerator=H100 replica=1 arrivalRateRPM=53.195098876953125 maxBatch=128 avgInTokens=761 avgOutTokens=775 avgTTFT=89.63536071777344 avgITL=37.41914367675781
+2026/04/21 11:49:37 INFO replica environment model=llama_13b accelerator=H100 replica=2 arrivalRateRPM=50.969398498535156 maxBatch=128 avgInTokens=776 avgOutTokens=788 avgTTFT=90.75188446044922 avgITL=36.79112243652344
+2026/04/21 11:49:37 INFO SlidingWindowEstimator: Fit complete alpha=12.035240282710294 beta=0.023471851855965866 gamma=0.0007507409040340705 observations=10 funcValue=0.001113554979776676
+2026/04/21 11:49:37 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=12.035240282710294 beta=0.023471851855965866 gamma=0.0007507409040340705 updateCount=28
+[GIN] 2026/04/21 - 11:49:37 | 200 |   64.366906ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:49:37 | 200 |       5.084µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:49:37 | 200 |      50.083µs |             ::1 | POST     "/merge"
+2026/04/21 11:50:07 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=35.90790557861328 maxBatch=128 avgInTokens=2108 avgOutTokens=1036 avgTTFT=213.72618103027344 avgITL=79.95207977294922
+2026/04/21 11:50:07 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=26.485414505004883 maxBatch=128 avgInTokens=2108 avgOutTokens=1036 avgTTFT=89.33014678955078 avgITL=28.53099822998047
+2026/04/21 11:50:07 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=37.02191925048828 maxBatch=128 avgInTokens=2108 avgOutTokens=1036 avgTTFT=374.39691162109375 avgITL=91.035400390625
+2026/04/21 11:50:07 INFO replica environment model=granite_8b accelerator=H100 replica=3 arrivalRateRPM=27.275861740112305 maxBatch=128 avgInTokens=2108 avgOutTokens=1036 avgTTFT=94.67382049560547 avgITL=30.938325881958008
+2026/04/21 11:50:07 INFO replica environment model=granite_8b accelerator=H100 replica=4 arrivalRateRPM=29.8971004486084 maxBatch=128 avgInTokens=2108 avgOutTokens=1036 avgTTFT=103.91305541992188 avgITL=36.19929885864258
+2026/04/21 11:50:07 INFO replica environment model=granite_8b accelerator=H100 replica=5 arrivalRateRPM=29.887290954589844 maxBatch=128 avgInTokens=2108 avgOutTokens=1036 avgTTFT=104.19766998291016 avgITL=36.539031982421875
+2026/04/21 11:50:07 INFO replica environment model=granite_8b accelerator=H100 replica=6 arrivalRateRPM=29.009899139404297 maxBatch=128 avgInTokens=2108 avgOutTokens=1036 avgTTFT=100.02824401855469 avgITL=33.83738327026367
+2026/04/21 11:50:07 INFO replica environment model=granite_8b accelerator=H100 replica=7 arrivalRateRPM=30.224897384643555 maxBatch=128 avgInTokens=2108 avgOutTokens=1036 avgTTFT=105.80179595947266 avgITL=37.51715087890625
+2026/04/21 11:50:07 INFO replica environment model=granite_8b accelerator=H100 replica=8 arrivalRateRPM=26.97023582458496 maxBatch=128 avgInTokens=2108 avgOutTokens=1036 avgTTFT=90.65174865722656 avgITL=29.670454025268555
+2026/04/21 11:50:07 INFO replica environment model=granite_8b accelerator=H100 replica=9 arrivalRateRPM=25.983339309692383 maxBatch=128 avgInTokens=2108 avgOutTokens=1036 avgTTFT=88.84526824951172 avgITL=28.019168853759766
+2026/04/21 11:50:07 INFO SlidingWindowEstimator: Fit complete alpha=7.60322787020666 beta=0.01585526595192432 gamma=0.0005096455564397698 observations=10 funcValue=0.0348069661000423
+2026/04/21 11:50:07 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=7.60322787020666 beta=0.01585526595192432 gamma=0.0005096455564397698 updateCount=29
+2026/04/21 11:50:07 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=51.06169891357422 maxBatch=128 avgInTokens=771 avgOutTokens=766 avgTTFT=86.66857147216797 avgITL=34.52386474609375
+2026/04/21 11:50:07 INFO replica environment model=llama_13b accelerator=H100 replica=1 arrivalRateRPM=48.47639846801758 maxBatch=128 avgInTokens=771 avgOutTokens=766 avgTTFT=81.3207015991211 avgITL=32.14760208129883
+2026/04/21 11:50:07 INFO replica environment model=llama_13b accelerator=H100 replica=2 arrivalRateRPM=48.57659912109375 maxBatch=128 avgInTokens=771 avgOutTokens=766 avgTTFT=80.92056274414062 avgITL=31.889575958251953
+2026/04/21 11:50:07 INFO SlidingWindowEstimator: Fit complete alpha=12.054922966934509 beta=0.02352350708045763 gamma=0.0007505770745362774 observations=10 funcValue=0.0007290349180302645
+2026/04/21 11:50:07 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=12.054922966934509 beta=0.02352350708045763 gamma=0.0007505770745362774 updateCount=29
+[GIN] 2026/04/21 - 11:50:07 | 200 |   70.827722ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:50:07 | 200 |       7.209µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:50:07 | 200 |      53.624µs |             ::1 | POST     "/merge"
+2026/04/21 11:50:37 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=28.552186965942383 maxBatch=128 avgInTokens=2072 avgOutTokens=1034 avgTTFT=99.02429962158203 avgITL=33.769588470458984
+2026/04/21 11:50:37 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=21.51453399658203 maxBatch=128 avgInTokens=2072 avgOutTokens=1034 avgTTFT=73.76813507080078 avgITL=21.453922271728516
+2026/04/21 11:50:37 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=23.91990089416504 maxBatch=128 avgInTokens=2072 avgOutTokens=1034 avgTTFT=79.24983215332031 avgITL=23.883895874023438
+2026/04/21 11:50:37 INFO replica environment model=granite_8b accelerator=H100 replica=3 arrivalRateRPM=27.033899307250977 maxBatch=128 avgInTokens=2072 avgOutTokens=1034 avgTTFT=88.92643737792969 avgITL=28.426921844482422
+2026/04/21 11:50:37 INFO replica environment model=granite_8b accelerator=H100 replica=4 arrivalRateRPM=26.903799057006836 maxBatch=128 avgInTokens=2072 avgOutTokens=1034 avgTTFT=87.74637603759766 avgITL=28.457618713378906
+2026/04/21 11:50:37 INFO replica environment model=granite_8b accelerator=H100 replica=5 arrivalRateRPM=19.714183807373047 maxBatch=128 avgInTokens=2072 avgOutTokens=1034 avgTTFT=70.7228775024414 avgITL=19.43531608581543
+2026/04/21 11:50:37 INFO replica environment model=granite_8b accelerator=H100 replica=6 arrivalRateRPM=28.6888427734375 maxBatch=128 avgInTokens=2072 avgOutTokens=1034 avgTTFT=95.29998016357422 avgITL=33.18992233276367
+2026/04/21 11:50:37 INFO replica environment model=granite_8b accelerator=H100 replica=7 arrivalRateRPM=28.1361141204834 maxBatch=128 avgInTokens=2072 avgOutTokens=1034 avgTTFT=94.60846710205078 avgITL=31.283437728881836
+2026/04/21 11:50:37 INFO replica environment model=granite_8b accelerator=H100 replica=8 arrivalRateRPM=30.051597595214844 maxBatch=128 avgInTokens=2072 avgOutTokens=1034 avgTTFT=101.91551208496094 avgITL=35.632442474365234
+2026/04/21 11:50:37 INFO replica environment model=granite_8b accelerator=H100 replica=9 arrivalRateRPM=20.29840087890625 maxBatch=128 avgInTokens=2072 avgOutTokens=1034 avgTTFT=72.50458526611328 avgITL=20.10637664794922
+2026/04/21 11:50:37 INFO replica environment model=granite_8b accelerator=H100 replica=10 arrivalRateRPM=27.7637996673584 maxBatch=128 avgInTokens=2072 avgOutTokens=1034 avgTTFT=90.9005355834961 avgITL=29.887042999267578
+2026/04/21 11:50:37 INFO SlidingWindowEstimator: Fit complete alpha=7.697283411133479 beta=0.015952241008555475 gamma=0.0005087451405500705 observations=10 funcValue=0.040192892562533285
+2026/04/21 11:50:37 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=7.697283411133479 beta=0.015952241008555475 gamma=0.0005087451405500705 updateCount=30
+2026/04/21 11:50:37 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=49.06169891357422 maxBatch=128 avgInTokens=708 avgOutTokens=776 avgTTFT=76.04879760742188 avgITL=30.48027801513672
+2026/04/21 11:50:37 INFO replica environment model=llama_13b accelerator=H100 replica=1 arrivalRateRPM=47.39247131347656 maxBatch=128 avgInTokens=708 avgOutTokens=776 avgTTFT=75.42971801757812 avgITL=29.52112579345703
+2026/04/21 11:50:37 INFO replica environment model=llama_13b accelerator=H100 replica=2 arrivalRateRPM=43.324554443359375 maxBatch=128 avgInTokens=708 avgOutTokens=776 avgTTFT=68.86860656738281 avgITL=27.238697052001953
+2026/04/21 11:50:37 INFO SlidingWindowEstimator: Fit complete alpha=11.619338112951894 beta=0.023524408025563777 gamma=0.0007662859678134234 observations=10 funcValue=0.0006496130942724539
+2026/04/21 11:50:37 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=11.619338112951894 beta=0.023524408025563777 gamma=0.0007662859678134234 updateCount=30
+[GIN] 2026/04/21 - 11:50:37 | 200 |   48.266534ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:50:37 | 200 |       6.083µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:50:37 | 200 |      39.833µs |             ::1 | POST     "/merge"
+2026/04/21 11:51:07 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=20.12948226928711 maxBatch=128 avgInTokens=2144 avgOutTokens=1014 avgTTFT=73.06909942626953 avgITL=20.143253326416016
+2026/04/21 11:51:07 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=22.84263801574707 maxBatch=128 avgInTokens=2144 avgOutTokens=1014 avgTTFT=78.47605895996094 avgITL=23.13602638244629
+2026/04/21 11:51:07 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=24.40114974975586 maxBatch=128 avgInTokens=2144 avgOutTokens=1014 avgTTFT=81.74146270751953 avgITL=24.875638961791992
+2026/04/21 11:51:07 INFO replica environment model=granite_8b accelerator=H100 replica=3 arrivalRateRPM=25.317699432373047 maxBatch=128 avgInTokens=2144 avgOutTokens=1014 avgTTFT=83.7934341430664 avgITL=26.1593074798584
+2026/04/21 11:51:07 INFO replica environment model=granite_8b accelerator=H100 replica=4 arrivalRateRPM=19.637527465820312 maxBatch=128 avgInTokens=2144 avgOutTokens=1014 avgTTFT=71.74797058105469 avgITL=19.787588119506836
+2026/04/21 11:51:07 INFO replica environment model=granite_8b accelerator=H100 replica=5 arrivalRateRPM=24.756811141967773 maxBatch=128 avgInTokens=2144 avgOutTokens=1014 avgTTFT=83.14498138427734 avgITL=25.01435089111328
+2026/04/21 11:51:07 INFO replica environment model=granite_8b accelerator=H100 replica=6 arrivalRateRPM=24.01097869873047 maxBatch=128 avgInTokens=2144 avgOutTokens=1014 avgTTFT=81.6026611328125 avgITL=24.681793212890625
+2026/04/21 11:51:07 INFO replica environment model=granite_8b accelerator=H100 replica=7 arrivalRateRPM=18.03499984741211 maxBatch=128 avgInTokens=2144 avgOutTokens=1014 avgTTFT=69.57929992675781 avgITL=18.692298889160156
+2026/04/21 11:51:07 INFO replica environment model=granite_8b accelerator=H100 replica=8 arrivalRateRPM=25.757930755615234 maxBatch=128 avgInTokens=2144 avgOutTokens=1014 avgTTFT=87.60536193847656 avgITL=26.60064125061035
+2026/04/21 11:51:07 INFO replica environment model=granite_8b accelerator=H100 replica=9 arrivalRateRPM=23.981199264526367 maxBatch=128 avgInTokens=2144 avgOutTokens=1014 avgTTFT=82.65373992919922 avgITL=24.520931243896484
+2026/04/21 11:51:07 INFO replica environment model=granite_8b accelerator=H100 replica=10 arrivalRateRPM=17.59309959411621 maxBatch=128 avgInTokens=2144 avgOutTokens=1014 avgTTFT=69.59259033203125 avgITL=17.983179092407227
+2026/04/21 11:51:07 INFO SlidingWindowEstimator: Fit complete alpha=7.601261253429494 beta=0.01600672246037341 gamma=0.0005113668623650195 observations=10 funcValue=0.02758113049399975
+2026/04/21 11:51:07 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=7.601261253429494 beta=0.01600672246037341 gamma=0.0005113668623650195 updateCount=31
+2026/04/21 11:51:07 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=42.11980438232422 maxBatch=128 avgInTokens=740 avgOutTokens=825 avgTTFT=74.75762939453125 avgITL=30.070127487182617
+2026/04/21 11:51:07 INFO replica environment model=llama_13b accelerator=H100 replica=1 arrivalRateRPM=38.029300689697266 maxBatch=128 avgInTokens=740 avgOutTokens=825 avgTTFT=70.01762390136719 avgITL=26.422082901000977
+2026/04/21 11:51:07 INFO replica environment model=llama_13b accelerator=H100 replica=2 arrivalRateRPM=42.57786178588867 maxBatch=128 avgInTokens=740 avgOutTokens=825 avgTTFT=76.8182144165039 avgITL=29.983793258666992
+2026/04/21 11:51:07 INFO SlidingWindowEstimator: Fit complete alpha=11.925958286148326 beta=0.02326278651857849 gamma=0.0007568434791443332 observations=10 funcValue=0.0013954950928784066
+2026/04/21 11:51:07 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=11.925958286148326 beta=0.02326278651857849 gamma=0.0007568434791443332 updateCount=31
+[GIN] 2026/04/21 - 11:51:07 | 200 |   66.317276ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:51:07 | 200 |       5.417µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:51:07 | 200 |      47.792µs |             ::1 | POST     "/merge"
+2026/04/21 11:51:36 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=23.400800704956055 maxBatch=128 avgInTokens=2145 avgOutTokens=1017 avgTTFT=79.90491485595703 avgITL=23.627307891845703
+2026/04/21 11:51:36 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=21.02312660217285 maxBatch=128 avgInTokens=2145 avgOutTokens=1017 avgTTFT=74.58531188964844 avgITL=20.984912872314453
+2026/04/21 11:51:36 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=27.17310333251953 maxBatch=128 avgInTokens=2145 avgOutTokens=1017 avgTTFT=92.80524444580078 avgITL=29.577842712402344
+2026/04/21 11:51:36 INFO replica environment model=granite_8b accelerator=H100 replica=3 arrivalRateRPM=21.79789924621582 maxBatch=128 avgInTokens=2145 avgOutTokens=1017 avgTTFT=75.30326080322266 avgITL=21.72016716003418
+2026/04/21 11:51:36 INFO replica environment model=granite_8b accelerator=H100 replica=4 arrivalRateRPM=26.247299194335938 maxBatch=128 avgInTokens=2145 avgOutTokens=1017 avgTTFT=88.823486328125 avgITL=27.94375991821289
+2026/04/21 11:51:36 INFO replica environment model=granite_8b accelerator=H100 replica=5 arrivalRateRPM=29.258699417114258 maxBatch=128 avgInTokens=2145 avgOutTokens=1017 avgTTFT=100.46571350097656 avgITL=33.82548522949219
+2026/04/21 11:51:36 INFO replica environment model=granite_8b accelerator=H100 replica=6 arrivalRateRPM=24.6341552734375 maxBatch=128 avgInTokens=2145 avgOutTokens=1017 avgTTFT=82.8322525024414 avgITL=25.048906326293945
+2026/04/21 11:51:36 INFO replica environment model=granite_8b accelerator=H100 replica=7 arrivalRateRPM=27.3828067779541 maxBatch=128 avgInTokens=2145 avgOutTokens=1017 avgTTFT=91.9048843383789 avgITL=30.31126594543457
+2026/04/21 11:51:36 INFO replica environment model=granite_8b accelerator=H100 replica=8 arrivalRateRPM=29.77505111694336 maxBatch=128 avgInTokens=2145 avgOutTokens=1017 avgTTFT=102.88033294677734 avgITL=35.31538772583008
+2026/04/21 11:51:36 INFO SlidingWindowEstimator: Fit complete alpha=7.604153721045952 beta=0.01603266218081115 gamma=0.0005116681078560091 observations=10 funcValue=0.026623663354234734
+2026/04/21 11:51:36 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=7.604153721045952 beta=0.01603266218081115 gamma=0.0005116681078560091 updateCount=32
+2026/04/21 11:51:36 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=35.44905471801758 maxBatch=128 avgInTokens=851 avgOutTokens=832 avgTTFT=75.04159545898438 avgITL=28.25397300720215
+2026/04/21 11:51:36 INFO replica environment model=llama_13b accelerator=H100 replica=1 arrivalRateRPM=37.40599822998047 maxBatch=128 avgInTokens=851 avgOutTokens=832 avgTTFT=76.97810363769531 avgITL=28.96721839904785
+2026/04/21 11:51:36 INFO replica environment model=llama_13b accelerator=H100 replica=2 arrivalRateRPM=35.230098724365234 maxBatch=128 avgInTokens=851 avgOutTokens=832 avgTTFT=75.0992202758789 avgITL=27.431447982788086
+2026/04/21 11:51:36 INFO SlidingWindowEstimator: Fit complete alpha=12.30649387451029 beta=0.02327508474299021 gamma=0.000743395098562039 observations=10 funcValue=0.0019973137543412003
+2026/04/21 11:51:36 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=12.30649387451029 beta=0.02327508474299021 gamma=0.000743395098562039 updateCount=32
+[GIN] 2026/04/21 - 11:51:36 | 200 |    62.94816ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:51:36 | 200 |        6.75µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:51:36 | 200 |      36.209µs |             ::1 | POST     "/merge"
+2026/04/21 11:52:05 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=26.714399337768555 maxBatch=128 avgInTokens=2027 avgOutTokens=1018 avgTTFT=83.5961685180664 avgITL=27.02281379699707
+2026/04/21 11:52:05 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=22.95119857788086 maxBatch=128 avgInTokens=2027 avgOutTokens=1018 avgTTFT=74.61903381347656 avgITL=22.230154037475586
+2026/04/21 11:52:05 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=21.103351593017578 maxBatch=128 avgInTokens=2027 avgOutTokens=1018 avgTTFT=69.89189147949219 avgITL=20.360910415649414
+2026/04/21 11:52:05 INFO replica environment model=granite_8b accelerator=H100 replica=3 arrivalRateRPM=23.671300888061523 maxBatch=128 avgInTokens=2027 avgOutTokens=1018 avgTTFT=75.73103332519531 avgITL=22.821292877197266
+2026/04/21 11:52:05 INFO replica environment model=granite_8b accelerator=H100 replica=4 arrivalRateRPM=24.153499603271484 maxBatch=128 avgInTokens=2027 avgOutTokens=1018 avgTTFT=78.00617980957031 avgITL=23.36243438720703
+2026/04/21 11:52:05 INFO replica environment model=granite_8b accelerator=H100 replica=5 arrivalRateRPM=23.558427810668945 maxBatch=128 avgInTokens=2027 avgOutTokens=1018 avgTTFT=74.39368438720703 avgITL=22.626819610595703
+2026/04/21 11:52:05 INFO replica environment model=granite_8b accelerator=H100 replica=6 arrivalRateRPM=21.49370002746582 maxBatch=128 avgInTokens=2027 avgOutTokens=1018 avgTTFT=71.19493865966797 avgITL=20.475719451904297
+2026/04/21 11:52:05 INFO replica environment model=granite_8b accelerator=H100 replica=7 arrivalRateRPM=23.556724548339844 maxBatch=128 avgInTokens=2027 avgOutTokens=1018 avgTTFT=75.93751525878906 avgITL=22.66402244567871
+2026/04/21 11:52:05 INFO replica environment model=granite_8b accelerator=H100 replica=8 arrivalRateRPM=20.196399688720703 maxBatch=128 avgInTokens=2027 avgOutTokens=1018 avgTTFT=69.93148803710938 avgITL=18.97011947631836
+2026/04/21 11:52:05 INFO SlidingWindowEstimator: Fit complete alpha=7.64745210978193 beta=0.01596813939487619 gamma=0.0005114808458614665 observations=10 funcValue=0.027076253046444117
+2026/04/21 11:52:05 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=7.64745210978193 beta=0.01596813939487619 gamma=0.0005114808458614665 updateCount=33
+2026/04/21 11:52:05 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=46.88199996948242 maxBatch=128 avgInTokens=721 avgOutTokens=810 avgTTFT=79.39220428466797 avgITL=31.58718490600586
+2026/04/21 11:52:05 INFO replica environment model=llama_13b accelerator=H100 replica=1 arrivalRateRPM=44.5441780090332 maxBatch=128 avgInTokens=721 avgOutTokens=810 avgTTFT=75.37139129638672 avgITL=29.385461807250977
+2026/04/21 11:52:05 INFO SlidingWindowEstimator: Fit complete alpha=12.307764605366229 beta=0.02326035518018004 gamma=0.0007438901031994004 observations=10 funcValue=0.0017444536370937935
+2026/04/21 11:52:05 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=12.307764605366229 beta=0.02326035518018004 gamma=0.0007438901031994004 updateCount=33
+[GIN] 2026/04/21 - 11:52:05 | 200 |   63.489326ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:52:05 | 200 |       5.708µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:52:05 | 200 |      35.125µs |             ::1 | POST     "/merge"
+2026/04/21 11:52:35 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=38.39799880981445 maxBatch=128 avgInTokens=727 avgOutTokens=811 avgTTFT=67.77606201171875 avgITL=25.400104522705078
+2026/04/21 11:52:35 INFO replica environment model=llama_13b accelerator=H100 replica=1 arrivalRateRPM=39.11640167236328 maxBatch=128 avgInTokens=727 avgOutTokens=811 avgTTFT=69.6595230102539 avgITL=26.00436782836914
+2026/04/21 11:52:35 INFO SlidingWindowEstimator: Fit complete alpha=12.15740278780729 beta=0.023425632969360732 gamma=0.0007478059465736673 observations=10 funcValue=0.0021466331324366573
+2026/04/21 11:52:35 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=12.15740278780729 beta=0.023425632969360732 gamma=0.0007478059465736673 updateCount=34
+2026/04/21 11:52:35 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=22.40850067138672 maxBatch=128 avgInTokens=2113 avgOutTokens=1073 avgTTFT=79.09345245361328 avgITL=23.906837463378906
+2026/04/21 11:52:35 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=25.05780029296875 maxBatch=128 avgInTokens=2113 avgOutTokens=1073 avgTTFT=87.61223602294922 avgITL=27.586570739746094
+2026/04/21 11:52:35 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=23.47920036315918 maxBatch=128 avgInTokens=2113 avgOutTokens=1073 avgTTFT=83.68950653076172 avgITL=25.29681396484375
+2026/04/21 11:52:35 INFO replica environment model=granite_8b accelerator=H100 replica=3 arrivalRateRPM=20.967172622680664 maxBatch=128 avgInTokens=2113 avgOutTokens=1073 avgTTFT=76.5286636352539 avgITL=22.148082733154297
+2026/04/21 11:52:35 INFO replica environment model=granite_8b accelerator=H100 replica=4 arrivalRateRPM=24.594919204711914 maxBatch=128 avgInTokens=2113 avgOutTokens=1073 avgTTFT=87.91291046142578 avgITL=27.551074981689453
+2026/04/21 11:52:35 INFO replica environment model=granite_8b accelerator=H100 replica=5 arrivalRateRPM=20.588483810424805 maxBatch=128 avgInTokens=2113 avgOutTokens=1073 avgTTFT=75.18021392822266 avgITL=22.21591567993164
+2026/04/21 11:52:35 INFO replica environment model=granite_8b accelerator=H100 replica=6 arrivalRateRPM=25.137081146240234 maxBatch=128 avgInTokens=2113 avgOutTokens=1073 avgTTFT=89.60721588134766 avgITL=28.983455657958984
+2026/04/21 11:52:35 INFO replica environment model=granite_8b accelerator=H100 replica=7 arrivalRateRPM=21.775653839111328 maxBatch=128 avgInTokens=2113 avgOutTokens=1073 avgTTFT=78.99987030029297 avgITL=23.320453643798828
+2026/04/21 11:52:35 INFO SlidingWindowEstimator: Fit complete alpha=7.675144916779431 beta=0.015950316365566902 gamma=0.0005112486773364208 observations=10 funcValue=0.02660180086517023
+2026/04/21 11:52:35 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=7.675144916779431 beta=0.015950316365566902 gamma=0.0005112486773364208 updateCount=34
+[GIN] 2026/04/21 - 11:52:35 | 200 |    65.99461ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:52:35 | 200 |     116.916µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:52:35 | 200 |        49.5µs |             ::1 | POST     "/merge"
+2026/04/21 11:53:05 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=22.389928817749023 maxBatch=128 avgInTokens=1961 avgOutTokens=1017 avgTTFT=71.28160858154297 avgITL=20.7364559173584
+2026/04/21 11:53:05 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=16.88899803161621 maxBatch=128 avgInTokens=1961 avgOutTokens=1017 avgTTFT=63.825706481933594 avgITL=16.77580451965332
+2026/04/21 11:53:05 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=19.49920082092285 maxBatch=128 avgInTokens=1961 avgOutTokens=1017 avgTTFT=66.15966796875 avgITL=18.27722930908203
+2026/04/21 11:53:05 INFO replica environment model=granite_8b accelerator=H100 replica=3 arrivalRateRPM=19.95685386657715 maxBatch=128 avgInTokens=1961 avgOutTokens=1017 avgTTFT=66.84619140625 avgITL=18.822101593017578
+2026/04/21 11:53:05 INFO replica environment model=granite_8b accelerator=H100 replica=4 arrivalRateRPM=19.656532287597656 maxBatch=128 avgInTokens=1961 avgOutTokens=1017 avgTTFT=67.32645416259766 avgITL=18.270824432373047
+2026/04/21 11:53:05 INFO replica environment model=granite_8b accelerator=H100 replica=5 arrivalRateRPM=19.481000900268555 maxBatch=128 avgInTokens=1961 avgOutTokens=1017 avgTTFT=64.59051513671875 avgITL=18.560163497924805
+2026/04/21 11:53:05 INFO replica environment model=granite_8b accelerator=H100 replica=6 arrivalRateRPM=21.879600524902344 maxBatch=128 avgInTokens=1961 avgOutTokens=1017 avgTTFT=70.5135498046875 avgITL=20.298768997192383
+2026/04/21 11:53:05 INFO replica environment model=granite_8b accelerator=H100 replica=7 arrivalRateRPM=19.18501853942871 maxBatch=128 avgInTokens=1961 avgOutTokens=1017 avgTTFT=65.68522644042969 avgITL=18.566041946411133
+2026/04/21 11:53:05 INFO SlidingWindowEstimator: Fit complete alpha=7.73588483760952 beta=0.015922790231246372 gamma=0.0005117638310732577 observations=10 funcValue=0.018548499880194722
+2026/04/21 11:53:05 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=7.73588483760952 beta=0.015922790231246372 gamma=0.0005117638310732577 updateCount=35
+2026/04/21 11:53:05 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=38.44246292114258 maxBatch=128 avgInTokens=721 avgOutTokens=766 avgTTFT=65.04833984375 avgITL=24.131948471069336
+2026/04/21 11:53:05 INFO replica environment model=llama_13b accelerator=H100 replica=1 arrivalRateRPM=37.388160705566406 maxBatch=128 avgInTokens=721 avgOutTokens=766 avgTTFT=63.47010803222656 avgITL=23.516389846801758
+2026/04/21 11:53:05 INFO SlidingWindowEstimator: Fit complete alpha=12.143507767254805 beta=0.023715256707823994 gamma=0.0007472395730082124 observations=10 funcValue=0.002191355203751898
+2026/04/21 11:53:05 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=12.143507767254805 beta=0.023715256707823994 gamma=0.0007472395730082124 updateCount=35
+[GIN] 2026/04/21 - 11:53:05 | 200 |    65.69582ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:53:05 | 200 |       5.791µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:53:05 | 200 |      33.917µs |             ::1 | POST     "/merge"
+2026/04/21 11:53:34 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=17.400772094726562 maxBatch=128 avgInTokens=2083 avgOutTokens=942 avgTTFT=65.69625854492188 avgITL=16.38907814025879
+2026/04/21 11:53:34 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=20.252399444580078 maxBatch=128 avgInTokens=2083 avgOutTokens=942 avgTTFT=69.03422546386719 avgITL=18.285030364990234
+2026/04/21 11:53:34 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=20.95989990234375 maxBatch=128 avgInTokens=2083 avgOutTokens=942 avgTTFT=69.41301727294922 avgITL=19.002147674560547
+2026/04/21 11:53:34 INFO replica environment model=granite_8b accelerator=H100 replica=3 arrivalRateRPM=21.960599899291992 maxBatch=128 avgInTokens=2083 avgOutTokens=942 avgTTFT=70.35472106933594 avgITL=19.801790237426758
+2026/04/21 11:53:34 INFO replica environment model=granite_8b accelerator=H100 replica=4 arrivalRateRPM=20.539100646972656 maxBatch=128 avgInTokens=2083 avgOutTokens=942 avgTTFT=68.91897583007812 avgITL=18.622894287109375
+2026/04/21 11:53:34 INFO replica environment model=granite_8b accelerator=H100 replica=5 arrivalRateRPM=20.89739990234375 maxBatch=128 avgInTokens=2083 avgOutTokens=942 avgTTFT=69.56104278564453 avgITL=18.940248489379883
+2026/04/21 11:53:34 INFO SlidingWindowEstimator: Fit complete alpha=7.700620188831936 beta=0.016092658862082047 gamma=0.0005117833601331504 observations=10 funcValue=0.01866249038814475
+2026/04/21 11:53:34 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=7.700620188831936 beta=0.016092658862082047 gamma=0.0005117833601331504 updateCount=36
+2026/04/21 11:53:34 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=32.21260070800781 maxBatch=128 avgInTokens=802 avgOutTokens=714 avgTTFT=60.4271125793457 avgITL=21.2119197845459
+2026/04/21 11:53:34 INFO replica environment model=llama_13b accelerator=H100 replica=1 arrivalRateRPM=32.612300872802734 maxBatch=128 avgInTokens=802 avgOutTokens=714 avgTTFT=60.3311767578125 avgITL=21.317766189575195
+2026/04/21 11:53:34 INFO SlidingWindowEstimator: Fit complete alpha=11.968959821884438 beta=0.02376887779126238 gamma=0.00075425917851295 observations=10 funcValue=0.002347055879260256
+2026/04/21 11:53:34 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=11.968959821884438 beta=0.02376887779126238 gamma=0.00075425917851295 updateCount=36
+[GIN] 2026/04/21 - 11:53:34 | 200 |   50.040487ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:53:34 | 200 |        6.25µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:53:34 | 200 |      40.709µs |             ::1 | POST     "/merge"
+2026/04/21 11:54:03 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=28.003725051879883 maxBatch=128 avgInTokens=1976 avgOutTokens=1047 avgTTFT=87.8705825805664 avgITL=28.66024398803711
+2026/04/21 11:54:03 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=27.84760093688965 maxBatch=128 avgInTokens=1976 avgOutTokens=1047 avgTTFT=87.32689666748047 avgITL=28.757518768310547
+2026/04/21 11:54:03 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=29.41659927368164 maxBatch=128 avgInTokens=1976 avgOutTokens=1047 avgTTFT=93.47664642333984 avgITL=31.666709899902344
+2026/04/21 11:54:03 INFO replica environment model=granite_8b accelerator=H100 replica=3 arrivalRateRPM=31.20400047302246 maxBatch=128 avgInTokens=1976 avgOutTokens=1047 avgTTFT=102.36080169677734 avgITL=36.18236541748047
+2026/04/21 11:54:03 INFO SlidingWindowEstimator: Fit complete alpha=7.619312483232178 beta=0.016076812024888983 gamma=0.0005147306637891504 observations=10 funcValue=0.0044738970584905675
+2026/04/21 11:54:03 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=7.619312483232178 beta=0.016076812024888983 gamma=0.0005147306637891504 updateCount=37
+2026/04/21 11:54:03 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=52.59009552001953 maxBatch=128 avgInTokens=755 avgOutTokens=719 avgTTFT=79.48038482666016 avgITL=31.176334381103516
+2026/04/21 11:54:03 INFO SlidingWindowEstimator: Fit complete alpha=11.9309999236772 beta=0.02386736790828182 gamma=0.000755818803817371 observations=10 funcValue=0.002271944369544123
+2026/04/21 11:54:03 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=11.9309999236772 beta=0.02386736790828182 gamma=0.000755818803817371 updateCount=37
+[GIN] 2026/04/21 - 11:54:03 | 200 |   62.109246ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:54:03 | 200 |       6.292µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:54:03 | 200 |      39.333µs |             ::1 | POST     "/merge"
+2026/04/21 11:54:33 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=15.64362621307373 maxBatch=128 avgInTokens=2205 avgOutTokens=943 avgTTFT=67.86271667480469 avgITL=16.400339126586914
+2026/04/21 11:54:33 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=16.167699813842773 maxBatch=128 avgInTokens=2205 avgOutTokens=943 avgTTFT=67.62077331542969 avgITL=16.665464401245117
+2026/04/21 11:54:33 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=18.11009979248047 maxBatch=128 avgInTokens=2205 avgOutTokens=943 avgTTFT=69.57843780517578 avgITL=18.04448890686035
+2026/04/21 11:54:33 INFO replica environment model=granite_8b accelerator=H100 replica=3 arrivalRateRPM=15.959760665893555 maxBatch=128 avgInTokens=2205 avgOutTokens=943 avgTTFT=67.42454528808594 avgITL=16.76981544494629
+2026/04/21 11:54:33 INFO SlidingWindowEstimator: Fit complete alpha=7.646431704580612 beta=0.016147913468837777 gamma=0.0005144364173266208 observations=10 funcValue=0.005211236367973821
+2026/04/21 11:54:33 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=7.646431704580612 beta=0.016147913468837777 gamma=0.0005144364173266208 updateCount=38
+2026/04/21 11:54:33 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=37.59354782104492 maxBatch=128 avgInTokens=781 avgOutTokens=786 avgTTFT=68.929931640625 avgITL=26.073862075805664
+2026/04/21 11:54:34 INFO SlidingWindowEstimator: Fit complete alpha=11.99118348821053 beta=0.023829635579577135 gamma=0.0007545427527360755 observations=10 funcValue=0.002475112362155718
+2026/04/21 11:54:34 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=11.99118348821053 beta=0.023829635579577135 gamma=0.0007545427527360755 updateCount=38
+[GIN] 2026/04/21 - 11:54:34 | 200 |   61.626927ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:54:34 | 200 |        11.5µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:54:34 | 200 |      50.958µs |             ::1 | POST     "/merge"
+2026/04/21 11:55:03 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=20.946094512939453 maxBatch=128 avgInTokens=2251 avgOutTokens=1001 avgTTFT=78.64129638671875 avgITL=22.023317337036133
+2026/04/21 11:55:03 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=21.604000091552734 maxBatch=128 avgInTokens=2251 avgOutTokens=1001 avgTTFT=78.62637329101562 avgITL=22.931116104125977
+2026/04/21 11:55:03 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=21.508716583251953 maxBatch=128 avgInTokens=2251 avgOutTokens=1001 avgTTFT=78.20845031738281 avgITL=22.810842514038086
+2026/04/21 11:55:03 INFO SlidingWindowEstimator: Fit complete alpha=7.668253521144621 beta=0.01615617178211048 gamma=0.0005140776380460406 observations=10 funcValue=0.005415014182963521
+2026/04/21 11:55:03 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=7.668253521144621 beta=0.01615617178211048 gamma=0.0005140776380460406 updateCount=39
+2026/04/21 11:55:03 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=29.330900192260742 maxBatch=128 avgInTokens=743 avgOutTokens=791 avgTTFT=59.533348083496094 avgITL=21.100278854370117
+2026/04/21 11:55:03 INFO SlidingWindowEstimator: Fit complete alpha=12.018345326261551 beta=0.023942160832733046 gamma=0.0007522939345675227 observations=10 funcValue=0.0025579913638278406
+2026/04/21 11:55:03 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=12.018345326261551 beta=0.023942160832733046 gamma=0.0007522939345675227 updateCount=39
+[GIN] 2026/04/21 - 11:55:03 | 200 |   46.505039ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:55:03 | 200 |       6.083µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:55:03 | 200 |      39.959µs |             ::1 | POST     "/merge"
+2026/04/21 11:55:33 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=19.481700897216797 maxBatch=128 avgInTokens=1925 avgOutTokens=1011 avgTTFT=66.1663589477539 avgITL=17.79390525817871
+2026/04/21 11:55:33 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=20.219478607177734 maxBatch=128 avgInTokens=1925 avgOutTokens=1011 avgTTFT=66.48249816894531 avgITL=18.6844425201416
+2026/04/21 11:55:33 INFO replica environment model=granite_8b accelerator=H100 replica=2 arrivalRateRPM=20.039600372314453 maxBatch=128 avgInTokens=1925 avgOutTokens=1011 avgTTFT=66.64350891113281 avgITL=18.4981632232666
+2026/04/21 11:55:33 INFO SlidingWindowEstimator: Fit complete alpha=7.9757780991450264 beta=0.016202765636269326 gamma=0.0005008988493296882 observations=10 funcValue=0.0022320109219343288
+2026/04/21 11:55:33 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=7.9757780991450264 beta=0.016202765636269326 gamma=0.0005008988493296882 updateCount=40
+2026/04/21 11:55:33 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=26.624300003051758 maxBatch=128 avgInTokens=790 avgOutTokens=749 avgTTFT=57.9982795715332 avgITL=19.947486877441406
+2026/04/21 11:55:33 INFO SlidingWindowEstimator: Fit complete alpha=11.94229488995559 beta=0.024091183445318038 gamma=0.0007568946448453524 observations=10 funcValue=0.0021632637981110433
+2026/04/21 11:55:33 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=11.94229488995559 beta=0.024091183445318038 gamma=0.0007568946448453524 updateCount=40
+[GIN] 2026/04/21 - 11:55:33 | 200 |   58.574808ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:55:33 | 200 |       6.083µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:55:33 | 200 |     112.708µs |             ::1 | POST     "/merge"
+2026/04/21 11:56:03 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=31.047399520874023 maxBatch=128 avgInTokens=2186 avgOutTokens=1046 avgTTFT=121.83413696289062 avgITL=45.20820236206055
+2026/04/21 11:56:03 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=30.756000518798828 maxBatch=128 avgInTokens=2186 avgOutTokens=1046 avgTTFT=122.1285629272461 avgITL=44.4574089050293
+2026/04/21 11:56:03 INFO SlidingWindowEstimator: Fit complete alpha=8.046939874407373 beta=0.0161753804638846 gamma=0.0004984680186655309 observations=10 funcValue=0.0024640649682077433
+2026/04/21 11:56:03 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.046939874407373 beta=0.0161753804638846 gamma=0.0004984680186655309 updateCount=41
+2026/04/21 11:56:03 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=30.038898468017578 maxBatch=128 avgInTokens=820 avgOutTokens=753 avgTTFT=62.20271301269531 avgITL=21.398090362548828
+2026/04/21 11:56:03 INFO SlidingWindowEstimator: Fit complete alpha=11.913283933863593 beta=0.02441320308234287 gamma=0.0007555190618030597 observations=10 funcValue=0.0016959767962264913
+2026/04/21 11:56:03 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=11.913283933863593 beta=0.02441320308234287 gamma=0.0007555190618030597 updateCount=41
+[GIN] 2026/04/21 - 11:56:03 | 200 |   64.934713ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:56:03 | 200 |       5.583µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:56:03 | 200 |        37.5µs |             ::1 | POST     "/merge"
+2026/04/21 11:56:33 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=30.719743728637695 maxBatch=128 avgInTokens=1869 avgOutTokens=1047 avgTTFT=92.75563049316406 avgITL=32.00343704223633
+2026/04/21 11:56:33 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=29.69770050048828 maxBatch=128 avgInTokens=1869 avgOutTokens=1047 avgTTFT=87.08224487304688 avgITL=29.946718215942383
+2026/04/21 11:56:33 INFO SlidingWindowEstimator: Fit complete alpha=8.040711496369283 beta=0.01619177815329337 gamma=0.0004995098892434607 observations=10 funcValue=0.002997279294063743
+2026/04/21 11:56:33 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.040711496369283 beta=0.01619177815329337 gamma=0.0004995098892434607 updateCount=42
+2026/04/21 11:56:33 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=28.324174880981445 maxBatch=128 avgInTokens=790 avgOutTokens=708 avgTTFT=57.51675796508789 avgITL=19.759109497070312
+2026/04/21 11:56:33 INFO SlidingWindowEstimator: Fit complete alpha=11.923954934882866 beta=0.02447263974002086 gamma=0.0007526441632942224 observations=10 funcValue=0.001004226566185942
+2026/04/21 11:56:33 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=11.923954934882866 beta=0.02447263974002086 gamma=0.0007526441632942224 updateCount=42
+[GIN] 2026/04/21 - 11:56:33 | 200 |   58.046225ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:56:33 | 200 |      10.083µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:56:33 | 200 |      33.875µs |             ::1 | POST     "/merge"
+2026/04/21 11:57:03 INFO replica environment model=granite_8b accelerator=H100 replica=0 arrivalRateRPM=31.817028045654297 maxBatch=128 avgInTokens=1990 avgOutTokens=1033 avgTTFT=104.93685913085938 avgITL=36.908905029296875
+2026/04/21 11:57:03 INFO replica environment model=granite_8b accelerator=H100 replica=1 arrivalRateRPM=31.332979202270508 maxBatch=128 avgInTokens=1990 avgOutTokens=1033 avgTTFT=102.45386505126953 avgITL=37.0349006652832
+2026/04/21 11:57:03 INFO SlidingWindowEstimator: Fit complete alpha=8.014133192208098 beta=0.016269789570822833 gamma=0.0004995333800616855 observations=10 funcValue=0.002438380851868628
+2026/04/21 11:57:03 INFO sliding-window tuned parameters model=granite_8b accelerator=H100 alpha=8.014133192208098 beta=0.016269789570822833 gamma=0.0004995333800616855 updateCount=43
+2026/04/21 11:57:03 INFO replica environment model=llama_13b accelerator=H100 replica=0 arrivalRateRPM=26.607086181640625 maxBatch=128 avgInTokens=841 avgOutTokens=774 avgTTFT=62.135353088378906 avgITL=21.144180297851562
+2026/04/21 11:57:03 INFO SlidingWindowEstimator: Fit complete alpha=11.975499167265196 beta=0.02456969861846336 gamma=0.0007501422095127419 observations=10 funcValue=0.0014706642842178873
+2026/04/21 11:57:03 INFO sliding-window tuned parameters model=llama_13b accelerator=H100 alpha=11.975499167265196 beta=0.02456969861846336 gamma=0.0007501422095127419 updateCount=43
+[GIN] 2026/04/21 - 11:57:03 | 200 |     53.9949ms |             ::1 | POST     "/tune"
+[GIN] 2026/04/21 - 11:57:03 | 200 |      12.416µs |             ::1 | GET      "/warmup"
+[GIN] 2026/04/21 - 11:57:03 | 200 |      40.583µs |             ::1 | POST     "/merge"

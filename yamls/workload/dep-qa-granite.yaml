@@ -9,7 +9,7 @@ metadata:
     inferno.server.model: granite_8b
     inferno.server.class: Premium
     inferno.server.allocation.accelerator: H100
-    inferno.server.allocation.maxbatchsize: "64"
+    inferno.server.allocation.maxbatchsize: "128"
     inferno.server.allocation.maxqueuesize: "128"
     inferno.server.load.rpm: "60"
     inferno.server.load.intokens: "2048"
@@ -39,7 +39,7 @@ spec:
         - name: NOISE_ENABLED
           value: "true"
         - name: NOISE_STD_FRACTION
-          value: "0.02"
+          value: "0.01"
         resources:
           requests:
             memory: "128Mi"

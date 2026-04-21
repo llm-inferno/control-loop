@@ -6,7 +6,7 @@
       "modelTargets": [
         {
           "model": "granite_8b",
-          "slo-itl": 20,
+          "slo-itl": 30,
           "slo-ttft": 200
         },
         {

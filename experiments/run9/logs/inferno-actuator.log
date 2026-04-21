@@ -1,0 +1,141 @@
+Running internal in the cluster
+Kube client created
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /update                   --> github.com/llm-inferno/control-loop/pkg/actuator.update (3 handlers)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://github.com/gin-gonic/gin/blob/master/docs/doc.md#dont-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :3303
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=55.79; inTok=1915; outTok=1029; acc=H100->H100; num=4->2; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=29.98; inTok=820; outTok=799; acc=H100->H100; num=2->1; batch=128->128 
+[GIN] 2026/04/21 - 11:36:04 | 200 |   11.911882ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=58.46; inTok=2172; outTok=1032; acc=H100->H100; num=2->3; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=30.05; inTok=754; outTok=767; acc=H100->H100; num=1->1; batch=128->128 
+[GIN] 2026/04/21 - 11:36:33 | 200 |    9.604514ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=61.71; inTok=2221; outTok=966; acc=H100->H100; num=3->3; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=27.20; inTok=822; outTok=766; acc=H100->H100; num=1->1; batch=128->128 
+[GIN] 2026/04/21 - 11:37:03 | 200 |    7.781895ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=58.63; inTok=2198; outTok=1021; acc=H100->H100; num=3->3; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=28.52; inTok=759; outTok=836; acc=H100->H100; num=1->1; batch=128->128 
+[GIN] 2026/04/21 - 11:37:33 | 200 |    7.946936ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=55.37; inTok=2045; outTok=1071; acc=H100->H100; num=3->3; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=29.02; inTok=796; outTok=835; acc=H100->H100; num=1->1; batch=128->128 
+[GIN] 2026/04/21 - 11:38:03 | 200 |    7.863312ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=63.09; inTok=1827; outTok=1056; acc=H100->H100; num=3->3; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=30.33; inTok=747; outTok=776; acc=H100->H100; num=1->1; batch=128->128 
+[GIN] 2026/04/21 - 11:38:33 | 200 |    7.145855ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=63.80; inTok=2112; outTok=1096; acc=H100->H100; num=3->3; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=32.44; inTok=815; outTok=828; acc=H100->H100; num=1->1; batch=128->128 
+[GIN] 2026/04/21 - 11:39:03 | 200 |    7.847812ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=61.52; inTok=1956; outTok=1115; acc=H100->H100; num=3->3; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=30.31; inTok=782; outTok=794; acc=H100->H100; num=1->1; batch=128->128 
+[GIN] 2026/04/21 - 11:39:33 | 200 |    7.461938ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=66.55; inTok=1931; outTok=1053; acc=H100->H100; num=3->3; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=40.90; inTok=781; outTok=818; acc=H100->H100; num=1->1; batch=128->128 
+[GIN] 2026/04/21 - 11:40:03 | 200 |    7.864729ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=90.47; inTok=1981; outTok=1108; acc=H100->H100; num=3->4; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=45.44; inTok=727; outTok=806; acc=H100->H100; num=1->1; batch=128->128 
+[GIN] 2026/04/21 - 11:40:33 | 200 |    8.635184ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=124.79; inTok=2061; outTok=1078; acc=H100->H100; num=4->5; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=63.40; inTok=746; outTok=707; acc=H100->H100; num=1->1; batch=128->128 
+[GIN] 2026/04/21 - 11:41:04 | 200 |    8.703934ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=129.69; inTok=2078; outTok=1172; acc=H100->H100; num=5->6; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=65.26; inTok=742; outTok=763; acc=H100->H100; num=1->1; batch=128->128 
+[GIN] 2026/04/21 - 11:41:35 | 200 |    9.154599ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=165.10; inTok=2054; outTok=1125; acc=H100->H100; num=6->7; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=83.89; inTok=765; outTok=717; acc=H100->H100; num=1->2; batch=128->128 
+[GIN] 2026/04/21 - 11:42:06 | 200 |   10.848179ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=194.90; inTok=2052; outTok=1047; acc=H100->H100; num=7->8; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=92.37; inTok=737; outTok=791; acc=H100->H100; num=2->2; batch=128->128 
+[GIN] 2026/04/21 - 11:42:36 | 200 |    8.963559ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=223.87; inTok=1968; outTok=1022; acc=H100->H100; num=8->8; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=117.45; inTok=829; outTok=770; acc=H100->H100; num=2->2; batch=128->128 
+[GIN] 2026/04/21 - 11:43:06 | 200 |    7.627229ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=222.98; inTok=1978; outTok=1033; acc=H100->H100; num=8->8; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=117.55; inTok=831; outTok=762; acc=H100->H100; num=2->2; batch=128->128 
+[GIN] 2026/04/21 - 11:43:35 | 200 |   14.870876ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=273.94; inTok=2129; outTok=1052; acc=H100->H100; num=8->11; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=120.81; inTok=799; outTok=731; acc=H100->H100; num=2->2; batch=128->128 
+[GIN] 2026/04/21 - 11:44:05 | 200 |    9.802223ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=259.66; inTok=2005; outTok=1081; acc=H100->H100; num=11->10; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=140.76; inTok=807; outTok=724; acc=H100->H100; num=2->3; batch=128->128 
+[GIN] 2026/04/21 - 11:44:36 | 200 |   19.999154ms |             ::1 | POST     "/update"
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=151.80; inTok=814; outTok=821; acc=H100->H100; num=3->3; batch=128->128 
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=304.46; inTok=1904; outTok=1081; acc=H100->H100; num=10->11; batch=128->128 
+[GIN] 2026/04/21 - 11:45:08 | 200 |   11.113637ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=307.77; inTok=1887; outTok=989; acc=H100->H100; num=11->10; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=155.63; inTok=808; outTok=830; acc=H100->H100; num=3->3; batch=128->128 
+[GIN] 2026/04/21 - 11:45:38 | 200 |    9.041434ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=295.39; inTok=2324; outTok=1063; acc=H100->H100; num=10->13; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=154.35; inTok=760; outTok=814; acc=H100->H100; num=3->3; batch=128->128 
+[GIN] 2026/04/21 - 11:46:06 | 200 |    9.462766ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=302.35; inTok=2146; outTok=1015; acc=H100->H100; num=13->12; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=157.79; inTok=772; outTok=723; acc=H100->H100; num=3->3; batch=128->128 
+[GIN] 2026/04/21 - 11:46:38 | 200 |    9.492682ms |             ::1 | POST     "/update"
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=166.30; inTok=738; outTok=718; acc=H100->H100; num=3->3; batch=128->128 
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=314.62; inTok=2115; outTok=1082; acc=H100->H100; num=12->13; batch=128->128 
+[GIN] 2026/04/21 - 11:47:08 | 200 |    9.264391ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=313.21; inTok=2076; outTok=1089; acc=H100->H100; num=13->13; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=146.14; inTok=765; outTok=803; acc=H100->H100; num=3->3; batch=128->128 
+[GIN] 2026/04/21 - 11:47:38 | 200 |    8.730851ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=299.10; inTok=2114; outTok=1062; acc=H100->H100; num=13->12; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=147.24; inTok=795; outTok=802; acc=H100->H100; num=3->3; batch=128->128 
+[GIN] 2026/04/21 - 11:48:08 | 200 |    9.611432ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=288.86; inTok=2087; outTok=908; acc=H100->H100; num=12->10; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=133.25; inTok=804; outTok=773; acc=H100->H100; num=3->3; batch=128->128 
+[GIN] 2026/04/21 - 11:48:37 | 200 |    9.640682ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=311.24; inTok=1953; outTok=1081; acc=H100->H100; num=10->12; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=135.03; inTok=768; outTok=807; acc=H100->H100; num=3->3; batch=128->128 
+[GIN] 2026/04/21 - 11:49:06 | 200 |   10.167055ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=304.82; inTok=2067; outTok=986; acc=H100->H100; num=12->11; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=157.15; inTok=776; outTok=788; acc=H100->H100; num=3->3; batch=128->128 
+[GIN] 2026/04/21 - 11:49:37 | 200 |    9.762473ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=300.97; inTok=2108; outTok=1036; acc=H100->H100; num=11->12; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=148.11; inTok=771; outTok=766; acc=H100->H100; num=3->3; batch=128->128 
+[GIN] 2026/04/21 - 11:50:07 | 200 |     9.57064ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=284.52; inTok=2072; outTok=1034; acc=H100->H100; num=12->11; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=140.16; inTok=708; outTok=776; acc=H100->H100; num=3->3; batch=128->128 
+[GIN] 2026/04/21 - 11:50:37 | 200 |    9.164808ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=247.28; inTok=2144; outTok=1014; acc=H100->H100; num=11->9; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=123.85; inTok=740; outTok=825; acc=H100->H100; num=3->3; batch=128->128 
+[GIN] 2026/04/21 - 11:51:07 | 200 |   10.171805ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=231.32; inTok=2145; outTok=1017; acc=H100->H100; num=9->9; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=108.80; inTok=851; outTok=832; acc=H100->H100; num=3->2; batch=128->128 
+[GIN] 2026/04/21 - 11:51:36 | 200 |    9.326391ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=207.87; inTok=2027; outTok=1018; acc=H100->H100; num=9->8; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=91.83; inTok=721; outTok=810; acc=H100->H100; num=2->2; batch=128->128 
+[GIN] 2026/04/21 - 11:52:05 | 200 |    9.382182ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=184.76; inTok=2113; outTok=1073; acc=H100->H100; num=8->8; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=77.51; inTok=727; outTok=811; acc=H100->H100; num=2->2; batch=128->128 
+[GIN] 2026/04/21 - 11:52:35 | 200 |    7.572729ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=159.39; inTok=1961; outTok=1017; acc=H100->H100; num=8->6; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=72.90; inTok=760; outTok=789; acc=H100->H100; num=2->2; batch=128->128 
+[GIN] 2026/04/21 - 11:53:05 | 200 |    9.439849ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=122.14; inTok=2083; outTok=942; acc=H100->H100; num=6->4; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=64.82; inTok=802; outTok=714; acc=H100->H100; num=2->1; batch=128->128 
+[GIN] 2026/04/21 - 11:53:34 | 200 |   10.064431ms |             ::1 | POST     "/update"
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=52.68; inTok=755; outTok=719; acc=H100->H100; num=1->1; batch=128->128 
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=116.49; inTok=1976; outTok=1047; acc=H100->H100; num=4->5; batch=128->128 
+[GIN] 2026/04/21 - 11:54:03 | 200 |    9.198891ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=66.36; inTok=2205; outTok=943; acc=H100->H100; num=5->3; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=37.98; inTok=781; outTok=786; acc=H100->H100; num=1->1; batch=128->128 
+[GIN] 2026/04/21 - 11:54:34 | 200 |    8.485568ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=64.57; inTok=2251; outTok=1001; acc=H100->H100; num=3->3; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=29.33; inTok=743; outTok=791; acc=H100->H100; num=1->1; batch=128->128 
+[GIN] 2026/04/21 - 11:55:03 | 200 |    7.964985ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=59.75; inTok=1925; outTok=1011; acc=H100->H100; num=3->2; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=26.62; inTok=790; outTok=749; acc=H100->H100; num=1->1; batch=128->128 
+[GIN] 2026/04/21 - 11:55:33 | 200 |    9.323982ms |             ::1 | POST     "/update"
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=30.04; inTok=820; outTok=753; acc=H100->H100; num=1->1; batch=128->128 
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=61.80; inTok=2186; outTok=1046; acc=H100->H100; num=2->3; batch=128->128 
+[GIN] 2026/04/21 - 11:56:03 | 200 |    8.941858ms |             ::1 | POST     "/update"
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=60.78; inTok=1869; outTok=1047; acc=H100->H100; num=3->3; batch=128->128 
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=28.67; inTok=790; outTok=708; acc=H100->H100; num=1->1; batch=128->128 
+[GIN] 2026/04/21 - 11:56:33 | 200 |    7.351653ms |             ::1 | POST     "/update"
+srv=[qa-llama/Bronze/llama_13b]: arrivalRateRPM=26.90; inTok=841; outTok=774; acc=H100->H100; num=1->1; batch=128->128 
+srv=[qa-granite/Premium/granite_8b]: arrivalRateRPM=63.41; inTok=1990; outTok=1033; acc=H100->H100; num=3->3; batch=128->128 
+[GIN] 2026/04/21 - 11:57:03 | 200 |     7.26757ms |             ::1 | POST     "/update"

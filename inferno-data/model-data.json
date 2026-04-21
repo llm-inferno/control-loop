@@ -4,22 +4,22 @@
       "name": "granite_8b",
       "acc": "H100",
       "accCount": 1,
-      "maxBatchSize": 64,
-      "atTokens": 512
+      "maxBatchSize": 128,
+      "atTokens": 1024
     },
     {
       "name": "granite_8b",
       "acc": "A100",
       "accCount": 1,
-      "maxBatchSize": 64,
-      "atTokens": 512
+      "maxBatchSize": 128,
+      "atTokens": 1024
     },
     {
       "name": "llama_13b",
       "acc": "H100",
       "accCount": 1,
-      "maxBatchSize": 64,
-      "atTokens": 512
+      "maxBatchSize": 128,
+      "atTokens": 1024
     }
   ]
 }

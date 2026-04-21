@@ -9,12 +9,12 @@ import (
 
 const (
 	// overloadTargetUtilization is the initial fraction of MaxRPS for the first re-simulation
-	// attempt when a pod reports saturation, targeting a stable ~90% utilization operating point.
-	overloadTargetUtilization = float32(0.90)
+	// attempt when a pod reports saturation, targeting a stable ~95% utilization operating point.
+	overloadTargetUtilization = float32(0.95)
 
 	// overloadRetryStep is the utilization reduction applied on each successive re-simulation
-	// attempt (0.90 → 0.75 → 0.60 of MaxRPS).
-	overloadRetryStep = float32(0.15)
+	// attempt (0.95 → 0.90 → 0.85 of MaxRPS).
+	overloadRetryStep = float32(0.05)
 
 	// overloadMaxRetries is the maximum number of re-simulation attempts before the pod is
 	// skipped entirely when saturation persists.
