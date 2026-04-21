@@ -111,7 +111,7 @@ spec:
           - name: KUBECONFIG
             value: ""
           - name: INFERNO_STARTUP_DELAY
-            value: "20"
+            value: "15"
         ports:
         - containerPort: 3301
         command: ["collector"]
@@ -175,6 +175,8 @@ spec:
             value: "true"
           - name: TUNER_ESTIMATOR_MODE
             value: "sliding-window"
+          - name: TUNER_INIT_FIT_THRESHOLD
+            value: "10"
         ports:
         - containerPort: 3304
         command: ["/app/tuner"]

@@ -21,8 +21,8 @@ data:
           "name": "granite_8b",
           "acc": "H100",
           "accCount": 1,
-          "maxBatchSize": 64,
-          "atTokens": 512,
+          "maxBatchSize": 128,
+          "atTokens": 1000,
           "perfParms": {
             "alpha": 8.0,
             "beta": 0.016,
@@ -33,8 +33,8 @@ data:
           "name": "llama_13b",
           "acc": "H100",
           "accCount": 1,
-          "maxBatchSize": 64,
-          "atTokens": 512,
+          "maxBatchSize": 128,
+          "atTokens": 1000,
           "perfParms": {
             "alpha": 12.0,
             "beta": 0.024,

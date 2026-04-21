@@ -1,0 +1,326 @@
+phases: loaded 5 phase(s):
+  phase 1: duration=6m0s ratio=1.0000 multiplier 1.0000 -> 1.0000
+  phase 2: duration=5m0s ratio=5.0000 multiplier 1.0000 -> 5.0000
+  phase 3: duration=5m0s ratio=1.0000 multiplier 5.0000 -> 5.0000
+  phase 4: duration=5m0s ratio=0.2000 multiplier 5.0000 -> 1.0000
+  phase 5: hold forever (multiplier=1.0000)
+Running with interval=20(sec), alpha=0.100, theta=0.800, skew=0.050, startupDelay=15s
+Running internal in the cluster
+Kube client created
+phases: entering phase 1 (multiplier=1.0000)
+deployment infer/qa-granite-8b: phase=1 mult=1.0000 nomRPM=60.0000
+deployment infer/qa-llama-13b: phase=1 mult=1.0000 nomRPM=30.0000
+pod qa-llama-13b-7d96584489-8gz5d: skipping (within startup delay)
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=1 mult=1.0000 nomRPM=60.0000
+deployment infer/qa-llama-13b: phase=1 mult=1.0000 nomRPM=30.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=1 mult=1.0000 nomRPM=60.0000
+deployment infer/qa-llama-13b: phase=1 mult=1.0000 nomRPM=30.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=1 mult=1.0000 nomRPM=60.0000
+deployment infer/qa-llama-13b: phase=1 mult=1.0000 nomRPM=30.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=1 mult=1.0000 nomRPM=60.0000
+deployment infer/qa-llama-13b: phase=1 mult=1.0000 nomRPM=30.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=1 mult=1.0000 nomRPM=60.0000
+deployment infer/qa-llama-13b: phase=1 mult=1.0000 nomRPM=30.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=1 mult=1.0000 nomRPM=60.0000
+deployment infer/qa-llama-13b: phase=1 mult=1.0000 nomRPM=30.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=1 mult=1.0000 nomRPM=60.0000
+deployment infer/qa-llama-13b: phase=1 mult=1.0000 nomRPM=30.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=1 mult=1.0000 nomRPM=60.0000
+deployment infer/qa-llama-13b: phase=1 mult=1.0000 nomRPM=30.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=1 mult=1.0000 nomRPM=60.0000
+pod qa-granite-8b-848c5c558d-jrdwr: skipping (within startup delay)
+deployment infer/qa-llama-13b: phase=1 mult=1.0000 nomRPM=30.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=1 mult=1.0000 nomRPM=60.0000
+deployment infer/qa-llama-13b: phase=1 mult=1.0000 nomRPM=30.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=1 mult=1.0000 nomRPM=60.0000
+deployment infer/qa-llama-13b: phase=1 mult=1.0000 nomRPM=30.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=1 mult=1.0000 nomRPM=60.0000
+deployment infer/qa-llama-13b: phase=1 mult=1.0000 nomRPM=30.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=1 mult=1.0000 nomRPM=60.0000
+deployment infer/qa-llama-13b: phase=1 mult=1.0000 nomRPM=30.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=1 mult=1.0000 nomRPM=60.0000
+pod qa-granite-8b-848c5c558d-jdftg: skipping (within startup delay)
+deployment infer/qa-llama-13b: phase=1 mult=1.0000 nomRPM=30.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=1 mult=1.0000 nomRPM=60.0000
+deployment infer/qa-llama-13b: phase=1 mult=1.0000 nomRPM=30.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=1 mult=1.0000 nomRPM=60.0000
+deployment infer/qa-llama-13b: phase=1 mult=1.0000 nomRPM=30.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=1 mult=1.0000 nomRPM=60.0000
+deployment infer/qa-llama-13b: phase=1 mult=1.0000 nomRPM=30.0000
+2 deployment(s) updated
+Waiting 20s...
+phases: entering phase 2 (multiplier=1.0000)
+deployment infer/qa-granite-8b: phase=2 mult=1.0315 nomRPM=61.8919
+deployment infer/qa-llama-13b: phase=2 mult=1.0315 nomRPM=30.9459
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=2 mult=1.2999 nomRPM=77.9929
+deployment infer/qa-llama-13b: phase=2 mult=1.2999 nomRPM=38.9964
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=2 mult=1.5682 nomRPM=94.0934
+deployment infer/qa-llama-13b: phase=2 mult=1.5682 nomRPM=47.0467
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=2 mult=1.8366 nomRPM=110.1971
+pod qa-granite-8b-848c5c558d-8mdzn: skipping (within startup delay)
+deployment infer/qa-llama-13b: phase=2 mult=1.8366 nomRPM=55.0986
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=2 mult=2.1049 nomRPM=126.2969
+deployment infer/qa-llama-13b: phase=2 mult=2.1049 nomRPM=63.1485
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=2 mult=2.3732 nomRPM=142.3929
+pod qa-granite-8b-848c5c558d-sg7gm: skipping (within startup delay)
+deployment infer/qa-llama-13b: phase=2 mult=2.3732 nomRPM=71.1964
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=2 mult=2.6414 nomRPM=158.4870
+deployment infer/qa-llama-13b: phase=2 mult=2.6414 nomRPM=79.2435
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=2 mult=2.9099 nomRPM=174.5940
+deployment infer/qa-llama-13b: phase=2 mult=2.9099 nomRPM=87.2970
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=2 mult=3.1783 nomRPM=190.7002
+pod qa-granite-8b-848c5c558d-6k5c2: skipping (within startup delay)
+deployment infer/qa-llama-13b: phase=2 mult=3.1783 nomRPM=95.3501
+pod qa-llama-13b-7d96584489-9p58q: skipping (within startup delay)
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=2 mult=3.4466 nomRPM=206.7963
+pod qa-granite-8b-848c5c558d-k97d7: skipping (within startup delay)
+deployment infer/qa-llama-13b: phase=2 mult=3.4466 nomRPM=103.3982
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=2 mult=3.7149 nomRPM=222.8961
+deployment infer/qa-llama-13b: phase=2 mult=3.7149 nomRPM=111.4480
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=2 mult=3.9848 nomRPM=239.0906
+deployment infer/qa-llama-13b: phase=2 mult=3.9848 nomRPM=119.5453
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=2 mult=4.2547 nomRPM=255.2849
+pod qa-granite-8b-848c5c558d-9mh8q: skipping (within startup delay)
+pod qa-granite-8b-848c5c558d-k8499: skipping (within startup delay)
+pod qa-granite-8b-848c5c558d-stg2j: skipping (within startup delay)
+pod qa-granite-8b-848c5c558d-tg6nt: skipping (within startup delay)
+deployment infer/qa-llama-13b: phase=2 mult=4.2547 nomRPM=127.6425
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=2 mult=4.5246 nomRPM=271.4775
+deployment infer/qa-llama-13b: phase=2 mult=4.5246 nomRPM=135.7388
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=2 mult=4.8052 nomRPM=288.3139
+deployment infer/qa-llama-13b: phase=2 mult=4.8052 nomRPM=144.1570
+pod qa-llama-13b-7d96584489-rvsks: skipping (within startup delay)
+2 deployment(s) updated
+Waiting 20s...
+phases: entering phase 3 (multiplier=5.0000)
+deployment infer/qa-granite-8b: phase=3 mult=5.0000 nomRPM=300.0000
+pod qa-granite-8b-848c5c558d-gl7wx: skipping (within startup delay)
+pod qa-granite-8b-848c5c558d-nztvm: skipping (within startup delay)
+pod qa-granite-8b-848c5c558d-wrljz: skipping (within startup delay)
+deployment infer/qa-llama-13b: phase=3 mult=5.0000 nomRPM=150.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=3 mult=5.0000 nomRPM=300.0000
+deployment infer/qa-llama-13b: phase=3 mult=5.0000 nomRPM=150.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=3 mult=5.0000 nomRPM=300.0000
+deployment infer/qa-llama-13b: phase=3 mult=5.0000 nomRPM=150.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=3 mult=5.0000 nomRPM=300.0000
+deployment infer/qa-llama-13b: phase=3 mult=5.0000 nomRPM=150.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=3 mult=5.0000 nomRPM=300.0000
+deployment infer/qa-llama-13b: phase=3 mult=5.0000 nomRPM=150.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=3 mult=5.0000 nomRPM=300.0000
+deployment infer/qa-llama-13b: phase=3 mult=5.0000 nomRPM=150.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=3 mult=5.0000 nomRPM=300.0000
+deployment infer/qa-llama-13b: phase=3 mult=5.0000 nomRPM=150.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=3 mult=5.0000 nomRPM=300.0000
+deployment infer/qa-llama-13b: phase=3 mult=5.0000 nomRPM=150.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=3 mult=5.0000 nomRPM=300.0000
+deployment infer/qa-llama-13b: phase=3 mult=5.0000 nomRPM=150.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=3 mult=5.0000 nomRPM=300.0000
+deployment infer/qa-llama-13b: phase=3 mult=5.0000 nomRPM=150.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=3 mult=5.0000 nomRPM=300.0000
+deployment infer/qa-llama-13b: phase=3 mult=5.0000 nomRPM=150.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=3 mult=5.0000 nomRPM=300.0000
+deployment infer/qa-llama-13b: phase=3 mult=5.0000 nomRPM=150.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=3 mult=5.0000 nomRPM=300.0000
+deployment infer/qa-llama-13b: phase=3 mult=5.0000 nomRPM=150.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=3 mult=5.0000 nomRPM=300.0000
+deployment infer/qa-llama-13b: phase=3 mult=5.0000 nomRPM=150.0000
+pod qa-llama-13b-7d96584489-z97fx: skipping (within startup delay)
+2 deployment(s) updated
+Waiting 20s...
+phases: entering phase 4 (multiplier=5.0000)
+deployment infer/qa-granite-8b: phase=4 mult=4.8948 nomRPM=293.6878
+pod qa-granite-8b-848c5c558d-2ddh2: skipping (within startup delay)
+deployment infer/qa-llama-13b: phase=4 mult=4.8948 nomRPM=146.8439
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=4 mult=4.6090 nomRPM=276.5411
+deployment infer/qa-llama-13b: phase=4 mult=4.6090 nomRPM=138.2706
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=4 mult=4.3205 nomRPM=259.2317
+deployment infer/qa-llama-13b: phase=4 mult=4.3205 nomRPM=129.6159
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=4 mult=4.0399 nomRPM=242.3954
+deployment infer/qa-llama-13b: phase=4 mult=4.0399 nomRPM=121.1977
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=4 mult=3.7596 nomRPM=225.5730
+deployment infer/qa-llama-13b: phase=4 mult=3.7596 nomRPM=112.7865
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=4 mult=3.4792 nomRPM=208.7542
+deployment infer/qa-llama-13b: phase=4 mult=3.4792 nomRPM=104.3771
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=4 mult=3.1960 nomRPM=191.7596
+deployment infer/qa-llama-13b: phase=4 mult=3.1960 nomRPM=95.8798
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=4 mult=2.9235 nomRPM=175.4108
+deployment infer/qa-llama-13b: phase=4 mult=2.9235 nomRPM=87.7054
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=4 mult=2.6536 nomRPM=159.2154
+deployment infer/qa-llama-13b: phase=4 mult=2.6536 nomRPM=79.6077
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=4 mult=2.3838 nomRPM=143.0282
+deployment infer/qa-llama-13b: phase=4 mult=2.3838 nomRPM=71.5141
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=4 mult=2.1140 nomRPM=126.8422
+deployment infer/qa-llama-13b: phase=4 mult=2.1140 nomRPM=63.4211
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=4 mult=1.8457 nomRPM=110.7413
+deployment infer/qa-llama-13b: phase=4 mult=1.8457 nomRPM=55.3706
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=4 mult=1.5773 nomRPM=94.6401
+deployment infer/qa-llama-13b: phase=4 mult=1.5773 nomRPM=47.3200
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=4 mult=1.3088 nomRPM=78.5308
+deployment infer/qa-llama-13b: phase=4 mult=1.3088 nomRPM=39.2654
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=4 mult=1.0405 nomRPM=62.4281
+deployment infer/qa-llama-13b: phase=4 mult=1.0405 nomRPM=31.2141
+2 deployment(s) updated
+Waiting 20s...
+phases: entering phase 5 (multiplier=1.0000)
+deployment infer/qa-granite-8b: phase=5 mult=1.0000 nomRPM=60.0000
+deployment infer/qa-llama-13b: phase=5 mult=1.0000 nomRPM=30.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=5 mult=1.0000 nomRPM=60.0000
+deployment infer/qa-llama-13b: phase=5 mult=1.0000 nomRPM=30.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=5 mult=1.0000 nomRPM=60.0000
+deployment infer/qa-llama-13b: phase=5 mult=1.0000 nomRPM=30.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=5 mult=1.0000 nomRPM=60.0000
+deployment infer/qa-llama-13b: phase=5 mult=1.0000 nomRPM=30.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=5 mult=1.0000 nomRPM=60.0000
+deployment infer/qa-llama-13b: phase=5 mult=1.0000 nomRPM=30.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=5 mult=1.0000 nomRPM=60.0000
+deployment infer/qa-llama-13b: phase=5 mult=1.0000 nomRPM=30.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=5 mult=1.0000 nomRPM=60.0000
+deployment infer/qa-llama-13b: phase=5 mult=1.0000 nomRPM=30.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=5 mult=1.0000 nomRPM=60.0000
+pod qa-granite-8b-848c5c558d-xxwks: skipping (within startup delay)
+deployment infer/qa-llama-13b: phase=5 mult=1.0000 nomRPM=30.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=5 mult=1.0000 nomRPM=60.0000
+deployment infer/qa-llama-13b: phase=5 mult=1.0000 nomRPM=30.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=5 mult=1.0000 nomRPM=60.0000
+deployment infer/qa-llama-13b: phase=5 mult=1.0000 nomRPM=30.0000
+2 deployment(s) updated
+Waiting 20s...
+deployment infer/qa-granite-8b: phase=5 mult=1.0000 nomRPM=60.0000
+pod qa-granite-8b-848c5c558d-wsb58: skipping (within startup delay)
+deployment infer/qa-llama-13b: phase=5 mult=1.0000 nomRPM=30.0000
+2 deployment(s) updated
+Waiting 20s...

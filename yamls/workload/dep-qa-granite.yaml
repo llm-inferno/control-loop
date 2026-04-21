@@ -39,7 +39,7 @@ spec:
         - name: NOISE_ENABLED
           value: "true"
         - name: NOISE_STD_FRACTION
-          value: "0.01"
+          value: "0.02"
         resources:
           requests:
             memory: "128Mi"
