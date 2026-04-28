@@ -4,8 +4,8 @@ go 1.24.0
 
 require (
 	github.com/gin-gonic/gin v1.11.0
-	github.com/llm-inferno/optimizer v0.7.3
-	github.com/llm-inferno/optimizer-light v0.7.6
+	github.com/llm-inferno/optimizer v0.7.4
+	github.com/llm-inferno/optimizer-light v0.7.7
 	github.com/prometheus/client_golang v1.22.0
 	github.com/prometheus/common v0.64.0
 	gopkg.in/yaml.v3 v3.0.1
@@ -43,7 +43,7 @@ require (
 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/llm-inferno/lpsolve v0.1.0 // indirect
-	github.com/llm-inferno/queue-analysis v0.5.0 // indirect
+	github.com/llm-inferno/queue-analysis v0.6.0 // indirect
 	github.com/mailru/easyjson v0.9.0 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
