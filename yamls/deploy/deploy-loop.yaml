@@ -174,7 +174,7 @@ spec:
           - name: TUNER_INIT_HOLD_BACK
             value: "true"
           - name: TUNER_ESTIMATOR_MODE
-            value: "sliding-window"
+            value: "ekf"
           - name: TUNER_INIT_FIT_THRESHOLD
             value: "10"
         ports:

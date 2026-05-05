@@ -224,6 +224,8 @@ in the 46–90ms range across all phases (Nelder-Mead on 10 observations), unaff
 
 ![Latency vs SLO Targets](figs/run10_latency.png)
 
+![Average Input and Output Tokens per Request](figs/run10_tokens.png)
+
 ![Sliding-Window α Parameter Convergence](figs/run10_swe_alpha.png)
 
 ![Sliding-Window β Parameter Stability](figs/run10_swe_beta.png)

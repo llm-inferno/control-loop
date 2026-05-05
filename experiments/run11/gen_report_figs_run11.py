@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Generate experiment report figures from inferno-cycles.jsonl — Run 10.
-Run 10: queue-analysis evaluator, sliding-window Nelder-Mead estimator (SWE),
-        cold start (no initial perfParms), TUNER_INIT_FIT_THRESHOLD=10 (new).
+"""Generate experiment report figures from inferno-cycles.jsonl — Run 11.
+Run 11: queue-analysis evaluator, EKF estimator (Extended Kalman Filter),
+        cold start (no initial perfParms), TUNER_INIT_OBS=3.
 """
 
 import json
@@ -45,20 +45,17 @@ def internal_series(model, acc, field):
     ]
 
 def phase_boundaries():
-    # Phase entry times estimated from load-emulator log (18 × 20s per phase):
-    # Phase 1 (1× hold, 6 min):  entered ~16:49 UTC
-    # Phase 2 (ramp 1→5×, 5 min): entered ~16:55 UTC
-    # Phase 3 (5× hold, 5 min):   entered ~17:00 UTC
-    # Phase 4 (ramp 5→1×, 5 min): entered ~17:05 UTC
-    # Phase 5 (1× hold, ∞):       entered ~17:10 UTC
-    def utc(h, m, s):
-        return datetime(2026, 4, 21, h, m, s, tzinfo=timezone.utc)
+    # Load emulator started ~21:02 UTC on 2026-05-04.
+    # Phase durations: Ph1=6min, Ph2=5min, Ph3=5min, Ph4=5min, Ph5=hold.
+    # Inferred from JSONL RPM pattern (ramp up visible at cycle 10, 21:08:45).
+    def utc(h, m, s=0):
+        return datetime(2026, 5, 4, h, m, s, tzinfo=timezone.utc)
     return [
-        utc(16, 49,  0),
-        utc(16, 55,  0),
-        utc(17,  0,  0),
-        utc(17,  5,  0),
-        utc(17, 10,  0),
+        utc(21,  2),   # Phase 1: baseline  (nominal 60/30 RPM)
+        utc(21,  8),   # Phase 2: ramp 1→5× (nominal 60→300 RPM)
+        utc(21, 13),   # Phase 3: hold 5×   (nominal 300 RPM)
+        utc(21, 18),   # Phase 4: ramp 5→1× (nominal 300→60 RPM)
+        utc(21, 23),   # Phase 5: hold 1×   (nominal 60/30 RPM)
     ]
 
 phase_ts  = phase_boundaries()
@@ -73,7 +70,7 @@ def add_phase_shading(ax):
     boundaries = phase_ts + [xlim_end]
     for i in range(len(phase_ts)):
         ax.axvspan(boundaries[i], boundaries[i+1], alpha=0.35, color=colors[i], zorder=0)
-    ax.set_xlim(times[0], xlim_end)
+    ax.set_xlim(times[0] - timedelta(seconds=30), xlim_end)
     trans = ax.get_xaxis_transform()
     for t, lbl in zip(phase_ts, phase_lbl):
         ax.axvline(t, color='#999999', lw=0.8, ls='--', zorder=1)
@@ -88,7 +85,7 @@ def fmt_xaxis(ax):
 # ── Figure 1: RPM + Replicas ──────────────────────────────────────────────────
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 6), sharex=True)
 fig.suptitle('Load and Autoscaling Response\n'
-             '(sliding-window Nelder-Mead, cold start, initFitThreshold=10)',
+             '(EKF estimator, cold start, TUNER_INIT_OBS=3)',
              fontweight='bold')
 
 granite_rpm      = server_series('rpm',      'granite_8b')
@@ -116,9 +113,9 @@ add_phase_shading(ax2)
 fmt_xaxis(ax2)
 
 plt.tight_layout()
-plt.savefig(f'{OUT}/run10_load_replicas.png', dpi=150, bbox_inches='tight')
+plt.savefig(f'{OUT}/run11_load_replicas.png', dpi=150, bbox_inches='tight')
 plt.close()
-print('Saved run10_load_replicas.png')
+print('Saved run11_load_replicas.png')
 
 # ── Figure 2: ITL + TTFT with SLOs ───────────────────────────────────────────
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 6), sharex=True)
@@ -147,12 +144,11 @@ ax2.plot(times, llama_ttft_clipped,   color=LLAMA_COLOR,   lw=1.5, label='llama_
 ax2.axhline(200,  color=GRANITE_COLOR, lw=1.2, ls='--', label='Premium TTFT SLO (200ms)')
 ax2.axhline(1000, color=LLAMA_COLOR,   lw=1.2, ls='--', label='Bronze TTFT SLO (1000ms)')
 
-# Annotate clipped outliers
-for i, (t, v) in enumerate(zip(times, granite_ttft)):
+for t, v in zip(times, granite_ttft):
     if v is not None and v > 600:
         ax2.annotate(f'{v/1000:.1f}k', xy=(t, 600), fontsize=6, color=GRANITE_COLOR,
                      ha='center', va='bottom', rotation=45)
-for i, (t, v) in enumerate(zip(times, llama_ttft)):
+for t, v in zip(times, llama_ttft):
     if v is not None and v > 2000:
         ax2.annotate(f'{v/1000:.1f}k', xy=(t, 2000), fontsize=6, color=LLAMA_COLOR,
                      ha='center', va='bottom', rotation=45)
@@ -165,19 +161,18 @@ add_phase_shading(ax2)
 fmt_xaxis(ax2)
 
 plt.tight_layout()
-plt.savefig(f'{OUT}/run10_latency.png', dpi=150, bbox_inches='tight')
+plt.savefig(f'{OUT}/run11_latency.png', dpi=150, bbox_inches='tight')
 plt.close()
-print('Saved run10_latency.png')
+print('Saved run11_latency.png')
 
-# ── Figure 3: SWE α convergence ───────────────────────────────────────────────
+# ── Figure 3: EKF α convergence ───────────────────────────────────────────────
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 6), sharex=True)
-fig.suptitle('Sliding-Window α Parameter Convergence (cold start, H100)',
-             fontweight='bold')
+fig.suptitle('EKF α Parameter Convergence (cold start, H100)', fontweight='bold')
 
 granite_alpha = internal_series('granite_8b', 'H100', 'alpha')
 llama_alpha   = internal_series('llama_13b',  'H100', 'alpha')
 
-ax1.plot(times, granite_alpha, color=GRANITE_COLOR, lw=1.5, label='granite_8b α (SWE)')
+ax1.plot(times, granite_alpha, color=GRANITE_COLOR, lw=1.5, label='granite_8b α (EKF)')
 ax1.axhline(8.0,  color=GRANITE_COLOR, lw=1, ls=':', label='Target (8.0ms)')
 ax1.set_ylabel('α (ms)')
 ax1.set_title('granite_8b / H100', fontsize=9)
@@ -185,7 +180,7 @@ ax1.legend(fontsize=8)
 ax1.grid(True, alpha=0.3)
 add_phase_shading(ax1)
 
-ax2.plot(times, llama_alpha, color=LLAMA_COLOR, lw=1.5, label='llama_13b α (SWE)')
+ax2.plot(times, llama_alpha, color=LLAMA_COLOR, lw=1.5, label='llama_13b α (EKF)')
 ax2.axhline(12.0, color=LLAMA_COLOR, lw=1, ls=':', label='Target (12.0ms)')
 ax2.set_ylabel('α (ms)')
 ax2.set_title('llama_13b / H100', fontsize=9)
@@ -196,18 +191,18 @@ add_phase_shading(ax2)
 fmt_xaxis(ax2)
 
 plt.tight_layout()
-plt.savefig(f'{OUT}/run10_swe_alpha.png', dpi=150, bbox_inches='tight')
+plt.savefig(f'{OUT}/run11_ekf_alpha.png', dpi=150, bbox_inches='tight')
 plt.close()
-print('Saved run10_swe_alpha.png')
+print('Saved run11_ekf_alpha.png')
 
-# ── Figure 4: SWE β parameter ─────────────────────────────────────────────────
+# ── Figure 4: EKF β parameter ─────────────────────────────────────────────────
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 6), sharex=True)
-fig.suptitle('Sliding-Window β Parameter Stability (H100)', fontweight='bold')
+fig.suptitle('EKF β Parameter Stability (H100)', fontweight='bold')
 
 granite_beta = internal_series('granite_8b', 'H100', 'beta')
 llama_beta   = internal_series('llama_13b',  'H100', 'beta')
 
-ax1.plot(times, granite_beta, color=GRANITE_COLOR, lw=1.5, label='granite_8b β (SWE)')
+ax1.plot(times, granite_beta, color=GRANITE_COLOR, lw=1.5, label='granite_8b β (EKF)')
 ax1.axhline(0.016, color=GRANITE_COLOR, lw=1, ls=':', label='Target (0.016)')
 ax1.set_ylabel('β (ms/tok)')
 ax1.set_title('granite_8b / H100', fontsize=9)
@@ -215,7 +210,7 @@ ax1.legend(fontsize=8)
 ax1.grid(True, alpha=0.3)
 add_phase_shading(ax1)
 
-ax2.plot(times, llama_beta, color=LLAMA_COLOR, lw=1.5, label='llama_13b β (SWE)')
+ax2.plot(times, llama_beta, color=LLAMA_COLOR, lw=1.5, label='llama_13b β (EKF)')
 ax2.axhline(0.024, color=LLAMA_COLOR, lw=1, ls=':', label='Target (0.024)')
 ax2.set_ylabel('β (ms/tok)')
 ax2.set_title('llama_13b / H100', fontsize=9)
@@ -226,33 +221,50 @@ add_phase_shading(ax2)
 fmt_xaxis(ax2)
 
 plt.tight_layout()
-plt.savefig(f'{OUT}/run10_swe_beta.png', dpi=150, bbox_inches='tight')
+plt.savefig(f'{OUT}/run11_ekf_beta.png', dpi=150, bbox_inches='tight')
 plt.close()
-print('Saved run10_swe_beta.png')
+print('Saved run11_ekf_beta.png')
 
-# ── Figure 5: Cycle timing ────────────────────────────────────────────────────
+# ── Figure 5: EKF γ parameter ─────────────────────────────────────────────────
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 6), sharex=True)
+fig.suptitle('EKF γ Parameter Stability (H100)', fontweight='bold')
+
+granite_gamma = internal_series('granite_8b', 'H100', 'gamma')
+llama_gamma   = internal_series('llama_13b',  'H100', 'gamma')
+
+ax1.plot(times, granite_gamma, color=GRANITE_COLOR, lw=1.5, label='granite_8b γ (EKF)')
+ax1.axhline(0.0005, color=GRANITE_COLOR, lw=1, ls=':', label='Target (0.0005)')
+ax1.set_ylabel('γ (ms/tok²)')
+ax1.set_title('granite_8b / H100', fontsize=9)
+ax1.legend(fontsize=8)
+ax1.grid(True, alpha=0.3)
+add_phase_shading(ax1)
+
+ax2.plot(times, llama_gamma, color=LLAMA_COLOR, lw=1.5, label='llama_13b γ (EKF)')
+ax2.axhline(0.00075, color=LLAMA_COLOR, lw=1, ls=':', label='Target (0.00075)')
+ax2.set_ylabel('γ (ms/tok²)')
+ax2.set_title('llama_13b / H100', fontsize=9)
+ax2.set_xlabel('Time (UTC)')
+ax2.legend(fontsize=8)
+ax2.grid(True, alpha=0.3)
+add_phase_shading(ax2)
+fmt_xaxis(ax2)
+
+plt.tight_layout()
+plt.savefig(f'{OUT}/run11_ekf_gamma.png', dpi=150, bbox_inches='tight')
+plt.close()
+print('Saved run11_ekf_gamma.png')
+
+# ── Figure 6: Cycle timing ────────────────────────────────────────────────────
 fig, ax = plt.subplots(figsize=(10, 4))
-fig.suptitle('Cycle Timing (from controller logs)', fontweight='bold')
+fig.suptitle('Cycle Timing (collect + EKF tune)', fontweight='bold')
 
-collect_ms = [
-    811,  60,  59, 130,  68,  56,  61,  67,  65, 138,
-    411, 813, 1216, 1623, 2021, 3611, 4419, 4416, 6016, 6409,
-    5217, 5214, 4812, 3618, 4810, 4413, 4413, 4811, 4809, 3615,
-    3614, 4013, 2425, 2015, 2020, 1213,  411,  57,  134,  66,
-      64,   64,  69,   54,  65,
-]
-tune_ms = [
-     44,  38,  40,  49,  57,  49,  56,  54,  55,  50,
-     48,  46,  48,  62,  67,  56,  87,  88,  87,  82,
-     81,  90,  75,  90,  75,  78,  66,  56,  53,  46,
-     70,  65,  54,  66,  70,  67,  68,  51,  59,  58,
-     55,  51,  51,  48,  63,
-]
+collect_ms = [r['timing']['collectMs'] for r in records]
+tune_ms    = [r['timing']['tuneMs']    for r in records]
 
-t = times[:len(collect_ms)]
-ax.plot(t, collect_ms, color='#4472C4', lw=1.5, label='collect (ms)')
-ax.fill_between(t, collect_ms, alpha=0.2, color='#4472C4')
-ax.plot(t, tune_ms, color='#ED7D31', lw=1.5, label='tune/SWE (ms)')
+ax.plot(times, collect_ms, color='#4472C4', lw=1.5, label='collect (ms)')
+ax.fill_between(times, collect_ms, alpha=0.2, color='#4472C4')
+ax.plot(times, tune_ms, color='#ED7D31', lw=1.5, label='tune/EKF (ms)')
 ax.set_ylabel('Time (ms)')
 ax.set_xlabel('Time (UTC)')
 ax.legend(loc='upper right', fontsize=8)
@@ -261,11 +273,11 @@ add_phase_shading(ax)
 fmt_xaxis(ax)
 
 plt.tight_layout()
-plt.savefig(f'{OUT}/run10_timing.png', dpi=150, bbox_inches='tight')
+plt.savefig(f'{OUT}/run11_timing.png', dpi=150, bbox_inches='tight')
 plt.close()
-print('Saved run10_timing.png')
+print('Saved run11_timing.png')
 
-# ── Figure 6: Total cost ──────────────────────────────────────────────────────
+# ── Figure 7: Total cost ──────────────────────────────────────────────────────
 fig, ax = plt.subplots(figsize=(10, 3))
 fig.suptitle('Total Allocation Cost Over Time', fontweight='bold')
 
@@ -279,39 +291,9 @@ add_phase_shading(ax)
 fmt_xaxis(ax)
 
 plt.tight_layout()
-plt.savefig(f'{OUT}/run10_cost.png', dpi=150, bbox_inches='tight')
+plt.savefig(f'{OUT}/run11_cost.png', dpi=150, bbox_inches='tight')
 plt.close()
-print('Saved run10_cost.png')
-
-# ── Figure 7: γ parameter ─────────────────────────────────────────────────────
-fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 6), sharex=True)
-fig.suptitle('Sliding-Window γ Parameter Stability (H100)', fontweight='bold')
-
-granite_gamma = internal_series('granite_8b', 'H100', 'gamma')
-llama_gamma   = internal_series('llama_13b',  'H100', 'gamma')
-
-ax1.plot(times, granite_gamma, color=GRANITE_COLOR, lw=1.5, label='granite_8b γ (SWE)')
-ax1.axhline(0.0005, color=GRANITE_COLOR, lw=1, ls=':', label='Target (0.0005)')
-ax1.set_ylabel('γ (ms/tok²)')
-ax1.set_title('granite_8b / H100', fontsize=9)
-ax1.legend(fontsize=8)
-ax1.grid(True, alpha=0.3)
-add_phase_shading(ax1)
-
-ax2.plot(times, llama_gamma, color=LLAMA_COLOR, lw=1.5, label='llama_13b γ (SWE)')
-ax2.axhline(0.00075, color=LLAMA_COLOR, lw=1, ls=':', label='Target (0.00075)')
-ax2.set_ylabel('γ (ms/tok²)')
-ax2.set_title('llama_13b / H100', fontsize=9)
-ax2.set_xlabel('Time (UTC)')
-ax2.legend(fontsize=8)
-ax2.grid(True, alpha=0.3)
-add_phase_shading(ax2)
-fmt_xaxis(ax2)
-
-plt.tight_layout()
-plt.savefig(f'{OUT}/run10_swe_gamma.png', dpi=150, bbox_inches='tight')
-plt.close()
-print('Saved run10_swe_gamma.png')
+print('Saved run11_cost.png')
 
 # ── Figure 8: Input and output tokens ────────────────────────────────────────
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 6), sharex=True)
@@ -345,8 +327,8 @@ add_phase_shading(ax2)
 fmt_xaxis(ax2)
 
 plt.tight_layout()
-plt.savefig(f'{OUT}/run10_tokens.png', dpi=150, bbox_inches='tight')
+plt.savefig(f'{OUT}/run11_tokens.png', dpi=150, bbox_inches='tight')
 plt.close()
-print('Saved run10_tokens.png')
+print('Saved run11_tokens.png')
 
-print('All Run 10 figures generated.')
+print('All Run 11 figures generated.')

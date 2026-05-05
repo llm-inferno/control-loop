@@ -1,0 +1,63 @@
+Running with control period = 30 sec
+Running in dynamic mode = false
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] GET    /invoke                   --> github.com/llm-inferno/control-loop/pkg/controller.invoke (3 handlers)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://github.com/gin-gonic/gin/blob/master/docs/doc.md#dont-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :3300
+21:02:15.547: tuner /tune warning (continuing with current model data): tuner /tune failed: 422 Unprocessable Entity
+21:02:15.550: skipping cycle ... reason=optimize failed to find solution: 404 Not Found
+21:02:45.556: tuner /tune warning (continuing with current model data): tuner /tune failed: 422 Unprocessable Entity
+21:02:45.557: skipping cycle ... reason=optimize failed to find solution: 404 Not Found
+21:03:15.598:	 collect: 821	 tune: 35	 (warm-up in progress — skipping optimize+actuate)
+21:03:45.549:	 collect: 820	 tune: 4	 (warm-up in progress — skipping optimize+actuate)
+21:04:15.588:	 collect: 814	 tune: 2	 optimize: 2	 actuate: 19	 total: 839 msec
+21:04:45.170:	 collect: 416	 tune: 2	 optimize: 1	 actuate: 17	 total: 438 msec
+21:05:14.868:	 collect: 110	 tune: 1	 optimize: 1	 actuate: 10	 total: 123 msec
+21:05:44.808:	 collect: 68	 tune: 2	 optimize: 1	 actuate: 9	 total: 81 msec
+21:06:14.810:	 collect: 71	 tune: 1	 optimize: 1	 actuate: 11	 total: 84 msec
+21:06:44.821:	 collect: 70	 tune: 1	 optimize: 1	 actuate: 16	 total: 90 msec
+21:07:14.817:	 collect: 73	 tune: 1	 optimize: 1	 actuate: 9	 total: 86 msec
+21:07:44.801:	 collect: 58	 tune: 1	 optimize: 1	 actuate: 8	 total: 69 msec
+21:08:14.822:	 collect: 56	 tune: 3	 optimize: 1	 actuate: 11	 total: 73 msec
+21:08:45.168:	 collect: 416	 tune: 3	 optimize: 2	 actuate: 16	 total: 438 msec
+21:09:15.585:	 collect: 832	 tune: 2	 optimize: 1	 actuate: 11	 total: 848 msec
+21:09:45.580:	 collect: 825	 tune: 2	 optimize: 1	 actuate: 15	 total: 844 msec
+21:10:15.981:	 collect: 1216	 tune: 2	 optimize: 2	 actuate: 14	 total: 1235 msec
+21:10:45.993:	 collect: 1224	 tune: 3	 optimize: 3	 actuate: 15	 total: 1247 msec
+21:11:17.984:	 collect: 3216	 tune: 2	 optimize: 1	 actuate: 14	 total: 3235 msec
+21:11:49.571:	 collect: 4818	 tune: 6	 optimize: 3	 actuate: 17	 total: 4845 msec
+21:12:19.175:	 collect: 4414	 tune: 7	 optimize: 3	 actuate: 19	 total: 4444 msec
+21:12:49.169:	 collect: 4414	 tune: 2	 optimize: 1	 actuate: 12	 total: 4431 msec
+21:13:19.579:	 collect: 4817	 tune: 2	 optimize: 1	 actuate: 13	 total: 4834 msec
+21:13:49.561:	 collect: 4816	 tune: 2	 optimize: 1	 actuate: 12	 total: 4832 msec
+21:14:20.372:	 collect: 5614	 tune: 4	 optimize: 1	 actuate: 12	 total: 5633 msec
+21:14:50.376:	 collect: 5614	 tune: 6	 optimize: 4	 actuate: 18	 total: 5643 msec
+21:15:20.390:	 collect: 5621	 tune: 5	 optimize: 2	 actuate: 18	 total: 5648 msec
+21:15:49.982:	 collect: 5219	 tune: 4	 optimize: 1	 actuate: 16	 total: 5241 msec
+21:16:19.175:	 collect: 4416	 tune: 5	 optimize: 3	 actuate: 20	 total: 4444 msec
+21:16:51.602:	 collect: 6812	 tune: 2	 optimize: 1	 actuate: 56	 total: 6873 msec
+21:17:19.593:	 collect: 4818	 tune: 4	 optimize: 3	 actuate: 27	 total: 4854 msec
+21:17:48.364:	 collect: 3617	 tune: 1	 optimize: 1	 actuate: 12	 total: 3633 msec
+21:18:19.577:	 collect: 4824	 tune: 5	 optimize: 2	 actuate: 22	 total: 4854 msec
+21:18:47.966:	 collect: 3212	 tune: 3	 optimize: 1	 actuate: 13	 total: 3231 msec
+21:19:18.763:	 collect: 4013	 tune: 5	 optimize: 2	 actuate: 15	 total: 4037 msec
+21:19:48.788:	 collect: 4018	 tune: 4	 optimize: 2	 actuate: 20	 total: 4047 msec
+21:20:17.956:	 collect: 3209	 tune: 2	 optimize: 2	 actuate: 15	 total: 3229 msec
+21:20:47.173:	 collect: 2420	 tune: 2	 optimize: 1	 actuate: 9	 total: 2433 msec
+21:21:17.180:	 collect: 2425	 tune: 4	 optimize: 3	 actuate: 15	 total: 2449 msec
+21:21:47.179:	 collect: 2424	 tune: 4	 optimize: 2	 actuate: 16	 total: 2447 msec
+21:22:16.775:	 collect: 2022	 tune: 2	 optimize: 2	 actuate: 20	 total: 2047 msec
+21:22:45.977:	 collect: 1216	 tune: 2	 optimize: 1	 actuate: 16	 total: 1238 msec
+21:23:15.160:	 collect: 411	 tune: 3	 optimize: 2	 actuate: 13	 total: 431 msec
+21:23:45.177:	 collect: 415	 tune: 3	 optimize: 2	 actuate: 12	 total: 433 msec
+21:24:15.155:	 collect: 407	 tune: 2	 optimize: 1	 actuate: 11	 total: 423 msec
+21:24:44.811:	 collect: 72	 tune: 2	 optimize: 2	 actuate: 10	 total: 87 msec
+21:25:14.818:	 collect: 71	 tune: 1	 optimize: 1	 actuate: 9	 total: 83 msec
+21:25:44.826:	 collect: 71	 tune: 1	 optimize: 1	 actuate: 8	 total: 82 msec
+21:26:14.808:	 collect: 72	 tune: 1	 optimize: 1	 actuate: 11	 total: 86 msec
