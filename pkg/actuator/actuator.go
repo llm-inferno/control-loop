@@ -1,6 +1,12 @@
 package actuator
 
 import (
+	"context"
+	"fmt"
+	"os"
+	"strconv"
+	"time"
+
 	ctrl "github.com/llm-inferno/control-loop/pkg/controller"
 
 	"github.com/gin-gonic/gin"
@@ -24,7 +30,32 @@ func NewActuator() (actuator *Actuator, err error) {
 		router: gin.Default(),
 	}
 	actuator.router.POST("/update", update)
+
+	// Start the pairing reconciler unless disabled.
+	period := pairingTickInterval()
+	if period > 0 {
+		fmt.Printf("actuator: starting pairing reconciler (tick=%s)\n", period)
+		go runReconciler(context.Background(), KubeClient, period)
+	} else {
+		fmt.Printf("actuator: pairing reconciler disabled (INFERNO_PAIRING_TICK_SEC=0)\n")
+	}
 	return actuator, nil
+}
+
+// pairingTickInterval reads INFERNO_PAIRING_TICK_SEC; defaults to 5s, returns 0
+// if the env var is set to "0" (disable).
+func pairingTickInterval() time.Duration {
+	const defaultSec = 5
+	v := os.Getenv("INFERNO_PAIRING_TICK_SEC")
+	if v == "" {
+		return defaultSec * time.Second
+	}
+	n, err := strconv.Atoi(v)
+	if err != nil || n < 0 {
+		fmt.Printf("actuator: invalid INFERNO_PAIRING_TICK_SEC=%q; using default %ds\n", v, defaultSec)
+		return defaultSec * time.Second
+	}
+	return time.Duration(n) * time.Second
 }
 
 // start server
