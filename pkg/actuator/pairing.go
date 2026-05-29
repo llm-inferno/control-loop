@@ -3,6 +3,7 @@ package actuator
 import (
 	"context"
 	"fmt"
+	"sync"
 	"time"
 
 	ctrl "github.com/llm-inferno/control-loop/pkg/controller"
@@ -13,9 +14,36 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
+// pairingLogDedup deduplicates noisy per-Deployment log lines so each unique
+// (deploymentKey, message) pair is logged at most once per dedupTTL.
+type pairingLogDedupEntry struct {
+	msg string
+	at  time.Time
+}
+
+var (
+	pairingLogMu   sync.Mutex
+	pairingLogSeen = map[string]pairingLogDedupEntry{}
+	pairingLogTTL  = time.Minute
+)
+
+// logOncePerMinute prints msg at most once per pairingLogTTL per key.
+// key is typically "<namespace>/<name>" of the managed Deployment.
+func logOncePerMinute(key, msg string) {
+	pairingLogMu.Lock()
+	defer pairingLogMu.Unlock()
+	now := time.Now()
+	if e, ok := pairingLogSeen[key]; ok && e.msg == msg && now.Sub(e.at) < pairingLogTTL {
+		return
+	}
+	pairingLogSeen[key] = pairingLogDedupEntry{msg: msg, at: now}
+	fmt.Println(msg)
+}
+
 // reconcileOne runs one reconcile pass for a single managed Deployment.
-// It returns nil on success or skip; non-nil only on programming errors.
-// Transient K8s API errors are logged and swallowed — the next tick is the retry.
+// It always returns nil; transient K8s API errors are logged and swallowed
+// since the next tick is the retry (see spec §7). The error return is kept
+// for forward compatibility if future logic needs to escalate.
 func reconcileOne(ctx context.Context, kc kubernetes.Interface, managed *appsv1.Deployment) error {
 	// Opt-in: only act on managed Deployments labelled vllm-server.
 	if managed.Labels[ctrl.KeyEvaluator] != ctrl.EvaluatorVLLMServer {
@@ -24,8 +52,9 @@ func reconcileOne(ctx context.Context, kc kubernetes.Interface, managed *appsv1.
 
 	vName := managed.Labels[ctrl.KeyVLLMDeployment]
 	if vName == "" {
-		fmt.Printf("pairing: managed Deployment %s/%s has evaluator=vllm-server but no %s label; skipping\n",
-			managed.Namespace, managed.Name, ctrl.KeyVLLMDeployment)
+		key := managed.Namespace + "/" + managed.Name
+		logOncePerMinute(key, fmt.Sprintf("pairing: managed Deployment %s has evaluator=vllm-server but no %s label; skipping",
+			key, ctrl.KeyVLLMDeployment))
 		return nil
 	}
 	vNs := managed.Labels[ctrl.KeyVLLMNamespace]
@@ -35,7 +64,8 @@ func reconcileOne(ctx context.Context, kc kubernetes.Interface, managed *appsv1.
 
 	vllm, err := kc.AppsV1().Deployments(vNs).Get(ctx, vName, metav1.GetOptions{})
 	if err != nil {
-		fmt.Printf("pairing: vllm Deployment %s/%s not found: %v; skipping\n", vNs, vName, err)
+		key := managed.Namespace + "/" + managed.Name
+		logOncePerMinute(key, fmt.Sprintf("pairing: vllm Deployment %s/%s not found: %v; skipping", vNs, vName, err))
 		return nil
 	}
 
@@ -51,7 +81,8 @@ func reconcileOne(ctx context.Context, kc kubernetes.Interface, managed *appsv1.
 	if vllmRep != managedRep {
 		fmt.Printf("pairing: scaling vllm %s/%s replicas %d -> %d\n", vNs, vName, vllmRep, managedRep)
 		if err := setDeploymentReplicas(ctx, kc, vNs, vName, managedRep); err != nil {
-			fmt.Printf("pairing: setDeploymentReplicas: %v\n", err)
+			key := managed.Namespace + "/" + managed.Name
+			logOncePerMinute(key, fmt.Sprintf("pairing: setDeploymentReplicas %s/%s: %v", vNs, vName, err))
 		}
 		// Let the next tick observe Ready transitions before labelling.
 		return nil
