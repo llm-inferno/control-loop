@@ -37,9 +37,73 @@ type PatchPlan struct {
 func ComputePairingPatches(managed, vllm []PodSnapshot, newUUID func() string) PatchPlan {
 	plan := PatchPlan{}
 
-	// Pair unpaired-Ready pods 1:1 in deterministic order.
-	mUnpaired := readyUnpaired(managed)
-	vUnpaired := readyUnpaired(vllm)
+	// Build pair-id index from both sides.
+	type entry struct {
+		mPod *PodSnapshot
+		vPod *PodSnapshot
+	}
+	idx := map[string]*entry{}
+	for i := range managed {
+		p := &managed[i]
+		if p.PairID == "" {
+			continue
+		}
+		if e := idx[p.PairID]; e != nil {
+			e.mPod = p
+		} else {
+			idx[p.PairID] = &entry{mPod: p}
+		}
+	}
+	for i := range vllm {
+		p := &vllm[i]
+		if p.PairID == "" {
+			continue
+		}
+		if e := idx[p.PairID]; e != nil {
+			e.vPod = p
+		} else {
+			idx[p.PairID] = &entry{vPod: p}
+		}
+	}
+
+	// A pair-id is healthy iff both peers are present and Ready.
+	pruned := map[string]bool{} // pod name + ns -> already in prunes
+	keyOf := func(p PodSnapshot) string { return p.Namespace + "/" + p.Name }
+	addPrune := func(p *PodSnapshot) {
+		if p == nil {
+			return
+		}
+		k := keyOf(*p)
+		if pruned[k] {
+			return
+		}
+		pruned[k] = true
+		plan.Prunes = append(plan.Prunes, PodRef{Name: p.Name, Namespace: p.Namespace})
+	}
+	for _, e := range idx {
+		healthy := e.mPod != nil && e.vPod != nil && e.mPod.Ready && e.vPod.Ready
+		if !healthy {
+			addPrune(e.mPod)
+			addPrune(e.vPod)
+		}
+	}
+
+	// Now compute who is effectively unpaired-Ready: never-labelled OR scheduled for prune.
+	effectivelyUnpaired := func(pods []PodSnapshot) []PodSnapshot {
+		out := make([]PodSnapshot, 0, len(pods))
+		for _, p := range pods {
+			if !p.Ready {
+				continue
+			}
+			if p.PairID == "" || pruned[keyOf(p)] {
+				out = append(out, p)
+			}
+		}
+		return out
+	}
+	mUnpaired := effectivelyUnpaired(managed)
+	vUnpaired := effectivelyUnpaired(vllm)
+
 	n := min2(len(mUnpaired), len(vUnpaired))
 	for i := 0; i < n; i++ {
 		plan.Bindings = append(plan.Bindings, Pairing{
@@ -49,16 +113,6 @@ func ComputePairingPatches(managed, vllm []PodSnapshot, newUUID func() string) P
 		})
 	}
 	return plan
-}
-
-func readyUnpaired(pods []PodSnapshot) []PodSnapshot {
-	out := make([]PodSnapshot, 0, len(pods))
-	for _, p := range pods {
-		if p.Ready && p.PairID == "" {
-			out = append(out, p)
-		}
-	}
-	return out
 }
 
 func min2(a, b int) int {

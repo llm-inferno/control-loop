@@ -80,3 +80,26 @@ func TestSteadyState_AlreadyPaired_NoOp(t *testing.T) {
 		t.Fatalf("expected no-op, got prunes=%d bindings=%d", len(plan.Prunes), len(plan.Bindings))
 	}
 }
+
+func TestOrphanedUUID_PrunesAndRepairs(t *testing.T) {
+	// m-1 carries pair-id "X" but no vllm pod has X.
+	managed := []PodSnapshot{
+		{Name: "m-1", Namespace: "ns", Ready: true, PairID: "X"},
+	}
+	vllm := []PodSnapshot{
+		{Name: "v-1", Namespace: "ns", Ready: true, PairID: ""},
+	}
+
+	plan := ComputePairingPatches(managed, vllm, uuidGen())
+
+	// m-1's stale label should be pruned.
+	if len(plan.Prunes) != 1 || plan.Prunes[0].Name != "m-1" {
+		t.Fatalf("expected one prune for m-1, got %v", plan.Prunes)
+	}
+	// And m-1 should be re-paired with v-1 in the same plan.
+	if len(plan.Bindings) != 1 ||
+		plan.Bindings[0].Managed.Name != "m-1" ||
+		plan.Bindings[0].VLLM.Name != "v-1" {
+		t.Fatalf("expected one binding m-1<->v-1, got %v", plan.Bindings)
+	}
+}
