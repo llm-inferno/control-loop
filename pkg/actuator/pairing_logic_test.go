@@ -103,3 +103,23 @@ func TestOrphanedUUID_PrunesAndRepairs(t *testing.T) {
 		t.Fatalf("expected one binding m-1<->v-1, got %v", plan.Bindings)
 	}
 }
+
+func TestMismatchedUUIDs_BothPrunedAndRepaired(t *testing.T) {
+	managed := []PodSnapshot{
+		{Name: "m-1", Namespace: "ns", Ready: true, PairID: "X"},
+	}
+	vllm := []PodSnapshot{
+		{Name: "v-1", Namespace: "ns", Ready: true, PairID: "Y"},
+	}
+
+	plan := ComputePairingPatches(managed, vllm, uuidGen())
+
+	// Both pods should be pruned (both UUIDs orphaned).
+	if len(plan.Prunes) != 2 {
+		t.Fatalf("expected 2 prunes, got %d", len(plan.Prunes))
+	}
+	// And they should be paired in the same plan with one new UUID.
+	if len(plan.Bindings) != 1 {
+		t.Fatalf("expected 1 binding, got %d", len(plan.Bindings))
+	}
+}
