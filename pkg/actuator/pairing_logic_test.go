@@ -123,3 +123,24 @@ func TestMismatchedUUIDs_BothPrunedAndRepaired(t *testing.T) {
 		t.Fatalf("expected 1 binding, got %d", len(plan.Bindings))
 	}
 }
+
+func TestAsymmetric_3Managed_2VLLM_TwoBindings(t *testing.T) {
+	managed := []PodSnapshot{
+		{Name: "m-1", Namespace: "ns", Ready: true},
+		{Name: "m-2", Namespace: "ns", Ready: true},
+		{Name: "m-3", Namespace: "ns", Ready: true},
+	}
+	vllm := []PodSnapshot{
+		{Name: "v-1", Namespace: "ns", Ready: true},
+		{Name: "v-2", Namespace: "ns", Ready: true},
+	}
+
+	plan := ComputePairingPatches(managed, vllm, uuidGen())
+
+	if len(plan.Bindings) != 2 {
+		t.Fatalf("expected 2 bindings (limited by vllm side), got %d", len(plan.Bindings))
+	}
+	if len(plan.Prunes) != 0 {
+		t.Fatalf("expected no prunes, got %d", len(plan.Prunes))
+	}
+}
