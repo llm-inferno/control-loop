@@ -8,6 +8,8 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/kubernetes"
 )
@@ -31,8 +33,9 @@ func isPodReady(p *corev1.Pod) bool {
 // Deployment whose Ready condition is True. Snapshots are returned in the order
 // returned by the K8s API (callers should sort if determinism matters).
 func listOwnedReadyPods(ctx context.Context, kc kubernetes.Interface, dep *appsv1.Deployment, pairLabelKey string) ([]PodSnapshot, error) {
+	selectorStr := labels.Set(dep.Spec.Selector.MatchLabels).String()
 	// Find ReplicaSets owned by the Deployment.
-	rsList, err := kc.AppsV1().ReplicaSets(dep.Namespace).List(ctx, metav1.ListOptions{})
+	rsList, err := kc.AppsV1().ReplicaSets(dep.Namespace).List(ctx, metav1.ListOptions{LabelSelector: selectorStr})
 	if err != nil {
 		return nil, fmt.Errorf("list replicasets in %s: %w", dep.Namespace, err)
 	}
@@ -49,7 +52,7 @@ func listOwnedReadyPods(ctx context.Context, kc kubernetes.Interface, dep *appsv
 		return nil, nil
 	}
 	// List pods in the namespace and filter to owned + Ready.
-	pods, err := kc.CoreV1().Pods(dep.Namespace).List(ctx, metav1.ListOptions{})
+	pods, err := kc.CoreV1().Pods(dep.Namespace).List(ctx, metav1.ListOptions{LabelSelector: selectorStr})
 	if err != nil {
 		return nil, fmt.Errorf("list pods in %s: %w", dep.Namespace, err)
 	}
@@ -96,8 +99,12 @@ func setPodLabel(ctx context.Context, kc kubernetes.Interface, ns, name, key, va
 func removePodLabel(ctx context.Context, kc kubernetes.Interface, ns, name, key string) error {
 	patch := []byte(fmt.Sprintf(`[{"op":"remove","path":"/metadata/labels/%s"}]`, jsonPatchEscape(key)))
 	_, err := kc.CoreV1().Pods(ns).Patch(ctx, name, types.JSONPatchType, patch, metav1.PatchOptions{})
-	if err != nil && strings.Contains(err.Error(), "the server rejected our request") {
-		// Best-effort: label was already absent.
+	if k8serrors.IsInvalid(err) {
+		// Real K8s server returns 422 Invalid when JSON-patch op=remove targets
+		// an absent label; treat this as success since our intent (label gone) is
+		// satisfied. NOTE: client-go fake clients return a raw evanphx/json-patch
+		// error instead of a typed *StatusError, so this idempotency path is only
+		// covered against a real API server.
 		return nil
 	}
 	return err
