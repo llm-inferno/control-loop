@@ -111,8 +111,11 @@ func removePodLabel(ctx context.Context, kc kubernetes.Interface, ns, name, key 
 }
 
 // setDeploymentReplicas patches spec.replicas to n.
+// op=add is used instead of op=replace: both overwrite an existing value, but
+// op=add also handles the rare case where spec.replicas is absent in the stored
+// object (op=replace would return 422 for a missing path).
 func setDeploymentReplicas(ctx context.Context, kc kubernetes.Interface, ns, name string, n int32) error {
-	patch := []byte(fmt.Sprintf(`[{"op":"replace","path":"/spec/replicas","value":%d}]`, n))
+	patch := []byte(fmt.Sprintf(`[{"op":"add","path":"/spec/replicas","value":%d}]`, n))
 	_, err := kc.AppsV1().Deployments(ns).Patch(ctx, name, types.JSONPatchType, patch, metav1.PatchOptions{})
 	return err
 }
