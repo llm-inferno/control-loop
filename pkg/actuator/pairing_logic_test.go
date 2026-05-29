@@ -2,6 +2,7 @@ package actuator
 
 import (
 	"sort"
+	"strconv"
 	"testing"
 )
 
@@ -9,22 +10,10 @@ import (
 func uuidGen() func() string {
 	i := 0
 	return func() string {
-		s := "uuid-" + itoa(i)
+		s := "uuid-" + strconv.Itoa(i)
 		i++
 		return s
 	}
-}
-
-func itoa(i int) string {
-	if i == 0 {
-		return "0"
-	}
-	var b []byte
-	for i > 0 {
-		b = append([]byte{byte('0' + i%10)}, b...)
-		i /= 10
-	}
-	return string(b)
 }
 
 func TestColdStart_AllReadyNoLabels(t *testing.T) {
@@ -168,6 +157,9 @@ func TestNotReadyCarrier_PrunesPeerAndLeavesNotReadyAlone(t *testing.T) {
 	if !pruneNames["v-1"] {
 		t.Fatalf("expected v-1 to be pruned, got %v", plan.Prunes)
 	}
+	if !pruneNames["m-1"] {
+		t.Fatalf("expected m-1 to be pruned (NotReady carrier of stale pair-id), got %v", plan.Prunes)
+	}
 
 	// m-2 (Ready, unpaired) should be paired with v-2 (Ready, unpaired-effective after prune).
 	if len(plan.Bindings) != 1 {
@@ -175,5 +167,28 @@ func TestNotReadyCarrier_PrunesPeerAndLeavesNotReadyAlone(t *testing.T) {
 	}
 	if plan.Bindings[0].Managed.Name != "m-2" || plan.Bindings[0].VLLM.Name != "v-2" {
 		t.Fatalf("expected m-2<->v-2, got %+v", plan.Bindings[0])
+	}
+}
+
+func TestOrphanedUUID_VLLMSide_PrunesAndRepairs(t *testing.T) {
+	// v-1 carries pair-id "X" but no managed pod has X.
+	managed := []PodSnapshot{
+		{Name: "m-1", Namespace: "ns", Ready: true, PairID: ""},
+	}
+	vllm := []PodSnapshot{
+		{Name: "v-1", Namespace: "ns", Ready: true, PairID: "X"},
+	}
+
+	plan := ComputePairingPatches(managed, vllm, uuidGen())
+
+	// v-1's stale label should be pruned.
+	if len(plan.Prunes) != 1 || plan.Prunes[0].Name != "v-1" {
+		t.Fatalf("expected one prune for v-1, got %v", plan.Prunes)
+	}
+	// And v-1 should be re-paired with m-1 in the same plan.
+	if len(plan.Bindings) != 1 ||
+		plan.Bindings[0].Managed.Name != "m-1" ||
+		plan.Bindings[0].VLLM.Name != "v-1" {
+		t.Fatalf("expected one binding m-1<->v-1, got %v", plan.Bindings)
 	}
 }

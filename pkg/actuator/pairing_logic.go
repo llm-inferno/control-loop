@@ -116,7 +116,7 @@ func ComputePairingPatches(managed, vllm []PodSnapshot, newUUID func() string) P
 	mUnpaired := effectivelyUnpaired(managed)
 	vUnpaired := effectivelyUnpaired(vllm)
 
-	n := min2(len(mUnpaired), len(vUnpaired))
+	n := min(len(mUnpaired), len(vUnpaired))
 	for i := 0; i < n; i++ {
 		plan.Bindings = append(plan.Bindings, Pairing{
 			Managed: PodRef{Name: mUnpaired[i].Name, Namespace: mUnpaired[i].Namespace},
@@ -127,9 +127,3 @@ func ComputePairingPatches(managed, vllm []PodSnapshot, newUUID func() string) P
 	return plan
 }
 
-func min2(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
