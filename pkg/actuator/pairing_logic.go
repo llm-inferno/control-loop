@@ -1,5 +1,7 @@
 package actuator
 
+import "sort"
+
 // PodSnapshot is the minimum pod state the pairing logic needs.
 // It is intentionally decoupled from corev1.Pod so the pure logic can be
 // tested without K8s API objects.
@@ -99,6 +101,16 @@ func ComputePairingPatches(managed, vllm []PodSnapshot, newUUID func() string) P
 				out = append(out, p)
 			}
 		}
+		sort.Slice(out, func(i, j int) bool {
+			// Never-labelled pods sort before prune-released pods so that
+			// fresh pods are preferred for new pairings.
+			iNeverLabelled := out[i].PairID == ""
+			jNeverLabelled := out[j].PairID == ""
+			if iNeverLabelled != jNeverLabelled {
+				return iNeverLabelled
+			}
+			return out[i].Name < out[j].Name
+		})
 		return out
 	}
 	mUnpaired := effectivelyUnpaired(managed)

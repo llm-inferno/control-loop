@@ -144,3 +144,36 @@ func TestAsymmetric_3Managed_2VLLM_TwoBindings(t *testing.T) {
 		t.Fatalf("expected no prunes, got %d", len(plan.Prunes))
 	}
 }
+
+func TestNotReadyCarrier_PrunesPeerAndLeavesNotReadyAlone(t *testing.T) {
+	// m-1 has pair-id X but is NotReady. v-1 has pair-id X and is Ready. v-2 is Ready and unpaired.
+	managed := []PodSnapshot{
+		{Name: "m-1", Namespace: "ns", Ready: false, PairID: "X"},
+		{Name: "m-2", Namespace: "ns", Ready: true,  PairID: ""},
+	}
+	vllm := []PodSnapshot{
+		{Name: "v-1", Namespace: "ns", Ready: true, PairID: "X"},
+		{Name: "v-2", Namespace: "ns", Ready: true, PairID: ""},
+	}
+
+	plan := ComputePairingPatches(managed, vllm, uuidGen())
+
+	// v-1 should be pruned (its peer m-1 is NotReady → unhealthy pairing).
+	// m-1 should also be in prunes (defensive — clear stale ID even on NotReady pod;
+	// it is harmless because the pod is being torn down or recovering).
+	pruneNames := map[string]bool{}
+	for _, p := range plan.Prunes {
+		pruneNames[p.Name] = true
+	}
+	if !pruneNames["v-1"] {
+		t.Fatalf("expected v-1 to be pruned, got %v", plan.Prunes)
+	}
+
+	// m-2 (Ready, unpaired) should be paired with v-2 (Ready, unpaired-effective after prune).
+	if len(plan.Bindings) != 1 {
+		t.Fatalf("expected 1 binding, got %d: %+v", len(plan.Bindings), plan.Bindings)
+	}
+	if plan.Bindings[0].Managed.Name != "m-2" || plan.Bindings[0].VLLM.Name != "v-2" {
+		t.Fatalf("expected m-2<->v-2, got %+v", plan.Bindings[0])
+	}
+}
