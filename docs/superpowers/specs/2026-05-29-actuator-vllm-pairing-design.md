@@ -2,7 +2,7 @@
 
 **Status:** Draft for review
 **Date:** 2026-05-29
-**Issue:** [llm-inferno/control-loop#15](https://github.com/llm-inferno/inferno/issues/15)
+**Issue:** [llm-inferno/control-loop#15](https://github.com/llm-inferno/control-loop/issues/15)
 **Companion spec:** [`server-sim/docs/superpowers/specs/2026-05-28-vllm-server-evaluator-design.md`](https://github.com/llm-inferno/server-sim/blob/main/docs/superpowers/specs/2026-05-28-vllm-server-evaluator-design.md)
 
 ## 1. Motivation
