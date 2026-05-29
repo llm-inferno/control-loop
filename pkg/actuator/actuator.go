@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	ctrl "github.com/llm-inferno/control-loop/pkg/controller"
@@ -15,6 +16,9 @@ import (
 
 // Kube client as global variable, used by handler functions
 var KubeClient *kubernetes.Clientset
+
+// pairingDebug is true when INFERNO_PAIRING_LOG_LEVEL=debug; enables per-tick tracing.
+var pairingDebug bool
 
 // Actuator REST server
 type Actuator struct {
@@ -30,6 +34,8 @@ func NewActuator() (actuator *Actuator, err error) {
 		router: gin.Default(),
 	}
 	actuator.router.POST("/update", update)
+
+	pairingDebug = strings.EqualFold(os.Getenv("INFERNO_PAIRING_LOG_LEVEL"), "debug")
 
 	// Start the pairing reconciler unless disabled.
 	period := pairingTickInterval()

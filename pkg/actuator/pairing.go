@@ -114,7 +114,12 @@ func reconcileOne(ctx context.Context, kc kubernetes.Interface, managed *appsv1.
 			continue
 		}
 		if err := setPodLabel(ctx, kc, b.VLLM.Namespace, b.VLLM.Name, ctrl.KeyPairID, b.UUID); err != nil {
+			// Managed pod now carries the UUID but vLLM pod does not. The next tick
+			// detects this as an orphaned UUID on the managed side, prunes it, and
+			// re-pairs both pods — a ~1-tick window where the evaluator returns 503.
+			// This is the expected self-heal path per spec §7.
 			fmt.Printf("pairing: setPodLabel vllm %s/%s: %v\n", b.VLLM.Namespace, b.VLLM.Name, err)
+			continue
 		}
 		fmt.Printf("pairing: bound %s/%s <-> %s/%s with id %s\n",
 			b.Managed.Namespace, b.Managed.Name, b.VLLM.Namespace, b.VLLM.Name, b.UUID)
@@ -130,6 +135,9 @@ func reconcileAll(ctx context.Context, kc kubernetes.Interface) {
 	if err != nil {
 		fmt.Printf("pairing: list managed Deployments: %v\n", err)
 		return
+	}
+	if pairingDebug {
+		fmt.Printf("pairing: tick, %d managed deployment(s)\n", len(deps.Items))
 	}
 	for i := range deps.Items {
 		_ = reconcileOne(ctx, kc, &deps.Items[i])
