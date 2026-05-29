@@ -63,3 +63,20 @@ func TestColdStart_AllReadyNoLabels(t *testing.T) {
 		t.Fatalf("managed pods in bindings: got %v, want %v", got, want)
 	}
 }
+
+func TestSteadyState_AlreadyPaired_NoOp(t *testing.T) {
+	managed := []PodSnapshot{
+		{Name: "m-1", Namespace: "ns", Ready: true, PairID: "X"},
+		{Name: "m-2", Namespace: "ns", Ready: true, PairID: "Y"},
+	}
+	vllm := []PodSnapshot{
+		{Name: "v-1", Namespace: "ns", Ready: true, PairID: "X"},
+		{Name: "v-2", Namespace: "ns", Ready: true, PairID: "Y"},
+	}
+
+	plan := ComputePairingPatches(managed, vllm, uuidGen())
+
+	if len(plan.Prunes) != 0 || len(plan.Bindings) != 0 {
+		t.Fatalf("expected no-op, got prunes=%d bindings=%d", len(plan.Prunes), len(plan.Bindings))
+	}
+}
