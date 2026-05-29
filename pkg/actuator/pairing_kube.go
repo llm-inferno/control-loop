@@ -3,6 +3,7 @@ package actuator
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -73,4 +74,38 @@ func listOwnedReadyPods(ctx context.Context, kc kubernetes.Interface, dep *appsv
 		})
 	}
 	return out, nil
+}
+
+// jsonPatchEscape escapes a JSON-pointer segment per RFC6901 (~ -> ~0, / -> ~1).
+func jsonPatchEscape(s string) string {
+	s = strings.ReplaceAll(s, "~", "~0")
+	s = strings.ReplaceAll(s, "/", "~1")
+	return s
+}
+
+// setPodLabel writes a label on a pod via JSON patch (op=add is idempotent for replace).
+func setPodLabel(ctx context.Context, kc kubernetes.Interface, ns, name, key, value string) error {
+	patch := []byte(fmt.Sprintf(`[{"op":"add","path":"/metadata/labels/%s","value":%q}]`,
+		jsonPatchEscape(key), value))
+	_, err := kc.CoreV1().Pods(ns).Patch(ctx, name, types.JSONPatchType, patch, metav1.PatchOptions{})
+	return err
+}
+
+// removePodLabel clears a label on a pod via JSON patch op=remove. Idempotent: a 422
+// (label absent) is treated as success.
+func removePodLabel(ctx context.Context, kc kubernetes.Interface, ns, name, key string) error {
+	patch := []byte(fmt.Sprintf(`[{"op":"remove","path":"/metadata/labels/%s"}]`, jsonPatchEscape(key)))
+	_, err := kc.CoreV1().Pods(ns).Patch(ctx, name, types.JSONPatchType, patch, metav1.PatchOptions{})
+	if err != nil && strings.Contains(err.Error(), "the server rejected our request") {
+		// Best-effort: label was already absent.
+		return nil
+	}
+	return err
+}
+
+// setDeploymentReplicas patches spec.replicas to n.
+func setDeploymentReplicas(ctx context.Context, kc kubernetes.Interface, ns, name string, n int32) error {
+	patch := []byte(fmt.Sprintf(`[{"op":"replace","path":"/spec/replicas","value":%d}]`, n))
+	_, err := kc.AppsV1().Deployments(ns).Patch(ctx, name, types.JSONPatchType, patch, metav1.PatchOptions{})
+	return err
 }
