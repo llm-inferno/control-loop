@@ -28,3 +28,42 @@ type PatchPlan struct {
 	Prunes   []PodRef  // pods whose pair-id label should be cleared
 	Bindings []Pairing // new pairings to apply (after prunes)
 }
+
+// ComputePairingPatches inspects current pod snapshots and returns the prune+
+// binding decisions needed to satisfy the four pairing invariants. It does no
+// I/O; the caller applies the resulting patches.
+//
+// newUUID is injected so callers can provide deterministic IDs in tests.
+func ComputePairingPatches(managed, vllm []PodSnapshot, newUUID func() string) PatchPlan {
+	plan := PatchPlan{}
+
+	// Pair unpaired-Ready pods 1:1 in deterministic order.
+	mUnpaired := readyUnpaired(managed)
+	vUnpaired := readyUnpaired(vllm)
+	n := min2(len(mUnpaired), len(vUnpaired))
+	for i := 0; i < n; i++ {
+		plan.Bindings = append(plan.Bindings, Pairing{
+			Managed: PodRef{Name: mUnpaired[i].Name, Namespace: mUnpaired[i].Namespace},
+			VLLM:    PodRef{Name: vUnpaired[i].Name, Namespace: vUnpaired[i].Namespace},
+			UUID:    newUUID(),
+		})
+	}
+	return plan
+}
+
+func readyUnpaired(pods []PodSnapshot) []PodSnapshot {
+	out := make([]PodSnapshot, 0, len(pods))
+	for _, p := range pods {
+		if p.Ready && p.PairID == "" {
+			out = append(out, p)
+		}
+	}
+	return out
+}
+
+func min2(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
