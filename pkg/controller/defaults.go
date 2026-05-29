@@ -113,6 +113,17 @@ const (
 	KeyNominalArrivalRate = KeyNominalPrefix + "rpm"
 	KeyNominalInTokens    = KeyNominalPrefix + "intokens"
 	KeyNominalOutTokens   = KeyNominalPrefix + "outtokens"
+
+	// Evaluator backend selection on managed Deployments
+	KeyEvaluator      = KeyServerPrefix + "evaluator"
+	KeyVLLMDeployment = KeyServerPrefix + "vllm-deployment"
+	KeyVLLMNamespace  = KeyServerPrefix + "vllm-namespace"
+	KeyPairID         = KeyServerPrefix + "pair-id"
+
+	// Evaluator label values
+	EvaluatorVLLMServer    = "vllm-server"
+	EvaluatorQueueAnalysis = "queue-analysis"
+	EvaluatorBlis          = "blis"
 )
 
 var (
