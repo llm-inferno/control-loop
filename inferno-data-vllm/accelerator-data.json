@@ -1,0 +1,18 @@
+{
+  "accelerators": [
+    {
+      "name": "cpu",
+      "type": "cpu",
+      "multiplicity": 1,
+      "memSize": 8,
+      "memBW": 100,
+      "power": {
+        "idle": 10,
+        "full": 30,
+        "midPower": 20,
+        "midUtil": 0.6
+      },
+      "cost": 1.0
+    }
+  ]
+}

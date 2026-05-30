@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vllm-qwen-cpu
+  namespace: infer
+  labels:
+    inferno.vllm.model: qwen
+    inferno.vllm.accelerator: cpu
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vllm-qwen-cpu
+  template:
+    metadata:
+      labels:
+        app: vllm-qwen-cpu
+        inferno.vllm.model: qwen
+        inferno.vllm.accelerator: cpu
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+        - name: vllm
+          image: vllm/vllm-openai-cpu:latest-arm64
+          imagePullPolicy: IfNotPresent
+          args:
+            - "--model"
+            - "Qwen/Qwen2.5-0.5B-Instruct"
+            - "--served-model-name"
+            - "qwen"
+            - "--dtype"
+            - "float32"
+            - "--max-model-len"
+            - "512"
+            - "--max-num-seqs"
+            - "4"
+            - "--gpu-memory-utilization"
+            - "0.5"
+            - "--port"
+            - "8000"
+          ports:
+            - containerPort: 8000
+          resources:
+            requests:
+              memory: "6Gi"
+              cpu: "2000m"
+            limits:
+              memory: "10Gi"
+              cpu: "4000m"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 180
+            periodSeconds: 10
+            failureThreshold: 30
