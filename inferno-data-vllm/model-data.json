@@ -5,7 +5,7 @@
       "acc": "cpu",
       "accCount": 1,
       "maxBatchSize": 4,
-      "atTokens": 512
+      "atTokens": 64
     }
   ]
 }
