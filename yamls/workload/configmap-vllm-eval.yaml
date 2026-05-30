@@ -12,11 +12,11 @@ data:
           "model": "qwen_0_5b",
           "vllmServedModelName": "qwen",
           "vllmPort": 8000,
-          "warmupSec": 30,
-          "minWindowSec": 60,
-          "maxWindowSec": 300,
-          "targetSamples": 20,
-          "minSamples": 5,
+          "warmupSec": 3,
+          "minWindowSec": 10,
+          "maxWindowSec": 20,
+          "targetSamples": 5,
+          "minSamples": 3,
           "ignoreEOS": true,
           "queueTimeMetric": "vllm:request_queue_time_seconds"
         }
