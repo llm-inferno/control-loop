@@ -1,0 +1,15 @@
+{
+  "serviceClasses": [
+    {
+      "name": "Bronze",
+      "priority": 1,
+      "modelTargets": [
+        {
+          "model": "qwen_0_5b",
+          "slo-itl": 100,
+          "slo-ttft": 500
+        }
+      ]
+    }
+  ]
+}

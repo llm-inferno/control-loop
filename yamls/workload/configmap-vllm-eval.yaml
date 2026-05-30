@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vllm-server-eval-config
+  namespace: infer
+data:
+  vllm-eval-config.json: |
+    {
+      "configs": [
+        {
+          "accelerator": "cpu",
+          "model": "qwen_0_5b",
+          "vllmServedModelName": "qwen",
+          "vllmPort": 8000,
+          "warmupSec": 3,
+          "minWindowSec": 10,
+          "maxWindowSec": 20,
+          "targetSamples": 5,
+          "minSamples": 3,
+          "ignoreEOS": true,
+          "queueTimeMetric": "vllm:request_queue_time_seconds"
+        }
+      ]
+    }

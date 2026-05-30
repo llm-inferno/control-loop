@@ -1,0 +1,10 @@
+{
+  "accelerators": [
+    {
+      "name": "cpu",
+      "type": "cpu",
+      "multiplicity": 1,
+      "cost": 1.0
+    }
+  ]
+}
