@@ -69,6 +69,8 @@ Data/config types (`config.SystemData`, `config.AllocationData`, etc.) and `util
 - `inferno.server.vllm-namespace` — namespace of the vLLM Deployment; defaults to the managed Deployment's namespace.
 - `inferno.server.pair-id` — UUID written by the Actuator on one managed pod and one vLLM pod per replica. Read at startup by the `vllm-server` evaluator sidecar (via the downward API) to resolve its paired vLLM pod IP.
 
+The vLLM Deployment's **pod template** must carry `inferno.vllm.model` (any non-empty value, e.g. `granite`). The evaluator uses this label as a disambiguator when resolving its paired vLLM pod — without it the pod selector matches both the managed and vLLM pods and pairing fails. The Actuator does not set this label; it must be present in the vLLM Deployment manifest.
+
 See [`docs/superpowers/specs/2026-05-29-actuator-vllm-pairing-design.md`](docs/superpowers/specs/2026-05-29-actuator-vllm-pairing-design.md) for the four-invariant contract.
 
 **Tuner ConfigMap requirement**: The Tuner container requires a `model-tuner-config` ConfigMap in the `inferno` namespace, mounted at `/etc/tuner/config` and referenced via `CONFIG_DATA_DIR`. This ConfigMap holds the EKF filter and model parameter configuration (see `github.com/llm-inferno/model-tuner/config-data/` for examples). Without it the tuner container will fail to start.
