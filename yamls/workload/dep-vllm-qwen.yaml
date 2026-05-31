@@ -9,7 +9,7 @@ metadata:
     inferno.server.model: qwen_0_5b
     inferno.server.class: Bronze
     inferno.server.allocation.accelerator: cpu
-    inferno.server.allocation.maxbatchsize: "4"
+    inferno.server.allocation.maxbatchsize: "8"
     inferno.server.allocation.maxqueuesize: "16"
     inferno.server.evaluator: "vllm-server"
     inferno.server.vllm-deployment: "vllm-qwen-cpu"

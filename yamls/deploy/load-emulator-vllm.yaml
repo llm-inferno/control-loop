@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: load-emulator
+  namespace: inferno
+spec:
+  serviceAccountName: inferno
+  containers:
+  - name: loademulator
+    image: quay.io/atantawi/inferno-loop:latest
+    imagePullPolicy: IfNotPresent
+    command: ["loademulator"]
+    env:
+    - name: INFERNO_LOAD_INTERVAL
+      value: "120"
+    - name: INFERNO_LOAD_ALPHA
+      value: "0.2"
+    - name: INFERNO_LOAD_THETA
+      value: "0.9"
+    - name: INFERNO_LOAD_SKEW
+      value: "0.0"
+    - name: INFERNO_STARTUP_DELAY
+      value: "0"
+    - name: INFERNO_LOAD_PHASES
+      value: "/etc/loadphases/phases.yaml"
+    volumeMounts:
+    - name: load-phases-config
+      mountPath: /etc/loadphases
+      readOnly: true
+    resources:
+      requests:
+        memory: "512Mi"
+        cpu: "100m"
+      limits:
+        memory: "1Gi"
+        cpu: "500m"
+  volumes:
+  - name: load-phases-config
+    configMap:
+      name: load-phases-config
+      optional: true   # pod starts normally even if the ConfigMap does not exist

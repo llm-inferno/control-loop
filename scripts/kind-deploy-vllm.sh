@@ -54,10 +54,11 @@ kubectl apply -f "$REPO_ROOT/yamls/deploy/configmap-tuner.yaml"
 
 echo "==> Deploying inferno pod (controller, collector, optimizer, actuator, tuner)"
 kubectl apply -f "$REPO_ROOT/yamls/deploy/deploy-loop.yaml"
-# 5-minute control period matches evaluator max measurement window.
+# 2.5-minute control period matches evaluator max measurement window.
 kubectl set env deployment/inferno -n inferno -c controller \
-  INFERNO_CONTROL_PERIOD=300 \
-  INFERNO_WARM_UP_TIMEOUT=0
+  INFERNO_CONTROL_PERIOD=150 \
+  INFERNO_WARM_UP_TIMEOUT=0 \
+  INFERNO_STARTUP_DELAY=0
 kubectl rollout status deployment/inferno -n inferno --timeout=120s
 
 echo "==> Creating evaluator RBAC + ConfigMap in infer namespace"
@@ -73,10 +74,10 @@ echo "==> Deploying managed workload (server-sim + vllm-server evaluator)"
 kubectl apply -f "$REPO_ROOT/yamls/workload/dep-vllm-qwen.yaml"
 kubectl rollout status deployment/vllm-qwen-server -n infer --timeout=120s
 
-echo "==> Deploying load emulator with vllm phase sequence (0.5 -> 1.0 -> 0.5 RPS, 15 min each)"
+echo "==> Deploying load emulator with vllm phase sequence (0.5 -> 1.0 -> 0.5 RPS, 20 min each)"
 kubectl apply -f "$REPO_ROOT/yamls/deploy/configmap-load-phases-vllm.yaml"
 kubectl delete pod load-emulator -n inferno --ignore-not-found
-kubectl apply -f "$REPO_ROOT/yamls/deploy/load-emulator.yaml"
+kubectl apply -f "$REPO_ROOT/yamls/deploy/load-emulator-vllm.yaml"
 
 echo ""
 echo "==> Done. Watch controller logs:"
@@ -91,5 +92,5 @@ echo ""
 echo "    Verify the evaluator resolved its paired vLLM pod:"
 echo "    kubectl logs -n infer deployment/vllm-qwen-server -c evaluator | grep 'pairing resolved'"
 echo ""
-echo "    NOTE: INFERNO_WARM_UP_TIMEOUT=0, INFERNO_CONTROL_PERIOD=300 (5 min)."
+echo "    NOTE: INFERNO_WARM_UP_TIMEOUT=0, INFERNO_CONTROL_PERIOD=150 (2.5 min)."
 echo "    The controller will wait for full EKF convergence before invoking the optimizer."

@@ -5,17 +5,17 @@ metadata:
   namespace: inferno
 data:
   phases.yaml: |
-    # vllm-server experiment phase sequence: 0.5 -> 1.0 -> 0.5 RPS, 15 min each.
+    # vllm-server experiment phase sequence: 0.5 -> 1.0 -> 0.5 RPS, 20 min each.
     # Nominal RPM is 30 (= 0.5 RPS) on the managed Deployment; ratios scale that.
     # Each transition is a 1-second linear ramp (effectively a step) so the hold
-    # phase reflects the target RPS for ~14m59s.
+    # phase reflects the target RPS for ~19m59s.
     phases:
-      - duration: 15m
-        ratio: 1.0     # hold at 0.5 RPS (30 RPM) for 15 minutes
+      - duration: 20m
+        ratio: 1.0     # hold at 0.5 RPS (30 RPM) for 20 minutes
       - duration: 1s
         ratio: 2.0     # step to 1.0 RPS (60 RPM)
-      - duration: 15m
-        ratio: 1.0     # hold at 1.0 RPS for 15 minutes
+      - duration: 20m
+        ratio: 1.0     # hold at 1.0 RPS for 20 minutes
       - duration: 1s
         ratio: 0.5     # step back to 0.5 RPS (30 RPM)
       - duration: 0s   # hold forever

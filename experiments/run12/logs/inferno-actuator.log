@@ -1,0 +1,54 @@
+Running internal in the cluster
+Kube client created
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /update                   --> github.com/llm-inferno/control-loop/pkg/actuator.update (3 handlers)
+actuator: starting pairing reconciler (tick=5s)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://github.com/gin-gonic/gin/blob/master/docs/doc.md#dont-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :3303
+pairing: bound infer/vllm-qwen-server-76755754b8-9zd24 <-> infer/vllm-qwen-cpu-6858d798bc-kpfdn with id 8cf9daa2-32b1-4e48-9074-f440deb4ba82
+srv=[vllm-qwen/Bronze/qwen_0_5b]: arrivalRateRPM=37.98; inTok=59; outTok=31; acc=cpu->cpu; num=1->1; batch=8->128 
+[GIN] 2026/05/31 - 15:18:11 | 200 |   13.519858ms |             ::1 | POST     "/update"
+srv=[vllm-qwen/Bronze/qwen_0_5b]: arrivalRateRPM=39.48; inTok=58; outTok=27; acc=cpu->cpu; num=1->1; batch=128->128 
+[GIN] 2026/05/31 - 15:20:41 | 200 |    9.851158ms |             ::1 | POST     "/update"
+srv=[vllm-qwen/Bronze/qwen_0_5b]: arrivalRateRPM=44.93; inTok=68; outTok=34; acc=cpu->cpu; num=1->1; batch=128->128 
+[GIN] 2026/05/31 - 15:23:11 | 200 |    5.832096ms |             ::1 | POST     "/update"
+srv=[vllm-qwen/Bronze/qwen_0_5b]: arrivalRateRPM=51.87; inTok=76; outTok=31; acc=cpu->cpu; num=1->1; batch=128->128 
+[GIN] 2026/05/31 - 15:25:41 | 200 |    6.709681ms |             ::1 | POST     "/update"
+srv=[vllm-qwen/Bronze/qwen_0_5b]: arrivalRateRPM=72.60; inTok=76; outTok=29; acc=cpu->cpu; num=1->1; batch=128->128 
+[GIN] 2026/05/31 - 15:28:11 | 200 |    6.699233ms |             ::1 | POST     "/update"
+srv=[vllm-qwen/Bronze/qwen_0_5b]: arrivalRateRPM=62.77; inTok=84; outTok=28; acc=cpu->cpu; num=1->1; batch=128->128 
+[GIN] 2026/05/31 - 15:30:41 | 200 |    6.268481ms |             ::1 | POST     "/update"
+srv=[vllm-qwen/Bronze/qwen_0_5b]: arrivalRateRPM=62.76; inTok=82; outTok=37; acc=cpu->cpu; num=1->1; batch=128->128 
+[GIN] 2026/05/31 - 15:33:11 | 200 |    7.875592ms |             ::1 | POST     "/update"
+srv=[vllm-qwen/Bronze/qwen_0_5b]: arrivalRateRPM=52.08; inTok=37; outTok=33; acc=cpu->cpu; num=1->1; batch=128->128 
+[GIN] 2026/05/31 - 15:35:41 | 200 |    7.272925ms |             ::1 | POST     "/update"
+srv=[vllm-qwen/Bronze/qwen_0_5b]: arrivalRateRPM=51.78; inTok=84; outTok=39; acc=cpu->cpu; num=1->1; batch=128->128 
+[GIN] 2026/05/31 - 15:38:11 | 200 |    7.502141ms |             ::1 | POST     "/update"
+srv=[vllm-qwen/Bronze/qwen_0_5b]: arrivalRateRPM=61.42; inTok=82; outTok=34; acc=cpu->cpu; num=1->1; batch=128->128 
+[GIN] 2026/05/31 - 15:40:41 | 200 |    6.070055ms |             ::1 | POST     "/update"
+srv=[vllm-qwen/Bronze/qwen_0_5b]: arrivalRateRPM=74.80; inTok=61; outTok=34; acc=cpu->cpu; num=1->1; batch=128->128 
+[GIN] 2026/05/31 - 15:43:11 | 200 |    7.389682ms |             ::1 | POST     "/update"
+srv=[vllm-qwen/Bronze/qwen_0_5b]: arrivalRateRPM=25.08; inTok=89; outTok=24; acc=cpu->cpu; num=1->1; batch=128->128 
+[GIN] 2026/05/31 - 15:45:41 | 200 |    7.430171ms |             ::1 | POST     "/update"
+srv=[vllm-qwen/Bronze/qwen_0_5b]: arrivalRateRPM=29.04; inTok=64; outTok=36; acc=cpu->cpu; num=1->1; batch=128->128 
+[GIN] 2026/05/31 - 15:48:11 | 200 |    9.283005ms |             ::1 | POST     "/update"
+srv=[vllm-qwen/Bronze/qwen_0_5b]: arrivalRateRPM=30.91; inTok=60; outTok=31; acc=cpu->cpu; num=1->1; batch=128->128 
+[GIN] 2026/05/31 - 15:50:41 | 200 |   10.994215ms |             ::1 | POST     "/update"
+srv=[vllm-qwen/Bronze/qwen_0_5b]: arrivalRateRPM=39.90; inTok=71; outTok=27; acc=cpu->cpu; num=1->1; batch=128->128 
+[GIN] 2026/05/31 - 15:53:11 | 200 |    6.009123ms |             ::1 | POST     "/update"
+srv=[vllm-qwen/Bronze/qwen_0_5b]: arrivalRateRPM=35.73; inTok=46; outTok=16; acc=cpu->cpu; num=1->1; batch=128->128 
+[GIN] 2026/05/31 - 15:55:41 | 200 |    7.364038ms |             ::1 | POST     "/update"
+srv=[vllm-qwen/Bronze/qwen_0_5b]: arrivalRateRPM=18.98; inTok=76; outTok=35; acc=cpu->cpu; num=1->1; batch=128->128 
+[GIN] 2026/05/31 - 15:58:11 | 200 |    5.759039ms |             ::1 | POST     "/update"
+srv=[vllm-qwen/Bronze/qwen_0_5b]: arrivalRateRPM=26.45; inTok=76; outTok=23; acc=cpu->cpu; num=1->1; batch=128->128 
+[GIN] 2026/05/31 - 16:00:41 | 200 |    7.114247ms |             ::1 | POST     "/update"
+srv=[vllm-qwen/Bronze/qwen_0_5b]: arrivalRateRPM=25.93; inTok=81; outTok=36; acc=cpu->cpu; num=1->1; batch=128->128 
+[GIN] 2026/05/31 - 16:03:11 | 200 |    6.790353ms |             ::1 | POST     "/update"
+srv=[vllm-qwen/Bronze/qwen_0_5b]: arrivalRateRPM=41.23; inTok=80; outTok=35; acc=cpu->cpu; num=1->1; batch=128->128 
+[GIN] 2026/05/31 - 16:05:41 | 200 |     5.40315ms |             ::1 | POST     "/update"
