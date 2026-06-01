@@ -60,6 +60,11 @@ kubectl set env deployment/inferno -n inferno -c controller \
   INFERNO_WARM_UP_TIMEOUT=0 \
   INFERNO_STARTUP_DELAY=0 \
   DEFAULT_MAX_BATCH_SIZE=8
+# vllm-server evaluator drives a real vLLM pod; sampling window can reach
+# warmupSec + maxWindowSec (production: 30 + 300 = 330s). Override the default
+# 30s /simulate timeout so /collect doesn't abort while polling.
+kubectl set env deployment/inferno -n inferno -c collector \
+  INFERNO_SIMULATE_TIMEOUT_SEC=360
 kubectl rollout status deployment/inferno -n inferno --timeout=120s
 
 echo "==> Creating evaluator RBAC + ConfigMap in infer namespace"
