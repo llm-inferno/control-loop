@@ -58,7 +58,8 @@ kubectl apply -f "$REPO_ROOT/yamls/deploy/deploy-loop.yaml"
 kubectl set env deployment/inferno -n inferno -c controller \
   INFERNO_CONTROL_PERIOD=150 \
   INFERNO_WARM_UP_TIMEOUT=0 \
-  INFERNO_STARTUP_DELAY=0
+  INFERNO_STARTUP_DELAY=0 \
+  DEFAULT_MAX_BATCH_SIZE=8
 kubectl rollout status deployment/inferno -n inferno --timeout=120s
 
 echo "==> Creating evaluator RBAC + ConfigMap in infer namespace"

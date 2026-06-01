@@ -36,7 +36,7 @@ spec:
             - "--max-model-len"
             - "512"
             - "--max-num-seqs"
-            - "4"
+            - "8"
             - "--gpu-memory-utilization"
             - "0.5"
             - "--port"
