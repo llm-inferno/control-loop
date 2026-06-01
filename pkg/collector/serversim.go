@@ -5,15 +5,36 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
+	"strconv"
 	"time"
 
 	"k8s.io/client-go/kubernetes"
 )
 
+// SimulateTimeoutEnvName overrides the per-pod /simulate timeout (seconds).
+// Default is 30s, which suffices for queue-analysis and blis (analytical, ms-scale).
+// The vllm-server evaluator drives a real vLLM server with a sampling window of
+// warmupSec + maxWindowSec (production: 30 + 60–300 = 90–330s); set this env var
+// to a value larger than that window for vllm-server runs.
+const SimulateTimeoutEnvName = "INFERNO_SIMULATE_TIMEOUT_SEC"
+
 const (
-	simPollInitial = 20 * time.Millisecond
-	simTimeout     = 30 * time.Second
+	simPollInitial    = 20 * time.Millisecond
+	defaultSimTimeout = 30 * time.Second
 )
+
+var simTimeout = defaultSimTimeout
+
+func init() {
+	if v := os.Getenv(SimulateTimeoutEnvName); v != "" {
+		if secs, err := strconv.Atoi(v); err == nil && secs > 0 {
+			simTimeout = time.Duration(secs) * time.Second
+		} else {
+			fmt.Printf("collector: invalid %s=%q; using default %s\n", SimulateTimeoutEnvName, v, defaultSimTimeout)
+		}
+	}
+}
 
 type simRequest struct {
 	RPS             float32 `json:"RPS"`

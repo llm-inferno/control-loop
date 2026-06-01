@@ -112,6 +112,8 @@ spec:
             value: ""
           - name: INFERNO_STARTUP_DELAY
             value: "15"
+          - name: INFERNO_SIMULATE_TIMEOUT_SEC
+            value: "30"
         ports:
         - containerPort: 3301
         command: ["collector"]
