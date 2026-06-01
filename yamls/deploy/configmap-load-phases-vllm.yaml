@@ -15,7 +15,7 @@ data:
       - duration: 1s
         ratio: 2.0     # step to 1.0 RPS (60 RPM)
       - duration: 20m
-        ratio: 1.0     # hold at 1.0 RPS for 20 minutes
+        ratio: 2.0     # hold at 1.0 RPS (60 RPM) for 20 minutes
       - duration: 1s
         ratio: 0.5     # step back to 0.5 RPS (30 RPM)
       - duration: 0s   # hold forever
