@@ -107,6 +107,7 @@ See [`docs/superpowers/specs/2026-05-29-actuator-vllm-pairing-design.md`](docs/s
 | `INFERNO_PAIRING_TICK_SEC` | `5` | Actuator pairing-reconciler tick interval (seconds). `0` disables the reconciler. |
 | `INFERNO_PAIRING_LOG_LEVEL` | `info` | Pairing-reconciler log verbosity. `info` = state-change logs only (scaling, binding, errors); `debug` = additionally logs a line per tick showing how many managed deployments were found. |
 | `INFERNO_STARTUP_DELAY` | `0` | Seconds after pod `StartTime` before the pod is treated as ready; filtered from both the Collector and Load Emulator during the window |
+| `INFERNO_SIMULATE_TIMEOUT_SEC` | `30` | Per-pod `/simulate` timeout used by the Collector when polling the server-sim sidecar. Default suffices for `queue-analysis`/`blis` (analytical, ms-scale). For the `vllm-server` evaluator (real vLLM, sampling window `warmupSec + maxWindowSec`, typically 90–330s), set this larger than the configured window. |
 | `INFERNO_WARM_UP_TIMEOUT` | `10` | Max consecutive warm-up cycles before the controller overrides the warm-up gate and proceeds with optimize+actuate using current model data; set to `0` to disable the timeout |
 | `INFERNO_CYCLE_LOG` | `inferno-cycles.jsonl` | Path to JSONL cycle log written by the controller each cycle. Set to `-` to disable. |
 | `KUBECONFIG` | `$HOME/.kube/config` | Kubernetes config path |
