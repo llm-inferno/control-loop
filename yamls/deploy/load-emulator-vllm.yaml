@@ -14,7 +14,7 @@ spec:
     - name: INFERNO_LOAD_INTERVAL
       value: "120"
     - name: INFERNO_LOAD_ALPHA
-      value: "0.2"
+      value: "0.1"
     - name: INFERNO_LOAD_THETA
       value: "0.9"
     - name: INFERNO_LOAD_SKEW
