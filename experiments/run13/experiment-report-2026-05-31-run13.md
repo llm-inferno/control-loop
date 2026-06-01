@@ -153,25 +153,25 @@ brief to exercise the controller's response.
 
 ## Next investigations
 
-1. **`maxRPM` calibration.** The optimizer's per-replica capacity prediction
-   from EKF α/β/γ is ~2× the real value for CPU vLLM. Decide whether to
-   adjust the queueing model, add a service-class-level saturation safety
-   factor, or feed the optimizer an empirical `maxRPM` from observed
-   saturation events.
+1. **`maxRPM` calibration** ([#23](https://github.com/llm-inferno/control-loop/issues/23)).
+   The optimizer's per-replica capacity prediction from EKF α/β/γ is ~2× the
+   real value for CPU vLLM. Decide whether to adjust the queueing model, add
+   a service-class-level saturation safety factor, or feed the optimizer an
+   empirical `maxRPM` from observed saturation events.
 
-2. **Issue #19 — per-pod `/simulate` timeout.** Cycle 10 hit the 30 s
-   default. Make this configurable (already filed) and tune to the
+2. **Per-pod `/simulate` timeout** ([#19](https://github.com/llm-inferno/control-loop/issues/19)).
+   Cycle 10 hit the 30 s default. Make this configurable and tune to the
    evaluator's expected window length.
 
-3. **EKF saturation gating.** Consider whether the tuner should down-weight
-   or skip observations marked `Saturation != ""` when fitting α/β/γ — the
-   contamination pattern in c11–c19 suggests the EKF may converge faster
-   and more accurately if it ignores saturated samples (while the optimizer
-   still uses them).
+3. **EKF saturation gating** ([#24](https://github.com/llm-inferno/control-loop/issues/24)).
+   Consider whether the tuner should down-weight or skip observations marked
+   `Saturation != ""` when fitting α/β/γ — the contamination pattern in
+   c11–c19 suggests the EKF may converge faster and more accurately if it
+   ignores saturated samples (while the optimizer still uses them).
 
-4. **Throughput-window correction in evaluator.** Lengthen the
-   `/simulate` window, subtract last-dispatch tail from the denominator, or
-   replace the evaluator's count with a Prometheus query.
+4. **Throughput-window correction in evaluator** ([#25](https://github.com/llm-inferno/control-loop/issues/25)).
+   Lengthen the `/simulate` window, subtract last-dispatch tail from the
+   denominator, or replace the evaluator's count with a Prometheus query.
 
 ## Pointers
 

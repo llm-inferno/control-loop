@@ -48,22 +48,22 @@ and surfaces the next set of issues to investigate.
 
 ## Candidate next steps (priority order)
 
-1. **`maxRPM` calibration.** The biggest remaining gap. The optimizer's
+1. **`maxRPM` calibration** ([#23](https://github.com/llm-inferno/control-loop/issues/23)). The biggest remaining gap. The optimizer's
    per-replica capacity prediction from α/β/γ is ~2× too high vs the real
    CPU vLLM. Options: (a) adjust the queueing model in `optimizer-light`;
    (b) introduce a service-class saturation safety factor; (c) feed the
    optimizer an empirical `maxRPM` derived from observed saturation events.
 
-2. **EKF saturation gating.** Down-weight or skip observations marked
+2. **EKF saturation gating** ([#24](https://github.com/llm-inferno/control-loop/issues/24)). Down-weight or skip observations marked
    `Saturation != ""` in the tuner's α/β/γ fit. The optimizer still gets
    the saturated reading via `curAlloc`; the EKF stays clean.
 
-3. **Issue #19 — per-pod `/simulate` timeout.** Default 30 s blocked cycle
-   10. Make configurable; align with the evaluator's measurement window.
+3. **Per-pod `/simulate` timeout** ([#19](https://github.com/llm-inferno/control-loop/issues/19)). Default 30 s blocked cycle 10.
+   Make configurable; align with the evaluator's measurement window.
 
-4. **Evaluator throughput window bias** (separate memory note). Throughput
-   under-counted by 15–40 % at low load, more under saturation. Three
-   options documented in `project_evaluator_throughput_bias.md`.
+4. **Evaluator throughput window bias** ([#25](https://github.com/llm-inferno/control-loop/issues/25)). Throughput under-counted by
+   15–40 % at low load, more under saturation. Three options documented
+   in the issue.
 
 ## Pointers
 
