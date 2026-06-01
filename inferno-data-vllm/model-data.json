@@ -4,7 +4,7 @@
       "name": "qwen_0_5b",
       "acc": "cpu",
       "accCount": 1,
-      "maxBatchSize": 8,
+      "maxBatchSize": 128,
       "atTokens": 64
     }
   ]
