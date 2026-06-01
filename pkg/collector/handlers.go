@@ -189,39 +189,48 @@ func collect(c *gin.Context) {
 					}
 					sim := simResults[i]
 
-					// If the pod reports saturation, its metrics (very high TTFT/ITL) are not
-					// useful for EKF tuning. Re-simulate at progressively lower load until
-					// unsaturated or overloadMaxRetries is reached; skip pod if still saturated.
+					// Backend-aware saturation handling. The re-simulation policy below replays
+					// /simulate at progressively lower load to recover well-conditioned EKF
+					// observations; this only works for purely-analytical evaluators where the
+					// response is a function of the request. The vllm-server evaluator forwards
+					// to a real vLLM pod and cannot manufacture a lower-load measurement on
+					// demand, so for that backend we pass the saturated reading through and let
+					// the optimizer react to the elevated TTFT/ITL.
 					if sim.Saturation != "" {
-						utilization := overloadTargetUtilization
-						resolved := false
-						for attempt := 1; attempt <= overloadMaxRetries; attempt++ {
-							adjustedRPS := sim.MaxRPS * utilization
-							fmt.Printf("pod %s: saturated (%s), attempt %d/%d; re-simulating at %.2freq/s\n",
-								pe.pod.Name, sim.Saturation, attempt, overloadMaxRetries, adjustedRPS)
-							adjReq := simRequest{
-								RPS:             adjustedRPS,
-								MaxConcurrency:  maxBatchSize,
-								AvgInputTokens:  float32(pe.inTok),
-								AvgOutputTokens: float32(pe.outTok),
-								Accelerator:     d.Labels[ctrl.KeyAccelerator],
-								Model:           d.Labels[ctrl.KeyServerModel],
+						if d.Labels[ctrl.KeyEvaluator] == ctrl.EvaluatorVLLMServer {
+							fmt.Printf("pod %s: saturated (%s); vllm-server backend, passing through\n",
+								pe.pod.Name, sim.Saturation)
+						} else {
+							utilization := overloadTargetUtilization
+							resolved := false
+							for attempt := 1; attempt <= overloadMaxRetries; attempt++ {
+								adjustedRPS := sim.MaxRPS * utilization
+								fmt.Printf("pod %s: saturated (%s), attempt %d/%d; re-simulating at %.2freq/s\n",
+									pe.pod.Name, sim.Saturation, attempt, overloadMaxRetries, adjustedRPS)
+								adjReq := simRequest{
+									RPS:             adjustedRPS,
+									MaxConcurrency:  maxBatchSize,
+									AvgInputTokens:  float32(pe.inTok),
+									AvgOutputTokens: float32(pe.outTok),
+									Accelerator:     d.Labels[ctrl.KeyAccelerator],
+									Model:           d.Labels[ctrl.KeyServerModel],
+								}
+								adjSim, adjErr := simulatePod(KubeClient, pe.pod.Namespace, pe.pod.Name, ctrl.ServerSimPort, adjReq)
+								if adjErr != nil {
+									fmt.Printf("pod %s: re-simulation error: %v; skipping pod\n", pe.pod.Name, adjErr)
+									break
+								}
+								sim = adjSim
+								if sim.Saturation == "" {
+									resolved = true
+									break
+								}
+								utilization -= overloadRetryStep
 							}
-							adjSim, adjErr := simulatePod(KubeClient, pe.pod.Namespace, pe.pod.Name, ctrl.ServerSimPort, adjReq)
-							if adjErr != nil {
-								fmt.Printf("pod %s: re-simulation error: %v; skipping pod\n", pe.pod.Name, adjErr)
-								break
+							if !resolved {
+								fmt.Printf("pod %s: still saturated after %d attempts; skipping\n", pe.pod.Name, overloadMaxRetries)
+								continue
 							}
-							sim = adjSim
-							if sim.Saturation == "" {
-								resolved = true
-								break
-							}
-							utilization -= overloadRetryStep
-						}
-						if !resolved {
-							fmt.Printf("pod %s: still saturated after %d attempts; skipping\n", pe.pod.Name, overloadMaxRetries)
-							continue
 						}
 					}
 
