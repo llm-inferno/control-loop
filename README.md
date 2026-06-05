@@ -4,6 +4,32 @@ The control loop comprises (1) a Collector to get data about the inference serve
 
 ![control-loop](docs/figs/components.png)
 
+## Repository layout
+
+```
+control-loop/
+├── cmd/                # Go binaries (one per microservice)
+├── pkg/                # Internal packages
+├── manifests/          # K8s YAMLs, organized per experiment
+│   ├── common/         # used by all experiments (namespaces, deploy-loop, configmap-tuner)
+│   ├── qa/             # queue-analysis evaluator workload + load emulator
+│   ├── blis/           # blis/trained-physics evaluator workload + load emulator
+│   ├── vllm-cpu/       # vllm-server evaluator workload + paired vLLM (CPU)
+│   └── samples/        # demo workloads referenced from §II walkthrough below
+├── inferno-data/       # optimizer/SLO config files, per experiment (qa, blis, vllm-cpu)
+├── scripts/
+│   ├── common/         # kind-teardown, sync-cycle-log, local-dev helpers
+│   ├── qa/             # kind-deploy.sh for queue-analysis
+│   ├── blis/           # kind-deploy.sh for blis
+│   └── vllm-cpu/       # kind-deploy.sh for vllm-server
+├── dashboard/          # Python Dash visualization app
+├── docs/               # design specs
+├── experiments/        # experiment reports
+└── sample-data/        # git submodule (realistic-scale data)
+```
+
+To add a new experiment `X`: create matching `manifests/X/`, `inferno-data/X/`, and `scripts/X/kind-deploy.sh`.
+
 ## Running
 
 ## I. Run control loop externally
@@ -18,7 +44,7 @@ Following are the steps to run the optimization control loop external to a clust
   - `REPO_BASE` path to this repository
   - `TUNER_REPO`path to [model-tuner](https://github.com/llm-inferno/model-tuner) repository
 - Setup [server-sim](https://github.com/llm-inferno/server-sim), which is used in the demo as a replacement to a real vLLM server.
-  - Make sure images `inferno-server-sim` and `inferno-evaluator`, as specified in the [deployment yaml files](yamls/workload/), are built and available in the cluster.
+  - Make sure images `inferno-server-sim` and `inferno-evaluator`, as specified in the [deployment yaml files](manifests/), are built and available in the cluster.
   - For the queue-model server-sim (default) evaluator, deploy `server-sim-model-data` configMap.
 
     ```bash
@@ -31,7 +57,7 @@ Following are the steps to run the optimization control loop external to a clust
 - Run script to create terminals for the various components. You may need to install [term](https://github.com/liyanage/macosx-shell-scripts/blob/master/term) and add terminal coloring support. (Hint: [Change OSX Terminal Settings from Command Line](https://ict4g.net/adolfo/notes/admin/change-osx-terminal-settings-from-command-line.html)).
 
     ```bash
-    cd $REPO_BASE/scripts
+    cd $REPO_BASE/scripts/common
     ./launch-terms.sh
     ```
 
@@ -52,13 +78,13 @@ Following are the steps to run the optimization control loop external to a clust
 - Set the environment in all of the (six) component terminals. [Make sure `$REPO_BASE` is set]
 
     ```bash
-    . $REPO_BASE/scripts/setparms.sh
+    . $REPO_BASE/scripts/common/setparms.sh
     ```
 
 - Deploy sample deployments (green terminal) in namespace `infer`, representing three inference servers.
 
     ```bash
-    kubectl apply -f ns.yaml
+    kubectl apply -f ../common/ns-infer.yaml
     kubectl apply -f dep1.yaml,dep2.yaml,dep3.yaml
     ```
 
@@ -127,7 +153,7 @@ Following are the steps to run the optimization control loop external to a clust
     Each metric follows a mean-reverting random walk: `next = current + theta*(nominal - current) + Normal(0, alpha*nominal)`, keeping the time average near the nominal value set in the deployment labels.
     The total deployment request rate is split across running pods using a skew factor (0 = equal split, 1 = fully random split).
 
-    Optionally, a **phase sequence** can be configured to vary the nominal request rate over time. Each phase specifies a real-time duration and a change ratio; the nominal RPM ramps linearly from its value at the start of the phase to `ratio × start` by the end. Ratios are chained: each is relative to the nominal at the start of that phase. The random walk tracks the changing nominal throughout. A `duration: 0s` terminal phase holds the final value indefinitely. Example (`yamls/deploy/configmap-load-phases.yaml`):
+    Optionally, a **phase sequence** can be configured to vary the nominal request rate over time. Each phase specifies a real-time duration and a change ratio; the nominal RPM ramps linearly from its value at the start of the phase to `ratio × start` by the end. Ratios are chained: each is relative to the nominal at the start of that phase. The random walk tracks the changing nominal throughout. A `duration: 0s` terminal phase holds the final value indefinitely. Example (`manifests/qa/configmap-load-phases.yaml`):
 
     ```yaml
     phases:
@@ -140,7 +166,7 @@ Following are the steps to run the optimization control loop external to a clust
       - duration: 0s  # hold at final value forever
     ```
 
-    The phase config is delivered as the `load-phases-config` ConfigMap (see `yamls/deploy/load-emulator.yaml`). When `INFERNO_LOAD_PHASES` is unset, the emulator behaves as before (static nominal).
+    The phase config is delivered as the `load-phases-config` ConfigMap (see `manifests/qa/load-emulator.yaml`). When `INFERNO_LOAD_PHASES` is unset, the emulator behaves as before (static nominal).
 
     Configuration is via environment variables (all optional, defaults shown):
 
@@ -161,7 +187,7 @@ Following are the steps to run the optimization control loop external to a clust
   
       ```bash
     kubectl delete -f dep1.yaml,dep2.yaml,dep3.yaml
-    kubectl delete -f ns.yaml
+    kubectl delete -f ../common/ns-infer.yaml
     ```
 
 ## II. Run control loop in a cluster
@@ -171,7 +197,7 @@ Following are the steps to run the optimization control loop external to a clust
 To create a docker image for the control loop (excluding the Optimizer). Instructions for the Optimizer are in the [optimizer repository](https://github.com/llm-inferno/optimizer).
 
 ```bash
-docker build -t  inferno-loop . --load
+docker build -t quay.io/atantawi/inferno-loop:latest . --load
 ```
 
 Following are the steps to run the optimization control loop within a cluster.
@@ -185,8 +211,8 @@ Following are the steps to run the optimization control loop within a cluster.
 - Create namespace *inferno*, where all optimizer components will reside.
 
     ```bash
-    cd $REPO_BASE/yamls/deploy
-    kubectl apply -f ns.yaml
+    cd $REPO_BASE/manifests/common
+    kubectl apply -f ns-inferno.yaml
     ```
 
 - Create a configmap populated with inferno static data, e.g. samples taken from the *large* directory.
@@ -240,11 +266,11 @@ Following are the steps to run the optimization control loop within a cluster.
 - Create deployments representing inference servers in namespace *infer*.
 
     ```bash
-    cd $REPO_BASE/yamls/workload
-    kubectl apply -f ns.yaml
+    kubectl apply -f $REPO_BASE/manifests/common/ns-infer.yaml
     kubectl create configmap server-sim-model-data -n infer \
       --from-file=model-data.json=$REPO_BASE/sample-data/large/model-data.json \
       --dry-run=client -o yaml | kubectl apply -f -
+    cd $REPO_BASE/manifests/samples
     kubectl apply -f dep1.yaml,dep2.yaml,dep3.yaml,dep4.yaml
     ```
 
@@ -293,8 +319,7 @@ Following are the steps to run the optimization control loop within a cluster.
 - Start a load emulator to inference servers.
 
     ```bash
-    cd $REPO_BASE/yamls/deploy
-    kubectl apply -f load-emulator.yaml
+    kubectl apply -f $REPO_BASE/manifests/qa/load-emulator.yaml
     kubectl logs -f load-emulator -n inferno
     ```
 
@@ -318,16 +343,16 @@ Following are the steps to run the optimization control loop within a cluster.
 - Cleanup
 
     ```bash
-    cd $REPO_BASE/yamls/deploy
-    kubectl delete -f load-emulator.yaml
-    kubectl delete -f deploy-loop.yaml 
+    kubectl delete -f $REPO_BASE/manifests/qa/load-emulator.yaml
+    cd $REPO_BASE/manifests/common
+    kubectl delete -f deploy-loop.yaml
     kubectl delete configmap inferno-static-data inferno-dynamic-data -n inferno
-    kubectl delete -f ns.yaml
+    kubectl delete -f ns-inferno.yaml
 
-    cd $REPO_BASE/yamls/workload
+    cd $REPO_BASE/manifests/samples
     kubectl delete -f dep1.yaml,dep2.yaml,dep3.yaml,dep4.yaml
     kubectl delete configmap server-sim-model-data -n infer
-    kubectl delete -f ns.yaml
+    kubectl delete -f $REPO_BASE/manifests/common/ns-infer.yaml
     ```
 
 ## III. Local kind cluster (quick start)
@@ -337,7 +362,7 @@ For local development and testing with a [kind](https://kind.sigs.k8s.io/) clust
 ### Prerequisites
 
 - `kind create cluster --name kind-cluster`
-- Sibling repos checked out under the same parent: `../optimizer`, `../model-tuner`, `../server-sim`
+- Sibling repos checked out under the same parent: `../optimizer-light`, `../model-tuner`, `../server-sim`
 - `sample-data` submodule initialized: `git submodule update --init`
 
 ### Step 1: Build images
@@ -346,8 +371,8 @@ For local development and testing with a [kind](https://kind.sigs.k8s.io/) clust
 # From control-loop/
 docker build -t quay.io/atantawi/inferno-loop:latest .
 
-# From ../optimizer/, ../model-tuner/, ../server-sim/
-docker build -t quay.io/atantawi/inferno-optimizer:latest .
+# From ../optimizer-light/, ../model-tuner/, ../server-sim/
+docker build -t quay.io/atantawi/inferno-optimizer-light:latest .
 docker build -t quay.io/atantawi/inferno-tuner:latest .
 docker build -f Dockerfile.server-sim -t quay.io/atantawi/inferno-server-sim:latest .
 docker build -f Dockerfile.evaluator  -t quay.io/atantawi/inferno-evaluator:latest .
@@ -362,19 +387,19 @@ Two workload configurations are provided:
 **queue-analysis** (`dep-qa-granite`, `dep-qa-llama` — `queue-analysis` evaluator, `sample-data/large/` model data):
 
 ```bash
-scripts/kind-deploy-qa.sh
+scripts/qa/kind-deploy.sh
 ```
 
-**blis/trained-physics** (`dep-blis-granite`, `dep-blis-llama` — `trained-physics` evaluator, `inferno-data/` config):
+**blis/trained-physics** (`dep-blis-granite`, `dep-blis-llama` — `trained-physics` evaluator, `inferno-data/blis/` config):
 
 ```bash
-scripts/kind-deploy-blis.sh
+scripts/blis/kind-deploy.sh
 ```
 
 | Script | Deployments | Models | Accelerator | Evaluator |
 |---|---|---|---|---|
-| `kind-deploy-qa.sh` | `dep-qa-granite`, `dep-qa-llama` | `granite_8b`, `llama_13b` | H100 | queue-analysis |
-| `kind-deploy-blis.sh` | `dep-blis-granite`, `dep-blis-llama` | `granite_8b`, `llama_13b` | H100 | blis/trained-physics |
+| `qa/kind-deploy.sh` | `dep-qa-granite`, `dep-qa-llama` | `granite_8b`, `llama_13b` | H100 | queue-analysis |
+| `blis/kind-deploy.sh` | `dep-blis-granite`, `dep-blis-llama` | `granite_8b`, `llama_13b` | H100 | blis/trained-physics |
 
 Each script handles: load images → namespaces → ConfigMaps → inferno pod → workloads → load-emulator.
 

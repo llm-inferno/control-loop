@@ -16,13 +16,42 @@ go run cmd/optimizer/main.go
 go run cmd/loademulator/main.go
 
 # Build Docker image
-docker build -t inferno-loop . --load
+docker build -t quay.io/atantawi/inferno-loop:latest . --load
 
 # Set environment variables for local development
-. scripts/setparms.sh
+. scripts/common/setparms.sh
 ```
 
 There are no automated tests in this repository.
+
+## Repository layout
+
+```
+control-loop/
+├── cmd/                # Go binaries (one per microservice)
+├── pkg/                # Internal packages
+├── manifests/          # K8s YAMLs, organized per experiment
+│   ├── common/         # used by all experiments (namespaces, deploy-loop, configmap-tuner)
+│   ├── qa/             # queue-analysis evaluator workload + load emulator
+│   ├── blis/           # blis/trained-physics evaluator workload + load emulator
+│   ├── vllm-cpu/       # vllm-server evaluator workload + paired vLLM (CPU)
+│   └── samples/        # demo workloads referenced from README §II walkthrough
+├── inferno-data/       # optimizer/SLO config files, per experiment
+│   ├── qa/             # ... matches manifests/qa
+│   ├── blis/
+│   └── vllm-cpu/
+├── scripts/
+│   ├── common/         # kind-teardown, sync-cycle-log, local-dev helpers
+│   ├── qa/             # kind-deploy.sh for queue-analysis
+│   ├── blis/           # kind-deploy.sh for blis
+│   └── vllm-cpu/       # kind-deploy.sh for vllm-server
+├── dashboard/          # Python Dash visualization app
+├── docs/               # design specs (historical record)
+├── experiments/        # experiment reports (historical record)
+└── sample-data/        # git submodule (realistic-scale data)
+```
+
+To add a new experiment `X`: create matching `manifests/X/`, `inferno-data/X/`, and `scripts/X/kind-deploy.sh`.
 
 ## Architecture
 
@@ -122,7 +151,7 @@ See [`docs/superpowers/specs/2026-05-29-actuator-vllm-pairing-design.md`](docs/s
 
 Sample data is in the `sample-data/` git submodule (`sample-data/large/` has realistic-scale data).
 
-The load emulator phase sequence is configured via `yamls/deploy/configmap-load-phases.yaml`, delivered to the pod as the `load-phases-config` ConfigMap mounted at `/etc/loadphases/`.
+The load emulator phase sequence is configured per-experiment via `manifests/{qa,blis,vllm-cpu}/configmap-load-phases.yaml`, delivered to the pod as the `load-phases-config` ConfigMap mounted at `/etc/loadphases/`.
 
 ## Known Behaviours and Operational Notes
 
@@ -165,7 +194,7 @@ The `dashboard/` directory contains a standalone Python Dash app (`dashboard.py`
 - [kind](https://kind.sigs.k8s.io/) cluster running (`kind create cluster --name kind-cluster`)
 - Docker runtime (images built with `docker build` and loaded via `kind load docker-image`)
 - Sibling repos checked out under the same parent directory as `control-loop`:
-  - `../optimizer`, `../model-tuner`, `../server-sim`
+  - `../optimizer-light`, `../model-tuner`, `../server-sim`
 - `sample-data` submodule initialized (`git submodule update --init`)
 
 ### Step 1: Build images (run in parallel)
@@ -174,8 +203,8 @@ The `dashboard/` directory contains a standalone Python Dash app (`dashboard.py`
 # From control-loop/
 docker build -t quay.io/atantawi/inferno-loop:latest .
 
-# From ../optimizer/
-docker build -t quay.io/atantawi/inferno-optimizer:latest .
+# From ../optimizer-light/
+docker build -t quay.io/atantawi/inferno-optimizer-light:latest .
 
 # From ../model-tuner/
 docker build -t quay.io/atantawi/inferno-tuner:latest .
@@ -191,30 +220,30 @@ All YAML files use `imagePullPolicy: IfNotPresent`, so kind will use locally-loa
 
 ```bash
 # From control-loop/
-scripts/kind-deploy.sh
+scripts/qa/kind-deploy.sh
 ```
 
-See `scripts/kind-deploy.sh` for the full deploy sequence (load images → namespaces → ConfigMaps → inferno pod → workloads → load-emulator).
+See `scripts/qa/kind-deploy.sh` for the full deploy sequence (load images → namespaces → ConfigMaps → inferno pod → workloads → load-emulator).
 
 ### Workloads
 
-**queue-analysis workloads** (`scripts/kind-deploy.sh`):
+**queue-analysis workloads** (`scripts/qa/kind-deploy.sh`):
 
 | Deployment | Model | Accelerator | Evaluator | Class |
 |---|---|---|---|---|
-| `dep1.yaml` (`premium-llama-13b`) | `llama_13b` | MI250 | queue-analysis | Premium |
-| `dep2.yaml` (`bronze-granite-13b`) | `granite_13b` | H100 | queue-analysis | Bronze |
+| `dep-qa-granite.yaml` | `granite_8b` | H100 | queue-analysis | Premium |
+| `dep-qa-llama.yaml` | `llama_13b` | H100 | queue-analysis | Bronze |
 
-Both share the `server-sim-model-data` ConfigMap (from `sample-data/large/model-data.json`).
+Both use `configmap-qa-small.yaml` and `inferno-data/qa/` for optimizer/SLO config.
 
-**blis/trained-physics workloads** (`scripts/kind-deploy-blis.sh`):
+**blis/trained-physics workloads** (`scripts/blis/kind-deploy.sh`):
 
 | Deployment | Model | Accelerator | Evaluator | Class |
 |---|---|---|---|---|
 | `dep-blis-granite.yaml` | `granite_8b` | H100 | blis/trained-physics | Premium |
 | `dep-blis-llama.yaml` | `llama_13b` | H100 | blis/trained-physics | Bronze |
 
-Both use `configmap-blis-small.yaml` (betaCoeffs/alphaCoeffs for trained-physics) and `inferno-data/` for optimizer/SLO config. `INFERNO_WARM_UP_TIMEOUT=0` is set so the optimizer waits for full EKF convergence before running.
+Both use `configmap-blis-small.yaml` (betaCoeffs/alphaCoeffs for trained-physics) and `inferno-data/blis/` for optimizer/SLO config. `INFERNO_WARM_UP_TIMEOUT=0` is set so the optimizer waits for full EKF convergence before running.
 
 ### Useful commands after deploy
 
@@ -242,7 +271,7 @@ kubectl patch deployment <name> -n infer \
 
 ## Integration Test Results (k3s / Rancher Desktop)
 
-Tested with `dep1` (`premium-llama-13b`, vllm-001) and `dep2-blis` (`bronze-granite-13b`, vllm-002) workloads:
+Tested with the queue-analysis workload set (`dep-qa-granite`, `dep-qa-llama`):
 
 | Experiment | Observation |
 |---|---|
