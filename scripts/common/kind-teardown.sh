@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# Tear down everything deployed by kind-deploy.sh, leaving the kind cluster intact.
-# Run from the control-loop/ repo root.
+# Tear down everything deployed by any of the kind-deploy.sh variants, leaving the kind cluster intact.
 
 set -euo pipefail
 

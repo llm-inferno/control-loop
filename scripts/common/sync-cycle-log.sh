@@ -3,11 +3,11 @@
 # Runs on an interval so the Dash dashboard auto-refresh picks up new records.
 #
 # Usage:
-#   scripts/sync-cycle-log.sh [interval_seconds] [local_output_path]
+#   scripts/common/sync-cycle-log.sh [interval_seconds] [local_output_path]
 #   defaults: interval=10, output=inferno-cycles.jsonl (repo root)
 #
 # Run in background:
-#   scripts/sync-cycle-log.sh &
+#   scripts/common/sync-cycle-log.sh &
 
 set -euo pipefail
 

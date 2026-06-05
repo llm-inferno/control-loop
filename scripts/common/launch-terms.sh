@@ -31,5 +31,5 @@ term -p 1200,750 -s 800,300 set_theme red beige
 sleep 1
 
 # launcher
-term -p 1500,900 -s 500,250 $YAMLS_DIR/workload set_theme yellow DarkGreen
+term -p 1500,900 -s 500,250 $MANIFESTS_DIR/samples set_theme yellow DarkGreen
 sleep 1
