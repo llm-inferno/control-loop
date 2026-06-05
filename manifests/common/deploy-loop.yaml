@@ -125,7 +125,7 @@ spec:
             memory: "1Gi"
             cpu: "1"
       - name: optimizer
-        image: quay.io/atantawi/inferno-optimizer:latest
+        image: quay.io/atantawi/inferno-optimizer-light:latest
         imagePullPolicy: IfNotPresent
         env:
           - name: INFERNO_PORT

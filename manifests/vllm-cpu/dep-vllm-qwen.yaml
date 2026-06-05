@@ -33,7 +33,7 @@ spec:
       serviceAccountName: vllm-server-evaluator
       containers:
         - name: server-sim
-          image: server-sim:latest
+          image: quay.io/atantawi/inferno-server-sim:latest
           imagePullPolicy: Never
           ports:
             - containerPort: 8080
@@ -50,7 +50,7 @@ spec:
               memory: "256Mi"
               cpu: "500m"
         - name: evaluator
-          image: evaluator:latest
+          image: quay.io/atantawi/inferno-evaluator:latest
           imagePullPolicy: Never
           args: ["vllm-server"]
           ports:
