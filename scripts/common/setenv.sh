@@ -16,9 +16,9 @@ echo "==> setting up environment"
 ############################################################
 
 export SCRIPTS_DIR=.
-export BASE_DIR=..
+export BASE_DIR=../..
 export CMD_DIR=$BASE_DIR/cmd
-export YAMLS_DIR=$BASE_DIR/yamls
+export MANIFESTS_DIR=$BASE_DIR/manifests
 
 # static data
 export SAMPLES_DIR=$BASE_DIR/sample-data

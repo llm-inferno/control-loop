@@ -1,0 +1,29 @@
+# Deploy/runtime artifacts — not consumed by `go build`
+manifests/
+inferno-data/
+scripts/
+sample-data/
+experiments/
+dashboard/
+docs/
+
+# Markdown / readmes
+*.md
+
+# Local tooling and editor state
+.git/
+.gitignore
+.gitmodules
+.dockerignore
+.claude/
+.worktrees/
+memory/
+
+# OS / cache
+.DS_Store
+**/.DS_Store
+**/__pycache__/
+**/.venv/
+
+# Runtime output
+inferno-cycles.jsonl

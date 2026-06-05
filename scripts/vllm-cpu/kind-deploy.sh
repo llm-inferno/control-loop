@@ -3,7 +3,7 @@
 # a local kind cluster. The workload pairs a managed Deployment (server-sim +
 # evaluator sidecar) with a CPU-only vLLM Deployment running Qwen2.5-0.5B-Instruct.
 #
-# Uses inferno-data-vllm/ for optimizer config (cpu accelerator, qwen_0_5b
+# Uses inferno-data/vllm-cpu/ for optimizer config (cpu accelerator, qwen_0_5b
 # model with no perfParms — EKF learns from scratch). 5-minute control period
 # matches the evaluator's max measurement window. INFERNO_WARM_UP_TIMEOUT=0 so
 # the optimizer waits for full EKF convergence.
@@ -11,7 +11,8 @@
 # Run from the control-loop/ repo root.
 # Prerequisites:
 #   - inferno images built (see CLAUDE.md Step 1)
-#   - server-sim:latest and evaluator:latest images built locally from the
+#   - quay.io/atantawi/inferno-server-sim:latest and
+#     quay.io/atantawi/inferno-evaluator:latest images built locally from the
 #     server-sim repo (see ../server-sim/deploy/k8s/LOCAL-KIND-TESTING.md)
 #   - vllm/vllm-openai-cpu:latest-arm64 pulled locally (~8 GB)
 #   - kind node has at least 12 GB of memory available (vLLM AOT compile peaks)
@@ -19,24 +20,26 @@
 set -euo pipefail
 
 CLUSTER=${KIND_CLUSTER:-kind-cluster}
-REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-DATA_DIR="$REPO_ROOT/inferno-data-vllm"
+REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+DATA_DIR="$REPO_ROOT/inferno-data/vllm-cpu"
+COMMON="$REPO_ROOT/manifests/common"
+EXP="$REPO_ROOT/manifests/vllm-cpu"
 
 echo "==> Loading inferno images into kind cluster: $CLUSTER"
 kind load docker-image quay.io/atantawi/inferno-loop:latest      --name "$CLUSTER"
-kind load docker-image quay.io/atantawi/inferno-optimizer:latest --name "$CLUSTER"
+kind load docker-image quay.io/atantawi/inferno-optimizer-light:latest --name "$CLUSTER"
 kind load docker-image quay.io/atantawi/inferno-tuner:latest     --name "$CLUSTER"
 
 echo "==> Loading server-sim/evaluator images into kind cluster: $CLUSTER"
-kind load docker-image server-sim:latest --name "$CLUSTER"
-kind load docker-image evaluator:latest  --name "$CLUSTER"
+kind load docker-image quay.io/atantawi/inferno-server-sim:latest --name "$CLUSTER"
+kind load docker-image quay.io/atantawi/inferno-evaluator:latest  --name "$CLUSTER"
 
 echo "==> Loading vLLM CPU image into kind cluster: $CLUSTER (this can take a minute)"
 kind load docker-image vllm/vllm-openai-cpu:latest-arm64 --name "$CLUSTER"
 
 echo "==> Creating namespaces"
-kubectl apply -f "$REPO_ROOT/yamls/deploy/ns.yaml"
-kubectl apply -f "$REPO_ROOT/yamls/workload/ns.yaml"
+kubectl apply -f "$COMMON/ns-inferno.yaml"
+kubectl apply -f "$COMMON/ns-infer.yaml"
 
 echo "==> Creating inferno ConfigMaps (cpu/qwen data, no perfParms)"
 kubectl create configmap inferno-static-data -n inferno \
@@ -50,10 +53,10 @@ kubectl create configmap inferno-dynamic-data -n inferno \
   --from-file=capacity-data.json="$DATA_DIR/capacity-data.json" \
   --save-config --dry-run=client -o yaml | kubectl apply -f -
 
-kubectl apply -f "$REPO_ROOT/yamls/deploy/configmap-tuner.yaml"
+kubectl apply -f "$COMMON/configmap-tuner.yaml"
 
 echo "==> Deploying inferno pod (controller, collector, optimizer, actuator, tuner)"
-kubectl apply -f "$REPO_ROOT/yamls/deploy/deploy-loop.yaml"
+kubectl apply -f "$COMMON/deploy-loop.yaml"
 # 2.5-minute control period matches evaluator max measurement window.
 kubectl set env deployment/inferno -n inferno -c controller \
   INFERNO_CONTROL_PERIOD=150 \
@@ -68,22 +71,22 @@ kubectl set env deployment/inferno -n inferno -c collector \
 kubectl rollout status deployment/inferno -n inferno --timeout=120s
 
 echo "==> Creating evaluator RBAC + ConfigMap in infer namespace"
-kubectl apply -f "$REPO_ROOT/yamls/workload/rbac-vllm-eval.yaml"
-kubectl apply -f "$REPO_ROOT/yamls/workload/configmap-vllm-eval.yaml"
+kubectl apply -f "$EXP/rbac-vllm-eval.yaml"
+kubectl apply -f "$EXP/configmap-vllm-eval.yaml"
 
 echo "==> Deploying paired vLLM Deployment (CPU, Qwen2.5-0.5B-Instruct)"
-kubectl apply -f "$REPO_ROOT/yamls/workload/deployment-vllm-cpu.yaml"
+kubectl apply -f "$EXP/deployment-vllm-cpu.yaml"
 echo "    Waiting for vLLM to become ready (model download + AOT compile, up to 8 minutes)..."
 kubectl wait --for=condition=available deployment/vllm-qwen-cpu -n infer --timeout=600s
 
 echo "==> Deploying managed workload (server-sim + vllm-server evaluator)"
-kubectl apply -f "$REPO_ROOT/yamls/workload/dep-vllm-qwen.yaml"
+kubectl apply -f "$EXP/dep-vllm-qwen.yaml"
 kubectl rollout status deployment/vllm-qwen-server -n infer --timeout=120s
 
 echo "==> Deploying load emulator with vllm phase sequence (0.5 -> 1.0 -> 0.5 RPS, 20 min each)"
-kubectl apply -f "$REPO_ROOT/yamls/deploy/configmap-load-phases-vllm.yaml"
+kubectl apply -f "$EXP/configmap-load-phases.yaml"
 kubectl delete pod load-emulator -n inferno --ignore-not-found
-kubectl apply -f "$REPO_ROOT/yamls/deploy/load-emulator-vllm.yaml"
+kubectl apply -f "$EXP/load-emulator.yaml"
 
 echo ""
 echo "==> Done. Watch controller logs:"
