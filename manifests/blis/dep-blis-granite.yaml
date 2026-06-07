@@ -10,12 +10,12 @@ metadata:
     inferno.server.class: Premium
     inferno.server.allocation.accelerator: H100
     inferno.server.allocation.maxbatchsize: "256"
-    inferno.server.load.rpm: "60"
-    inferno.server.load.intokens: "2048"
-    inferno.server.load.outtokens: "1024"
-    inferno.server.load.nominal.rpm: "60"
-    inferno.server.load.nominal.intokens: "2048"
-    inferno.server.load.nominal.outtokens: "1024"
+    inferno.server.load.rpm: "15"
+    inferno.server.load.intokens: "1024"
+    inferno.server.load.outtokens: "256"
+    inferno.server.load.nominal.rpm: "15"
+    inferno.server.load.nominal.intokens: "1024"
+    inferno.server.load.nominal.outtokens: "256"
 spec:
   replicas: 2
   selector:

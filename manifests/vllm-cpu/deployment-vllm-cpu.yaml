@@ -8,6 +8,8 @@ metadata:
     inferno.vllm.accelerator: cpu
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: vllm-qwen-cpu
@@ -41,12 +43,15 @@ spec:
             - "0.5"
             - "--port"
             - "8000"
+          env:
+            - name: VLLM_CPU_KVCACHE_SPACE
+              value: "4"
           ports:
             - containerPort: 8000
           resources:
             requests:
               memory: "6Gi"
-              cpu: "2000m"
+              cpu: "1000m"
             limits:
               memory: "10Gi"
               cpu: "4000m"

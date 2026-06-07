@@ -6,16 +6,11 @@
       "modelTargets": [
         {
           "model": "granite_8b",
-          "slo-itl": 30,
-          "slo-ttft": 200
+          "slo-itl": 9,
+          "slo-ttft": 32
         },
         {
           "model": "llama_13b",
-          "slo-itl": 15,
-          "slo-ttft": 100
-        },
-        {
-          "model": "mixtral_8_7b",
           "slo-itl": 15,
           "slo-ttft": 100
         }
@@ -32,13 +27,8 @@
         },
         {
           "model": "llama_13b",
-          "slo-itl": 60,
-          "slo-ttft": 1000
-        },
-        {
-          "model": "mixtral_8_7b",
-          "slo-itl": 20,
-          "slo-ttft": 1000
+          "slo-itl": 14,
+          "slo-ttft": 40
         }
       ]
     }

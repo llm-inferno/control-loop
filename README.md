@@ -44,7 +44,7 @@ Following are the steps to run the optimization control loop external to a clust
   - `REPO_BASE` path to this repository
   - `TUNER_REPO`path to [model-tuner](https://github.com/llm-inferno/model-tuner) repository
 - Setup [server-sim](https://github.com/llm-inferno/server-sim), which is used in the demo as a replacement to a real vLLM server.
-  - Make sure images `inferno-server-sim` and `inferno-evaluator`, as specified in the [deployment yaml files](manifests/), are built and available in the cluster.
+  - Make sure images `inferno-server-sim` and `inferno-evaluator`, as specified in the [deployment yaml files](manifests/samples/), are built and available in the cluster.
   - For the queue-model server-sim (default) evaluator, deploy `server-sim-model-data` configMap.
 
     ```bash
@@ -232,6 +232,12 @@ Following are the steps to run the optimization control loop within a cluster.
     kubectl create configmap inferno-dynamic-data -n inferno --from-file=/$SAMPLE_DATA_PATH/capacity-data.json 
     ```
 
+- Create the model tuner configmap.
+
+    ```bash
+    kubectl apply -f configmap-tuner.yaml 
+    ```
+
 - Deploy inferno in the cluster.
 
     ```bash
@@ -319,6 +325,7 @@ Following are the steps to run the optimization control loop within a cluster.
 - Start a load emulator to inference servers.
 
     ```bash
+    kubectl apply -f $REPO_BASE/manifests/qa/configmap-load-phases.yaml
     kubectl apply -f $REPO_BASE/manifests/qa/load-emulator.yaml
     kubectl logs -f load-emulator -n inferno
     ```
