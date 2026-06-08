@@ -4,14 +4,12 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"strconv"
 
 	ctrl "github.com/llm-inferno/control-loop/pkg/controller"
 
 	"github.com/llm-inferno/optimizer-light/pkg/config"
 
 	"github.com/gin-gonic/gin"
-	v1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 )
@@ -24,69 +22,14 @@ func update(c *gin.Context) {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "binding error: " + err.Error()})
 		return
 	}
-	allocMap := info.Spec
-	serverMap := info.KubeResource
 
-	// get managed deployments
-	labelSelector := ctrl.KeyManaged + "=true"
-	deps, err := KubeClient.AppsV1().Deployments("").List(context.TODO(), metav1.ListOptions{
-		LabelSelector: labelSelector})
-	if err != nil {
-		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "kube client: " + err.Error()})
-		return
-	}
+	// Drive updates from the Collector-built serverMap. The set zeroed out is
+	// {serverMap - allocMap}: any managed deployment the Collector saw for
+	// which the Optimizer did not return an allocation gets replicas=0.
+	updates := ComputeUpdates(info.Spec, info.KubeResource)
 
-	updatedDeployments := map[string]bool{}
-
-	//update deployments
-	for serverName, allocData := range allocMap {
-
-		var dep ctrl.ServerKubeInfo
-		var exists bool
-		if dep, exists = serverMap[serverName]; !exists {
-			continue
-		}
-
-		deployUID := dep.UID
-		deployName := dep.Name
-		nameSpace := dep.Space
-
-		// TODO: need more efficient search
-		// find deployment by name
-		for _, d := range deps.Items {
-			if string(d.UID) == deployUID {
-				if err := patchDeployment(d, serverName, deployName, nameSpace, &allocData); err != nil {
-					c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "kube client: " + err.Error()})
-					return
-				}
-				updatedDeployments[deployUID] = true
-			}
-		}
-	}
-
-	for _, d := range deps.Items {
-		deployUID := string(d.UID)
-		if updatedDeployments[deployUID] {
-			continue
-		}
-
-		serverName := d.Labels[ctrl.KeyServerName]
-		deployName := d.Name
-		nameSpace := d.Namespace
-
-		// set allocation to none (no feasible allocation was found by the optimizer)
-		allocData := &config.AllocationData{
-			Accelerator: "",
-			NumReplicas: 0,
-			MaxBatch:    0,
-			Load: config.ServerLoadSpec{
-				ArrivalRate:  0,
-				AvgInTokens:  0,
-				AvgOutTokens: 0,
-			},
-		}
-
-		if err := patchDeployment(d, serverName, deployName, nameSpace, allocData); err != nil {
+	for _, u := range updates {
+		if err := patchDeployment(u.ServerName, u.DeployName, u.Namespace, &u.Allocation); err != nil {
 			c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "kube client: " + err.Error()})
 			return
 		}
@@ -95,30 +38,27 @@ func update(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, "Done")
 }
 
-func patchDeployment(d v1.Deployment, serverName, deployName, nameSpace string, allocData *config.AllocationData) error {
+// patchDeployment applies the optimizer's allocation (or the zero allocation
+// for "no feasible solution") to a single managed Deployment. The Deployment
+// is identified by name + namespace; no full v1.Deployment lookup is needed.
+func patchDeployment(serverName, deployName, nameSpace string, allocData *config.AllocationData) error {
 	acceleratorName := allocData.Accelerator
 	numReplicas := int32(allocData.NumReplicas)
 	maxBatchSize := allocData.MaxBatch
 
-	// patch numReplicas and labels
 	patchAcc := fmt.Sprintf(`{"op": "replace", "path": "/metadata/labels/%s", "value": "%s"}`, ctrl.KeyAccelerator, acceleratorName)
 	patchBatch := fmt.Sprintf(`{"op": "replace", "path": "/metadata/labels/%s", "value": "%d"}`, ctrl.KeyMaxBatchSize, maxBatchSize)
 	patchRep := fmt.Sprintf(`{"op": "replace", "path": "/spec/replicas", "value": %d}`, numReplicas)
 	patchAll := []byte(`[` + patchAcc + `,` + patchBatch + `,` + patchRep + `]`)
 
-	// TODO: fix this
-	// print change - for testing
-	curMaxBatchSize, _ := strconv.Atoi(d.Labels[ctrl.KeyMaxBatchSize])
 	arrivalRateRPM := allocData.Load.ArrivalRate
 	curInTokens := allocData.Load.AvgInTokens
 	curOutTokens := allocData.Load.AvgOutTokens
-	fmt.Printf("srv=[%s/%s/%s]: arrivalRateRPM=%.2f; inTok=%d; outTok=%d; acc=%s->%s; num=%d->%d; batch=%d->%d \n",
-		serverName, d.Labels[ctrl.KeyServerClass], d.Labels[ctrl.KeyServerModel],
+	fmt.Printf("srv=[%s/%s]: arrivalRateRPM=%.2f; inTok=%d; outTok=%d; acc=%s; num=%d; batch=%d \n",
+		serverName, nameSpace,
 		arrivalRateRPM, curInTokens, curOutTokens,
-		d.Labels[ctrl.KeyAccelerator], acceleratorName,
-		*d.Spec.Replicas, numReplicas, curMaxBatchSize, maxBatchSize)
+		acceleratorName, numReplicas, maxBatchSize)
 
-	// update deployment
 	if _, err := KubeClient.AppsV1().Deployments(nameSpace).Patch(context.Background(), deployName,
 		types.JSONPatchType, patchAll, metav1.PatchOptions{}); err != nil {
 		return err
