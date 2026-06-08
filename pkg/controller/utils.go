@@ -228,6 +228,12 @@ func POSTActuator(actuatorInfo *ServerActuatorInfo) error {
 	}
 }
 
+// WatchNamespace returns the namespace inferno should watch for managed
+// Deployments. Empty string means cluster-wide (default; backwards compatible).
+func WatchNamespace() string {
+	return os.Getenv(WatchNamespaceEnvName)
+}
+
 // IsPodReady returns true if the pod has been running long enough to be past the startup delay.
 // When StartupDelay is 0 (default), all running pods are considered ready.
 // A nil startTime is treated as "still starting" to be safe.
