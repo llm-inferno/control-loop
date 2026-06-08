@@ -15,10 +15,10 @@ metadata:
     inferno.server.vllm-deployment: vllm-llama-gpu
     inferno.server.vllm-namespace: inferno-workload
     inferno.server.load.rpm: "90"
-    inferno.server.load.intokens: "4096"
+    inferno.server.load.intokens: "768"
     inferno.server.load.outtokens: "2048"
     inferno.server.load.nominal.rpm: "90"
-    inferno.server.load.nominal.intokens: "4096"
+    inferno.server.load.nominal.intokens: "768"
     inferno.server.load.nominal.outtokens: "2048"
 spec:
   replicas: 1

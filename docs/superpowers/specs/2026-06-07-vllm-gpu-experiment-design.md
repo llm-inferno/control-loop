@@ -127,8 +127,10 @@ Two Deployments, one per model, each with the standard two-sidecar pattern:
 
 | Server | model label | class | accelerator | `vllm-deployment` | `vllm-namespace` | nominal RPM | inTok | outTok | `maxbatchsize` |
 |---|---|---|---|---|---|---|---|---|---|
-| `vllm-qwen-14b-server` | `qwen_2_5_14b` | Bronze | H100 | `vllm-qwen-14b-gpu` | `inferno-workload` | 60 | 2048 | 1024 | 32 |
-| `vllm-llama-server` | `llama_3_1_8b` | Premium | H100 | `vllm-llama-gpu` | `inferno-workload` | 90 | 4096 | 2048 | 32 |
+| `vllm-qwen-14b-server` | `qwen_2_5_14b` | Bronze | H100 | `vllm-qwen-14b-gpu` | `inferno-workload` | 60 | 1024 | 512 | 32 |
+| `vllm-llama-server` | `llama_3_1_8b` | Premium | H100 | `vllm-llama-gpu` | `inferno-workload` | 90 | 768 | 2048 | 32 |
+
+The two deployments are deliberately asymmetric in token shape: Qwen is **prefill-heavy** (in:out = 2:1) on the larger 14B model, while Llama is **decode-heavy** (in:out ≈ 0.375) on the smaller 8B model. This exercises the optimizer and EKF across distinct workload regimes within a single experiment.
 
 Both also carry: `inferno.server.managed: "true"`, `inferno.server.evaluator: "vllm-server"`, `inferno.server.allocation.maxqueuesize: "64"`, and the matching `inferno.server.load.nominal.*` triplet.
 
@@ -189,12 +191,12 @@ Notes:
 
 | Field | avg | sampled range |
 |---|---|---|
-| Qwen inTok | 2048 | [1024, 3073] |
-| Qwen outTok | 1024 | [512, 1537] |
-| Llama inTok | 4096 | [2048, 6145] |
+| Qwen inTok | 1024 | [512, 1537] |
+| Qwen outTok | 512 | [256, 769] |
+| Llama inTok | 768 | [384, 1153] |
 | Llama outTok | 2048 | [1024, 3073] |
 
-All ranges stay strictly inside vLLM's `--max-model-len` for the corresponding model.
+Worst-case in+out per request stays strictly inside vLLM's `--max-model-len`: Qwen 1537+769=2306 < 4096; Llama 1153+3073=4226 < 8192.
 
 - `maxWindowSec=30` is a starting point. With 2 deployments serialized in the controller's `/collect` loop, this gives ~60 s of evaluator wall-clock per cycle; control period is set to 120 s (see Control-loop tuning).
 

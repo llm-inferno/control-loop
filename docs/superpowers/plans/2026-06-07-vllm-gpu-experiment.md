@@ -709,11 +709,11 @@ metadata:
     inferno.server.vllm-deployment: vllm-qwen-14b-gpu
     inferno.server.vllm-namespace: inferno-workload
     inferno.server.load.rpm: "60"
-    inferno.server.load.intokens: "2048"
-    inferno.server.load.outtokens: "1024"
+    inferno.server.load.intokens: "1024"
+    inferno.server.load.outtokens: "512"
     inferno.server.load.nominal.rpm: "60"
-    inferno.server.load.nominal.intokens: "2048"
-    inferno.server.load.nominal.outtokens: "1024"
+    inferno.server.load.nominal.intokens: "1024"
+    inferno.server.load.nominal.outtokens: "512"
 spec:
   replicas: 1
   selector:
@@ -810,10 +810,10 @@ metadata:
     inferno.server.vllm-deployment: vllm-llama-gpu
     inferno.server.vllm-namespace: inferno-workload
     inferno.server.load.rpm: "90"
-    inferno.server.load.intokens: "4096"
+    inferno.server.load.intokens: "768"
     inferno.server.load.outtokens: "2048"
     inferno.server.load.nominal.rpm: "90"
-    inferno.server.load.nominal.intokens: "4096"
+    inferno.server.load.nominal.intokens: "768"
     inferno.server.load.nominal.outtokens: "2048"
 spec:
   replicas: 1
