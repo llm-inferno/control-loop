@@ -26,6 +26,13 @@ func update(c *gin.Context) {
 	// Drive updates from the Collector-built serverMap. The set zeroed out is
 	// {serverMap - allocMap}: any managed deployment the Collector saw for
 	// which the Optimizer did not return an allocation gets replicas=0.
+	//
+	// The Actuator does not re-verify that targets carry the
+	// `inferno.server.managed=true` label; the Collector enforces that
+	// invariant when it builds serverMap. This handler trusts its caller —
+	// consistent with the rest of the in-pod control plane, which is bound
+	// to localhost and has no auth middleware. Do not derive patch targets
+	// from any other source without restoring a server-side label gate.
 	updates := ComputeUpdates(info.Spec, info.KubeResource)
 
 	for _, u := range updates {
