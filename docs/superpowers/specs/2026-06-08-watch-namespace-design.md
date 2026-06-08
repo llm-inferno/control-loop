@@ -86,6 +86,7 @@ The `patchDeployment` call only needs `nameSpace`, `deployName`, and the `Alloca
 
 - A Deployment that becomes managed *between* the Collector's `/collect` and the Actuator's `/update` will not be scaled by this `/update` call. It is picked up on the next Collect+Update cycle (≤ one control period later). This is acceptable: typical `collect→update` separation is ~265 ms, and the next cycle is at most `INFERNO_CONTROL_PERIOD` seconds away.
 - A Deployment whose `inferno.server.managed` label is removed mid-cycle will no longer be touched by the Actuator at all. Today's behavior is the same — the cluster-wide list would no longer match it either.
+- A Deployment deleted between the Collector's `/collect` and this `/update` is tolerated: `apierrors.IsNotFound` errors from the Patch are logged and skipped, so a single transient deletion does not strand the remaining patches in the batch. (In the pre-refactor handler this was implicit — the cluster-wide list filtered the deletion out before the loop. Driving from `serverMap` re-introduces the mid-cycle race; the explicit skip restores the prior behavior.)
 - The Actuator no longer reads `inferno.server.managed` directly. This is also a step toward issue #34 (configurable managed-label key/value): once the Actuator is decoupled from the label, that follow-up only needs to touch the Collector, Load Emulator, and pairing reconciler.
 
 ### Manifests and scripts
