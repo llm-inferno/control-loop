@@ -104,6 +104,30 @@ func TestComputeUpdates_AllocationWithoutServerMapEntryIsIgnored(t *testing.T) {
 	}
 }
 
+func TestComputeUpdates_BothEmpty(t *testing.T) {
+	updates := ComputeUpdates(map[string]config.AllocationData{}, map[string]ctrl.ServerKubeInfo{})
+	if len(updates) != 0 {
+		t.Fatalf("expected 0 updates, got %d", len(updates))
+	}
+}
+
+func TestComputeUpdates_NilMaps(t *testing.T) {
+	updates := ComputeUpdates(nil, nil)
+	if len(updates) != 0 {
+		t.Fatalf("expected 0 updates, got %d", len(updates))
+	}
+}
+
+func TestComputeUpdates_AllocOnlyEmptyServerMap(t *testing.T) {
+	allocMap := map[string]config.AllocationData{
+		"srv-a": {Accelerator: "H100", NumReplicas: 1},
+	}
+	updates := ComputeUpdates(allocMap, map[string]ctrl.ServerKubeInfo{})
+	if len(updates) != 0 {
+		t.Fatalf("expected 0 updates (no Kube refs to patch), got %d", len(updates))
+	}
+}
+
 func TestComputeUpdates_Ordering(t *testing.T) {
 	// Output order is deterministic by server name (lexical) so logs and
 	// patch-error reports are stable across cycles.

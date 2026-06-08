@@ -10,6 +10,7 @@ import (
 	"github.com/llm-inferno/optimizer-light/pkg/config"
 
 	"github.com/gin-gonic/gin"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 )
@@ -37,6 +38,14 @@ func update(c *gin.Context) {
 
 	for _, u := range updates {
 		if err := patchDeployment(u.ServerName, u.DeployName, u.Namespace, &u.Allocation); err != nil {
+			// A Deployment can be deleted between Collector /collect and
+			// this /update (~265 ms window in the kind qa run). Skip and
+			// continue so a single transient deletion does not strand the
+			// remaining patches; the next cycle will re-converge.
+			if apierrors.IsNotFound(err) {
+				fmt.Printf("srv=[%s/%s]: deployment gone, skipping\n", u.ServerName, u.Namespace)
+				continue
+			}
 			c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "kube client: " + err.Error()})
 			return
 		}
