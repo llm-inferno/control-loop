@@ -27,13 +27,13 @@ EXP="$REPO_ROOT/manifests/vllm-gpu"
 SYS_NS="inferno-system"
 WORK_NS="inferno-workload"
 
-# Rewrite hard-coded `namespace: inferno` (and the matching ClusterRoleBinding
-# subject) in shared common YAMLs to target the new system namespace. We use
-# sed with a word boundary substitute so `inferno-workload` (which appears
-# nowhere in the common files anyway) cannot accidentally match.
+# Rewrite hard-coded `namespace: inferno` lines in shared common YAMLs
+# (deploy-loop.yaml, configmap-tuner.yaml) to target the new system namespace.
+# The end-anchor on `inferno$` ensures `namespace: inferno-workload` is not
+# matched. ClusterRole / ServiceAccount / RoleBinding `name: inferno` lines
+# are identity references and intentionally not rewritten.
 rewrite_ns() {
-  sed "s/^\(  *\)namespace: inferno$/\1namespace: ${SYS_NS}/g
-       s/^\(  *\)name: inferno$/\1name: inferno/g"
+  sed "s/^\(  *\)namespace: inferno$/\1namespace: ${SYS_NS}/g"
 }
 
 echo "==> Pre-flight: oc whoami"
