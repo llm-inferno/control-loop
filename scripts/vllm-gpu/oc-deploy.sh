@@ -8,14 +8,13 @@
 #     with the other team's existing inferno/infer namespaces on the cluster.
 #   - The shared manifests/common/deploy-loop.yaml and configmap-tuner.yaml
 #     hard-code namespace: inferno; we sed-rewrite them at apply time.
-#   - The HF_TOKEN secret is copied from infer/hf-token-secret rather than
-#     committed to git.
+#   - The HF_TOKEN secret is created from the local HUGGING_FACE_HUB_TOKEN
+#     (or HF_TOKEN) environment variable rather than committed to git.
 #
 # Run from the control-loop/ repo root.
 # Prerequisites:
 #   - oc whoami succeeds against the target cluster.
-#   - The user has read access to infer/hf-token-secret (script will fail with
-#     a clear message otherwise).
+#   - HUGGING_FACE_HUB_TOKEN (or HF_TOKEN) is exported in the local shell.
 
 set -euo pipefail
 
@@ -44,17 +43,16 @@ echo "==> Creating namespaces"
 oc apply -f "$COMMON/ns-inferno-system.yaml"
 oc apply -f "$COMMON/ns-inferno-workload.yaml"
 
-echo "==> Copying HF token secret from infer/hf-token-secret"
-if ! oc get secret hf-token-secret -n infer >/dev/null 2>&1; then
-  echo "ERROR: cannot read infer/hf-token-secret. Either:" >&2
-  echo "  - ask the cluster admin to grant 'get secrets' on the infer namespace, OR" >&2
-  echo "  - manually create ${WORK_NS}/hf-token-secret with key 'token' before re-running." >&2
+echo "==> Creating HF token secret in ${WORK_NS}"
+HF_TOKEN_VALUE="${HUGGING_FACE_HUB_TOKEN:-${HF_TOKEN:-}}"
+if [[ -z "$HF_TOKEN_VALUE" ]]; then
+  echo "ERROR: set HUGGING_FACE_HUB_TOKEN (or HF_TOKEN) before running." >&2
+  echo "  e.g.  export HUGGING_FACE_HUB_TOKEN=hf_xxx" >&2
   exit 1
 fi
-oc get secret hf-token-secret -n infer -o yaml \
-  | sed "s/namespace: infer$/namespace: ${WORK_NS}/" \
-  | grep -vE '^  (uid|resourceVersion|creationTimestamp|selfLink):' \
-  | oc apply -f -
+oc create secret generic hf-token-secret -n "$WORK_NS" \
+  --from-literal=token="$HF_TOKEN_VALUE" \
+  --dry-run=client -o yaml | oc apply -f -
 
 echo "==> Creating PVC + RBAC in ${WORK_NS}"
 oc apply -f "$EXP/pvc-models-cache.yaml"

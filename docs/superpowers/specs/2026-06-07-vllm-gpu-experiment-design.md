@@ -48,7 +48,6 @@ The existing `ns-inferno.yaml` and `ns-infer.yaml` are unchanged. The existing `
 
 ```
 pvc-models-cache.yaml           NEW   100Gi RWX, ibm-spectrum-scale-fileset
-secret-hf-token.yaml            NEW   stub manifest, value supplied by deploy script
 deployment-vllm-qwen.yaml       NEW   Qwen2.5-14B-Instruct on H100
 deployment-vllm-llama.yaml      NEW   unsloth/Meta-Llama-3.1-8B-Instruct on H100
 dep-vllm-qwen-server.yaml       NEW   managed Deployment, Bronze, paired with vllm-qwen
@@ -294,29 +293,20 @@ Fresh PVC, isolated from the other team's `infer/vllm-models-cache`. First deplo
 
 ### HF token secret
 
-`secret-hf-token.yaml` is a stub:
-
-```yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: hf-token-secret
-  namespace: inferno-workload
-type: Opaque
-data:
-  token: ""   # populated by oc-deploy.sh from infer/hf-token-secret
-```
-
-The deploy script copies the value from the existing `infer/hf-token-secret` rather than committing the token to git:
+There is no static manifest for the Secret. The deploy script creates it directly from a local environment variable, so the token never lives on disk or in git. The Secret contract is fixed by the vLLM Deployments' `secretKeyRef`: name `hf-token-secret`, namespace `inferno-workload`, key `token`.
 
 ```bash
-oc get secret hf-token-secret -n infer -o yaml \
-  | sed 's/namespace: infer/namespace: inferno-workload/' \
-  | grep -v '^  uid:\|^  resourceVersion:\|^  creationTimestamp:' \
-  | oc apply -f -
+HF_TOKEN_VALUE="${HUGGING_FACE_HUB_TOKEN:-${HF_TOKEN:-}}"
+if [[ -z "$HF_TOKEN_VALUE" ]]; then
+  echo "ERROR: set HUGGING_FACE_HUB_TOKEN (or HF_TOKEN) before running." >&2
+  exit 1
+fi
+oc create secret generic hf-token-secret -n "$WORK_NS" \
+  --from-literal=token="$HF_TOKEN_VALUE" \
+  --dry-run=client -o yaml | oc apply -f -
 ```
 
-If the script's `oc get` fails (user lacks read access to `infer/`), it prints a clear message asking the user to populate the secret manually before re-running.
+Rationale for this approach over copying from `infer/hf-token-secret` (the original design): the cross-namespace copy depended on another team's secret existing under a stable name, plus `get secrets` on `infer/` for the script-runner. The env-var approach removes both couplings — the runner just needs their own HF token in their shell.
 
 ### Deploy script
 

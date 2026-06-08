@@ -41,7 +41,6 @@ inferno-data/vllm-gpu/
 
 manifests/vllm-gpu/
   pvc-models-cache.yaml         100Gi RWX, ibm-spectrum-scale        [Task 3]
-  secret-hf-token.yaml          Stub Secret manifest                 [Task 3]
   rbac-vllm-eval.yaml           SA + Role + RoleBinding              [Task 3]
   deployment-vllm-qwen.yaml     Qwen2.5-14B vLLM Deployment          [Task 4]
   deployment-vllm-llama.yaml    Llama-3.1-8B vLLM Deployment         [Task 4]
@@ -260,11 +259,12 @@ EOF
 
 ---
 
-## Task 3: PVC, HF token Secret stub, evaluator RBAC
+## Task 3: PVC and evaluator RBAC
+
+> **Deviation from original plan**: this task originally also created a stub `secret-hf-token.yaml`, and the deploy script copied the token from `infer/hf-token-secret`. That coupling to another team's namespace was removed during review — the deploy script now creates the Secret directly from the local `HUGGING_FACE_HUB_TOKEN` (or `HF_TOKEN`) env var, and there is no static manifest for the Secret. See the design doc's "HF token secret" section.
 
 **Files:**
 - Create: `manifests/vllm-gpu/pvc-models-cache.yaml`
-- Create: `manifests/vllm-gpu/secret-hf-token.yaml`
 - Create: `manifests/vllm-gpu/rbac-vllm-eval.yaml`
 
 - [ ] **Step 1: Create pvc-models-cache.yaml**
@@ -285,25 +285,7 @@ spec:
   volumeMode: Filesystem
 ```
 
-- [ ] **Step 2: Create secret-hf-token.yaml**
-
-```yaml
-# Stub Secret manifest. The deploy script (scripts/vllm-gpu/oc-deploy.sh)
-# copies the actual token value from infer/hf-token-secret on the cluster.
-# This file documents the required Secret name/namespace/key contract;
-# applying it directly creates an empty Secret which the vLLM containers
-# would reject. Do not apply it standalone — let oc-deploy.sh handle it.
-apiVersion: v1
-kind: Secret
-metadata:
-  name: hf-token-secret
-  namespace: inferno-workload
-type: Opaque
-data:
-  token: ""
-```
-
-- [ ] **Step 3: Create rbac-vllm-eval.yaml**
+- [ ] **Step 2: Create rbac-vllm-eval.yaml**
 
 ```yaml
 apiVersion: v1
@@ -337,30 +319,30 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 ```
 
-- [ ] **Step 4: Validate all three YAMLs parse**
+- [ ] **Step 3: Validate both YAMLs parse**
 
 Run:
 ```bash
-for f in manifests/vllm-gpu/pvc-models-cache.yaml manifests/vllm-gpu/secret-hf-token.yaml manifests/vllm-gpu/rbac-vllm-eval.yaml; do
+for f in manifests/vllm-gpu/pvc-models-cache.yaml manifests/vllm-gpu/rbac-vllm-eval.yaml; do
   echo "==> $f"
   kubectl apply --dry-run=client -f "$f"
 done
 ```
-Expected output: three `==>` lines, each followed by one or more `... created (dry run)` lines (PVC: 1, Secret: 1, RBAC: 3 — SA + Role + RoleBinding). No errors.
+Expected output: two `==>` lines, each followed by one or more `... created (dry run)` lines (PVC: 1, RBAC: 3 — SA + Role + RoleBinding). No errors.
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 4: Commit**
 
 (This is the first commit on what will be the larger "manifests" diff — committing each subgroup separately keeps reviewable diffs.)
 
 ```bash
-git add manifests/vllm-gpu/pvc-models-cache.yaml manifests/vllm-gpu/secret-hf-token.yaml manifests/vllm-gpu/rbac-vllm-eval.yaml
+git add manifests/vllm-gpu/pvc-models-cache.yaml manifests/vllm-gpu/rbac-vllm-eval.yaml
 git commit -m "$(cat <<'EOF'
-feat(vllm-gpu): add PVC, HF token stub, and evaluator RBAC
+feat(vllm-gpu): add PVC and evaluator RBAC
 
 PVC is RWX 100Gi on ibm-spectrum-scale-fileset (cluster default that
-supports RWX). The HF Secret is a stub; the deploy script copies the
-real value from infer/hf-token-secret. RBAC mirrors the vllm-cpu
-pattern, scoped to the new inferno-workload namespace.
+supports RWX). RBAC mirrors the vllm-cpu pattern, scoped to the new
+inferno-workload namespace. The HF Secret is created at deploy time
+from the local HUGGING_FACE_HUB_TOKEN env var (no static manifest).
 
 Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>
 EOF
