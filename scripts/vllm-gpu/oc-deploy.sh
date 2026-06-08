@@ -90,14 +90,24 @@ rewrite_ns < "$COMMON/deploy-loop.yaml" \
 #   - 120s control period covers worst-case collect time (2 deployments x 30s window)
 #   - INFERNO_WARM_UP_TIMEOUT=10 default (perfParms are seeded; warm-up is fast)
 #   - DEFAULT_MAX_BATCH_SIZE=32 matches per-server label and per-model maxBatchSize
+#   - INFERNO_CYCLE_LOG=/tmp/... — OpenShift's restricted SCC makes the workdir
+#     read-only, so the default relative path fails with permission denied.
 oc set env deployment/inferno -n "$SYS_NS" -c controller \
   INFERNO_CONTROL_PERIOD=120 \
   INFERNO_WARM_UP_TIMEOUT=10 \
-  DEFAULT_MAX_BATCH_SIZE=32
+  DEFAULT_MAX_BATCH_SIZE=32 \
+  INFERNO_CYCLE_LOG=/tmp/inferno-cycles.jsonl
 
 # Collector simulate timeout > 2x maxWindowSec=30
+# WATCH_NAMESPACE scopes the managed-deployment watch to inferno-workload so we
+# don't iterate the other team's deployments on the shared cluster (PR #35).
 oc set env deployment/inferno -n "$SYS_NS" -c collector \
-  INFERNO_SIMULATE_TIMEOUT_SEC=60
+  INFERNO_SIMULATE_TIMEOUT_SEC=60 \
+  WATCH_NAMESPACE=inferno-workload
+
+# Actuator's pairing reconciler also needs WATCH_NAMESPACE for the same reason.
+oc set env deployment/inferno -n "$SYS_NS" -c actuator \
+  WATCH_NAMESPACE=inferno-workload
 
 oc rollout status deployment/inferno -n "$SYS_NS" --timeout=180s
 

@@ -23,6 +23,11 @@ spec:
           value: "0"
         - name: INFERNO_LOAD_PHASES
           value: "/etc/loadphases/phases.yaml"
+        # Scope managed-deployment watch to our namespace so this load-emulator
+        # does not write dynamic load labels onto another team's pods running
+        # in a different namespace on the shared cluster (see PR #35 / issue #33).
+        - name: WATCH_NAMESPACE
+          value: "inferno-workload"
       volumeMounts:
         - name: load-phases-config
           mountPath: /etc/loadphases
