@@ -28,6 +28,10 @@ spec:
         inferno.vllm.accelerator: H100
     spec:
       affinity:
+        # Node exclusion list inherited from the existing infer/ deployment on
+        # this shared cluster. The 8 listed nodes are reserved for another
+        # team's workload — do not remove without checking with the cluster
+        # owners. Pods schedule on any other GPU node.
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
