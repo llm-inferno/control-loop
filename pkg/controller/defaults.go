@@ -21,6 +21,10 @@ const (
 	TunerHostEnvName = "TUNER_HOST"
 	TunerPortEnvName = "TUNER_PORT"
 
+	// WatchNamespaceEnvName scopes the managed-deployment watch to a single
+	// namespace. Empty/unset means cluster-wide (default; backwards compatible).
+	WatchNamespaceEnvName = "WATCH_NAMESPACE"
+
 	DataPathEnvName          = "INFERNO_DATA_PATH"
 	DefaultMaxBatchSizeEnvName = "DEFAULT_MAX_BATCH_SIZE"
 	ControlPeriodEnvName  = "INFERNO_CONTROL_PERIOD"

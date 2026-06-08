@@ -63,9 +63,9 @@ func NewLoadEmulator(intervalSec int, alpha, theta, skew float64, tracker *Phase
 // run the load emulator
 func (lg *LoadEmulator) Run() {
 	for {
-		// get deployments
+		// get deployments (scoped to WATCH_NAMESPACE if set; empty means cluster-wide)
 		labelSelector := ctrl.KeyManaged + "=true"
-		deps, err := lg.kubeClient.AppsV1().Deployments("").List(context.TODO(), metav1.ListOptions{
+		deps, err := lg.kubeClient.AppsV1().Deployments(ctrl.WatchNamespace()).List(context.TODO(), metav1.ListOptions{
 			LabelSelector: labelSelector})
 		if err != nil {
 			fmt.Println(err)

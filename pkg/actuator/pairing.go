@@ -129,7 +129,8 @@ func reconcileOne(ctx context.Context, kc kubernetes.Interface, managed *appsv1.
 
 // reconcileAll lists all managed Deployments and runs reconcileOne on each.
 func reconcileAll(ctx context.Context, kc kubernetes.Interface) {
-	deps, err := kc.AppsV1().Deployments("").List(ctx, metav1.ListOptions{
+	// scoped to WATCH_NAMESPACE if set; empty means cluster-wide
+	deps, err := kc.AppsV1().Deployments(ctrl.WatchNamespace()).List(ctx, metav1.ListOptions{
 		LabelSelector: ctrl.KeyManaged + "=true",
 	})
 	if err != nil {
