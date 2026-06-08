@@ -22,9 +22,9 @@ import (
 // Handlers for REST API calls
 
 func collect(c *gin.Context) {
-	// get managed deployments
+	// get managed deployments (scoped to WATCH_NAMESPACE if set; empty means cluster-wide)
 	labelSelector := ctrl.KeyManaged + "=true"
-	deps, err := KubeClient.AppsV1().Deployments("").List(context.TODO(), metav1.ListOptions{
+	deps, err := KubeClient.AppsV1().Deployments(ctrl.WatchNamespace()).List(context.TODO(), metav1.ListOptions{
 		LabelSelector: labelSelector})
 	if err != nil {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "kube client: " + err.Error()})
