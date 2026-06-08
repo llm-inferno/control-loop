@@ -23,6 +23,10 @@ spec:
       value: "0"
     - name: INFERNO_LOAD_PHASES
       value: "/etc/loadphases/phases.yaml"
+    # Empty = cluster-wide (default). Set on shared clusters to scope
+    # the managed-deployment watch to a single namespace.
+    - name: WATCH_NAMESPACE
+      value: ""
     volumeMounts:
     - name: load-phases-config
       mountPath: /etc/loadphases

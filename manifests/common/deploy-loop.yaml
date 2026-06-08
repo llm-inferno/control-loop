@@ -114,6 +114,11 @@ spec:
             value: "15"
           - name: INFERNO_SIMULATE_TIMEOUT_SEC
             value: "30"
+          # Empty = cluster-wide (default). Set to a single namespace on
+          # shared clusters where another inferno setup uses the same
+          # inferno.server.* labels in different namespaces.
+          - name: WATCH_NAMESPACE
+            value: ""
         ports:
         - containerPort: 3301
         command: ["collector"]
@@ -147,6 +152,12 @@ spec:
           - name: ACTUATOR_PORT
             value: "3303"
           - name: KUBECONFIG
+            value: ""
+          # Used by the pairing reconciler. The /update handler is
+          # implicitly scoped via the Collector-built serverMap; setting
+          # this here keeps the pairing reconciler in step. Empty =
+          # cluster-wide (default).
+          - name: WATCH_NAMESPACE
             value: ""
         ports:
         - containerPort: 3303
