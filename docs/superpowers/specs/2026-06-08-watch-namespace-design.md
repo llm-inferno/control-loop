@@ -52,18 +52,41 @@ func WatchNamespace() string { return os.Getenv(WatchNamespaceEnvName) }
 
 ### Call-site changes
 
-Replace `Deployments("")` with `Deployments(ctrl.WatchNamespace())` at exactly four sites:
+Three sites get a one-line scope change; one site (`Actuator /update`) gets a small refactor instead.
 
-| File | Line | Caller |
-|---|---|---|
-| `pkg/collector/handlers.go` | 27 | Collector `/collect` |
-| `pkg/loademulator/loademulator.go` | 68 | `LoadEmulator.Run` |
-| `pkg/actuator/handlers.go` | 32 | Actuator `/update` |
-| `pkg/actuator/pairing.go` | 132 | `reconcileAll` (pairing reconciler) |
+| File | Line | Caller | Change |
+|---|---|---|---|
+| `pkg/collector/handlers.go` | 27 | Collector `/collect` | `Deployments("")` → `Deployments(ctrl.WatchNamespace())` |
+| `pkg/loademulator/loademulator.go` | 68 | `LoadEmulator.Run` | `Deployments("")` → `Deployments(ctrl.WatchNamespace())` |
+| `pkg/actuator/pairing.go` | 132 | `reconcileAll` (pairing reconciler) | `Deployments("")` → `Deployments(ctrl.WatchNamespace())` |
+| `pkg/actuator/handlers.go` | 21–96 | Actuator `/update` | Drop the cluster-wide list; drive both loops from `info.KubeResource` (see below) |
 
 Downstream `ReplicaSets(d.Namespace)` and `Pods(d.Namespace)` lookups in the same files are already namespace-scoped to each found deployment and need no change.
 
 No code path in the project lists `Deployments` cluster-wide outside these four sites (verified via `grep -n 'Deployments("")' pkg/ cmd/`).
+
+### Actuator `/update` refactor
+
+The current handler does a cluster-wide list and uses it twice:
+
+1. **First loop** — for each entry in `allocMap`, looks up the matching `Deployment` in the listed items by UID and patches it. The list is being used as a UID→Deployment lookup, but the handler already has `{UID, Name, Namespace}` in `info.KubeResource` (`serverMap`).
+2. **Second loop** — iterates *every* listed managed Deployment and zeroes out replicas on any not touched by the first loop ("no feasible allocation"). This is the loop that, on 2026-06-08, scaled another team's Deployments toward zero because they matched the cluster-wide selector but were absent from our `allocMap`.
+
+`serverMap` (built by the Collector and shipped in the `/update` payload) already contains every managed Deployment from the Collector's view. Once the Collector is namespace-scoped, `serverMap` is namespace-scoped automatically — and `serverMap ⊆ clusterScannedMap` always holds. So the refactor is:
+
+- Remove the `Deployments("").List(...)` call at the top of `update`.
+- Iterate `serverMap` entries directly. For each `serverName`:
+  - If `serverName ∈ allocMap`, patch with the optimizer's `AllocationData`.
+  - Otherwise, patch with the zero-allocation (replicas=0, accelerator="", maxBatch=0, zero load) — same "no feasible allocation" branch as today, just driven from `serverMap` instead of the cluster scan.
+- The set zeroed out becomes `{serverMap − allocMap}` rather than `{clusterScannedMap − allocMap}` — an architectural correction, not a feature regression.
+
+The `patchDeployment` call only needs `nameSpace`, `deployName`, and the `AllocationData` to construct its JSON patch; the full `v1.Deployment` value is currently used solely for a `Printf` of the deployment's prior label values. We will either drop those columns from the log line or fetch the Deployment with `Deployments(ns).Get(name)` per entry. Choice deferred to the implementation plan.
+
+#### Behavioral consequences
+
+- A Deployment that becomes managed *between* the Collector's `/collect` and the Actuator's `/update` will not be scaled by this `/update` call. It is picked up on the next Collect+Update cycle (≤ one control period later). This is acceptable: typical `collect→update` separation is ~265 ms, and the next cycle is at most `INFERNO_CONTROL_PERIOD` seconds away.
+- A Deployment whose `inferno.server.managed` label is removed mid-cycle will no longer be touched by the Actuator at all. Today's behavior is the same — the cluster-wide list would no longer match it either.
+- The Actuator no longer reads `inferno.server.managed` directly. This is also a step toward issue #34 (configurable managed-label key/value): once the Actuator is decoupled from the label, that follow-up only needs to touch the Collector, Load Emulator, and pairing reconciler.
 
 ### Manifests and scripts
 
@@ -78,7 +101,7 @@ Add a row to the env-var table in `CLAUDE.md`:
 
 | Variable | Default | Description |
 |---|---|---|
-| `WATCH_NAMESPACE` | unset (cluster-wide) | Namespace to scope managed-deployment watches to. Set on shared clusters where another inferno setup uses the same `inferno.server.*` labels in different namespaces. Applies to the Collector, Load Emulator, and Actuator (both `/update` and pairing reconciler). |
+| `WATCH_NAMESPACE` | unset (cluster-wide) | Namespace to scope managed-deployment watches to. Set on shared clusters where another inferno setup uses the same `inferno.server.*` labels in different namespaces. Applies to the Collector, Load Emulator, and Actuator pairing reconciler. The Actuator `/update` handler is implicitly scoped via the Collector-built `serverMap` it receives. |
 
 A short note in the existing "Managed deployments" paragraph cross-references the new env var.
 
@@ -101,9 +124,10 @@ Fully isolating two co-tenant inferno setups requires the second pod side as wel
 
 ## Risks
 
-- **Logic regression:** every list call is a one-line argument change. Risk is low. Read by inspection.
+- **Logic regression at the three env-var sites:** every change is a one-line argument swap. Risk is low. Read by inspection.
 - **Empty string passed to client-go:** `Deployments("")` and `Deployments("inferno-workload")` are both legal — `""` is the documented signal for "all namespaces" in client-go. Backwards compatibility is structural, not behavioral.
 - **Forgotten call site:** mitigated by the explicit grep above; if a future call site appears, the same helper is one import away.
+- **Actuator `/update` refactor:** the larger change. Risk-mitigators: (a) `serverMap ⊆ clusterScannedMap` for any single `/update` call where the Collector and Actuator share the same `WATCH_NAMESPACE` and label selector — the only cases not in `serverMap` are exactly the ones we no longer want to touch; (b) the zero-allocation path is unchanged in shape, only its driving set changes; (c) verified end-to-end on a kind scenario that scale-out and scale-down still work.
 
 ## Out of scope / future work
 
