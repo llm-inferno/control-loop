@@ -35,7 +35,7 @@ spec:
       containers:
         - name: server-sim
           image: quay.io/atantawi/inferno-server-sim:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:
@@ -52,7 +52,7 @@ spec:
               cpu: 500m
         - name: evaluator
           image: quay.io/atantawi/inferno-evaluator:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           args: ["vllm-server"]
           ports:
             - containerPort: 8081

@@ -77,7 +77,14 @@ echo "==> Creating tuner ConfigMap in ${SYS_NS} (namespace rewritten)"
 rewrite_ns < "$COMMON/configmap-tuner.yaml" | oc apply -f -
 
 echo "==> Deploying inferno pod (controller, collector, optimizer, actuator, tuner) into ${SYS_NS}"
-rewrite_ns < "$COMMON/deploy-loop.yaml" | oc apply -f -
+# imagePullPolicy: Always — the inferno containers track the moving :latest tag
+# on quay; without Always, a node that has cached an older (or wrong-arch) layer
+# will silently keep using it. The kind-targeted shared deploy-loop.yaml uses
+# IfNotPresent because kind preloads images via `kind load`; on a cluster we
+# always want a fresh pull.
+rewrite_ns < "$COMMON/deploy-loop.yaml" \
+  | sed 's/imagePullPolicy: IfNotPresent/imagePullPolicy: Always/g' \
+  | oc apply -f -
 
 # Override env to match the vllm-gpu scenario:
 #   - 120s control period covers worst-case collect time (2 deployments x 30s window)

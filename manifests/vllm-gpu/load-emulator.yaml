@@ -8,7 +8,7 @@ spec:
   containers:
     - name: loademulator
       image: quay.io/atantawi/inferno-loop:latest
-      imagePullPolicy: IfNotPresent
+      imagePullPolicy: Always
       command: ["loademulator"]
       env:
         - name: INFERNO_LOAD_INTERVAL
