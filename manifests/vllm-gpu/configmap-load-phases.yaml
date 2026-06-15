@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: load-phases-config
+  namespace: inferno-system
+data:
+  phases.yaml: |
+    # vllm-gpu experiment: 5-phase 1x -> 3x -> 1x ramp, 6 minutes per phase.
+    # Total active phase sequence ~24 min, then hold at 1x indefinitely.
+    # Stays under the 30-min gpu-reaper.io idle threshold.
+    #
+    # Ratios are chained-multiplicative; hold phases use ratio: 1.0 and
+    # ramp phases carry the multiplier change. The load emulator
+    # interpolates linearly within a phase based on its ratio.
+    phases:
+      - duration: 6m
+        ratio: 1.0       # hold at 1x
+      - duration: 6m
+        ratio: 3.0       # linear ramp 1x -> 3x
+      - duration: 6m
+        ratio: 1.0       # hold at 3x
+      - duration: 6m
+        ratio: 0.333     # linear ramp 3x -> 1x
+      - duration: 0s     # hold at 1x forever

@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: load-emulator
+  namespace: inferno-system
+spec:
+  serviceAccountName: inferno
+  containers:
+    - name: loademulator
+      image: quay.io/atantawi/inferno-loop:latest
+      imagePullPolicy: Always
+      command: ["loademulator"]
+      env:
+        - name: INFERNO_LOAD_INTERVAL
+          value: "30"
+        - name: INFERNO_LOAD_ALPHA
+          value: "0.1"
+        - name: INFERNO_LOAD_THETA
+          value: "0.9"
+        - name: INFERNO_LOAD_SKEW
+          value: "0.0"
+        - name: INFERNO_STARTUP_DELAY
+          value: "0"
+        - name: INFERNO_LOAD_PHASES
+          value: "/etc/loadphases/phases.yaml"
+        # Scope managed-deployment watch to our namespace so this load-emulator
+        # does not write dynamic load labels onto another team's pods running
+        # in a different namespace on the shared cluster (see PR #35 / issue #33).
+        - name: WATCH_NAMESPACE
+          value: "inferno-workload"
+      volumeMounts:
+        - name: load-phases-config
+          mountPath: /etc/loadphases
+          readOnly: true
+      resources:
+        requests:
+          memory: 512Mi
+          cpu: 100m
+        limits:
+          memory: 1Gi
+          cpu: 500m
+  volumes:
+    - name: load-phases-config
+      configMap:
+        name: load-phases-config
+        optional: true

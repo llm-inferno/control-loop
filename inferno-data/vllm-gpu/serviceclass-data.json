@@ -1,0 +1,26 @@
+{
+  "serviceClasses": [
+    {
+      "name": "Premium",
+      "priority": 1,
+      "modelTargets": [
+        {
+          "model": "llama_3_1_8b",
+          "slo-itl": 9.5,
+          "slo-ttft": 50
+        }
+      ]
+    },
+    {
+      "name": "Bronze",
+      "priority": 2,
+      "modelTargets": [
+        {
+          "model": "qwen_2_5_14b",
+          "slo-itl": 25,
+          "slo-ttft": 100
+        }
+      ]
+    }
+  ]
+}

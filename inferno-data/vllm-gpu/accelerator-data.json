@@ -1,0 +1,10 @@
+{
+  "accelerators": [
+    {
+      "name": "H100",
+      "type": "H100",
+      "multiplicity": 1,
+      "cost": 1.0
+    }
+  ]
+}

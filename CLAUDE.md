@@ -246,6 +246,15 @@ Both use `configmap-qa-small.yaml` and `inferno-data/qa/` for optimizer/SLO conf
 
 Both use `configmap-blis-small.yaml` (betaCoeffs/alphaCoeffs for trained-physics) and `inferno-data/blis/` for optimizer/SLO config. `INFERNO_WARM_UP_TIMEOUT=0` is set so the optimizer waits for full EKF convergence before running.
 
+**vllm-gpu workloads** (`scripts/vllm-gpu/oc-deploy.sh`):
+
+| Deployment | Model | Accelerator | Evaluator | Class |
+|---|---|---|---|---|
+| `dep-vllm-qwen-server.yaml` | `qwen_2_5_14b` (Qwen2.5-14B-Instruct) | H100 | vllm-server | Bronze |
+| `dep-vllm-llama-server.yaml` | `llama_3_1_8b` (unsloth/Meta-Llama-3.1-8B-Instruct, non-gated) | H100 | vllm-server | Premium |
+
+Targets a shared OpenShift cluster (not kind). Uses two new namespaces — `inferno-system` (replaces `inferno`) and `inferno-workload` (replaces `infer`) — to avoid colliding with another team's existing setup. Both vLLM Deployments use `vllm/vllm-openai:v0.21.0` with `--max-num-seqs 32`, mount a shared `vllm-models-cache` PVC (RWX 100Gi on `ibm-spectrum-scale-fileset`), and read `HUGGING_FACE_HUB_TOKEN` from `hf-token-secret` (created by the deploy script from the local `HUGGING_FACE_HUB_TOKEN` / `HF_TOKEN` env var, not stored in git). perfParms in `inferno-data/vllm-gpu/model-data.json` are seeded with the converged values from the existing setup so cycle 1 produces a useful allocation. The seeding is an accelerator, not a requirement — the tuner's EKF learns these from observations, and the controller's warm-up gate prevents the optimizer from running on uninitialised values; seeding just skips the warm-up wait. Control period is 120 s (worst-case `/collect` is ~60 s with 2 deployments × 30 s eval windows). The eval config uses `uniform-bounded` token sampling on both inputs and outputs to add per-request size variation without breaking `--max-model-len`. The cluster runs a `gpu-reaper.io` controller that scales down idle GPU pods after 30 min; the experiment's 24-min active phase sequence stays under the threshold, but vLLM Deployments left idle overnight will be reaped (cold start on next deploy, the PVC keeps weights).
+
 ### Useful commands after deploy
 
 ```bash
