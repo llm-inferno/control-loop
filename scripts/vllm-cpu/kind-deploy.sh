@@ -58,11 +58,14 @@ kubectl apply -f "$COMMON/configmap-tuner.yaml"
 echo "==> Deploying inferno pod (controller, collector, optimizer, actuator, tuner)"
 kubectl apply -f "$COMMON/deploy-loop.yaml"
 # 2.5-minute control period matches evaluator max measurement window.
+# DEFAULT_MAX_BATCH_SIZE intentionally unset: the optimizer searches the optimal
+# concurrency M* (optimizer-light v0.8.0). The per-model maxBatchSize in
+# inferno-data/vllm-cpu/model-data.json (=8) is the search ceiling, kept equal to
+# the vLLM --max-num-seqs so M* can never exceed what the real server honors.
 kubectl set env deployment/inferno -n inferno -c controller \
   INFERNO_CONTROL_PERIOD=150 \
   INFERNO_WARM_UP_TIMEOUT=0 \
-  INFERNO_STARTUP_DELAY=0 \
-  DEFAULT_MAX_BATCH_SIZE=8
+  INFERNO_STARTUP_DELAY=0
 # vllm-server evaluator drives a real vLLM pod; sampling window can reach
 # warmupSec + maxWindowSec (production: 30 + 300 = 330s). Override the default
 # 30s /simulate timeout so /collect doesn't abort while polling.
