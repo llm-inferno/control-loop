@@ -124,7 +124,7 @@ Following are the steps to run the optimization control loop external to a clust
     The arguments for the Controller may also be set through the environment variables `INFERNO_CONTROL_PERIOD` and `INFERNO_CONTROL_DYNAMIC`, respectively.
     The command line arguments override the values of the environment variables.
 
-    Set `DEFAULT_MAX_BATCH_SIZE` to pin the batch size for all servers (overrides the optimizer's computed value). When unset or 0, the optimizer determines the batch size per server from performance data.
+    Set `DEFAULT_MAX_BATCH_SIZE` to pin the batch size (max concurrency) for all servers — an explicit override that skips the optimizer's search. When unset or 0, the optimizer searches the optimal concurrency `M*` per server (the smallest max batch size reaching near-peak throughput under the SLO), bounded above by each model's `maxBatchSize` ceiling in `model-data.json`.
 
   - Tuner (purple, optional)
 

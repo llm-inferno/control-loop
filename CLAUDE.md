@@ -138,6 +138,7 @@ See [`docs/superpowers/specs/2026-05-29-actuator-vllm-pairing-design.md`](docs/s
 | `INFERNO_STARTUP_DELAY` | `0` | Seconds after pod `StartTime` before the pod is treated as ready; filtered from both the Collector and Load Emulator during the window |
 | `INFERNO_SIMULATE_TIMEOUT_SEC` | `30` | Per-pod `/simulate` timeout used by the Collector when polling the server-sim sidecar. Default suffices for `queue-analysis`/`blis` (analytical, ms-scale). For the `vllm-server` evaluator (real vLLM, sampling window `warmupSec + maxWindowSec`, typically 90–330s), set this larger than the configured window. |
 | `INFERNO_WARM_UP_TIMEOUT` | `10` | Max consecutive warm-up cycles before the controller overrides the warm-up gate and proceeds with optimize+actuate using current model data; set to `0` to disable the timeout |
+| `DEFAULT_MAX_BATCH_SIZE` | unset (search enabled) | Optional escape hatch. When > 0, the controller pins `ServerSpec.MaxBatchSize` on every server, which the optimizer treats as an explicit concurrency **override** — skipping the optimal-concurrency search entirely. Leave unset to let `optimizer-light` v0.8.0 search the optimal concurrency `M*` per (server, accelerator). |
 | `INFERNO_CYCLE_LOG` | `inferno-cycles.jsonl` | Path to JSONL cycle log written by the controller each cycle. Set to `-` to disable. |
 | `WATCH_NAMESPACE` | unset (cluster-wide) | Namespace to scope managed-deployment watches to. Set on shared clusters where another inferno setup uses the same `inferno.server.*` labels in different namespaces. Applies to the Collector, Load Emulator, and Actuator pairing reconciler. The Actuator `/update` handler is implicitly scoped via the Collector-built `serverMap` it receives. |
 | `KUBECONFIG` | `$HOME/.kube/config` | Kubernetes config path |
@@ -145,7 +146,7 @@ See [`docs/superpowers/specs/2026-05-29-actuator-vllm-pairing-design.md`](docs/s
 ## Data Files (in `INFERNO_DATA_PATH`)
 
 - `accelerator-data.json` — accelerator hardware specs (static)
-- `model-data.json` — LLM model profiles (static)
+- `model-data.json` — LLM model profiles (static). `maxBatchSize` is the **search ceiling** for the optimizer's optimal-concurrency search (`0` ⇒ `DefaultConcurrencyCeiling` = 256), not a fixed batch size. For real-vLLM experiments keep it equal to the pod's `--max-num-seqs` so the searched `M*` can never exceed what the server honors. (The retired `atTokens` field is no longer read.)
 - `serviceclass-data.json` — SLA/service class definitions (static)
 - `optimizer-data.json` — optimizer parameters (static)
 - `capacity-data.json` — current accelerator capacity counts (re-read each cycle)
@@ -173,6 +174,13 @@ The load emulator phase sequence is configured per-experiment via `manifests/{qa
   - **vllm-server**: the evaluator's `vllm-eval-config.json` (e.g. `manifests/vllm-gpu/configmap-vllm-eval.yaml`) accepts an optional `defaultConcurrency` field that should match the paired vLLM deployment's `--max-num-seqs`. We do **not** set it: every managed vllm workload here already carries a `maxbatchsize` label equal to `--max-num-seqs` (gpu=`32`, cpu=`8`), so the request value always wins and the 256 backstop is unreachable. If that label is ever dropped from a vllm-server deployment, add `defaultConcurrency` to the eval configmap so the evaluator falls back to the real `--max-num-seqs` rather than 256.
   - **queue-analysis / blis**: unaffected in practice — both already fall back to their per-model `maxBatchSize` / `maxRunningReqs` config when the request omits the value, and every managed deployment here sets the `maxbatchsize` label anyway.
   - server-sim is consumed only via the `/simulate` REST contract and the server-sim + evaluator **container images** (not a Go-module dependency), and PR #18 left the request/response schema unchanged — so picking up this behaviour requires only rebuilding/redeploying the `:latest` server-sim + evaluator images, with no control-loop code change.
+
+**Optimal-concurrency batch sizing (optimizer-light v0.8.0)**: For each (server, accelerator) candidate, the optimizer asks the queue analyzer for the minimum concurrency `M*` that reaches near-peak throughput under the SLO (`queue-analysis` `OptimalConcurrency`), replacing the old `maxBatchSize × atTokens / K` linear heuristic (`atTokens` is retired). `perf.MaxBatchSize` in `model-data.json` is the search **ceiling** (`0` ⇒ 256); the searched `M*` is emitted as `AllocationData.MaxBatch`. The control-loop is already shaped for this — **no Go code change in the Collector/Actuator/Tuner/Load Emulator**:
+  - **Actuator** writes `M*` to the `inferno.server.allocation.maxbatchsize` label each cycle (`pkg/actuator/handlers.go`).
+  - **Collector** reads that label back into `CurrentAlloc.MaxBatch` (informational + the `/simulate` `maxConcurrency`); it never sets the optimizer *override* (`ServerSpec.MaxBatchSize`), so the search runs every cycle.
+  - **Tuner** gets concurrency purely from the per-pod replicaSpecs the controller POSTs to `/tune` — `CurrentAlloc.MaxBatch` (`model-tuner/pkg/service/utils.go`), **not** from `model-tuner-config`, which holds only EKF filter params and α/β/γ init state. So the EKF observes at whatever `M*` the optimizer last chose, keeping the fit consistent.
+  - The single knob that disables the feature is `DEFAULT_MAX_BATCH_SIZE` (see env table): when set it pins the override and the search never runs. It is left unset in `deploy-loop.yaml` and the deploy scripts.
+  - Runtime behaviour lives in the `inferno-optimizer-light:latest` image; rebuild it (and `inferno-tuner:latest`, which also dropped `atTokens`) from the v0.8.0 modules. The control-loop's `optimizer`/`optimizer-light` go.mod pins are bumped to v0.8.0 for shared-config-type consistency.
 
 **Tuner fault tolerance**: If the tuner container is not ready or crashes, `POSTTune` fails with a connection error. The controller logs a warning (`tuner /tune warning: ...`) and continues the cycle using `currentModelData` unchanged. The tune timing column shows ~1ms (fast fail). Cycles remain uninterrupted.
 

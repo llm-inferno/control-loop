@@ -89,13 +89,15 @@ rewrite_ns < "$COMMON/deploy-loop.yaml" \
 # Override env to match the vllm-gpu scenario:
 #   - 120s control period covers worst-case collect time (2 deployments x 30s window)
 #   - INFERNO_WARM_UP_TIMEOUT=10 default (perfParms are seeded; warm-up is fast)
-#   - DEFAULT_MAX_BATCH_SIZE=32 matches per-server label and per-model maxBatchSize
+#   - DEFAULT_MAX_BATCH_SIZE intentionally unset: the optimizer searches the optimal
+#     concurrency M* (optimizer-light v0.8.0). The per-model maxBatchSize in
+#     inferno-data/vllm-gpu/model-data.json (=32) is the search ceiling, kept equal to
+#     the vLLM --max-num-seqs so M* can never exceed what the real server honors.
 #   - INFERNO_CYCLE_LOG=/tmp/... — OpenShift's restricted SCC makes the workdir
 #     read-only, so the default relative path fails with permission denied.
 oc set env deployment/inferno -n "$SYS_NS" -c controller \
   INFERNO_CONTROL_PERIOD=120 \
   INFERNO_WARM_UP_TIMEOUT=10 \
-  DEFAULT_MAX_BATCH_SIZE=32 \
   INFERNO_CYCLE_LOG=/tmp/inferno-cycles.jsonl
 
 # Collector simulate timeout > 2x maxWindowSec=30

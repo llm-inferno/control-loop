@@ -90,8 +90,6 @@ spec:
             value: "3304"
           - name: INFERNO_WARM_UP_TIMEOUT
             value: "10"
-          - name: DEFAULT_MAX_BATCH_SIZE
-            value: "128"
         ports:
         - containerPort: 3300
         command: ["controller"]
