@@ -255,22 +255,30 @@ func (a *Controller) Optimize() error {
 		if _, tuneErr := POSTTune(collectorInfo.ReplicaSpecs); tuneErr != nil {
 			fmt.Printf("%v: tuner /tune warning (continuing with current model data): %s\n",
 				time.Now().Format("15:04:05.000"), tuneErr.Error())
+		}
+		// Consult /warmup regardless of the /tune result. During the EKF
+		// init-observation collection phase the tuner is up but /tune returns
+		// 422 ("collecting initial observations N/M"); gating only on the
+		// tune-success path would let the controller call the optimizer with
+		// un-learned (zero) perfParms, which fails with a 404. If /warmup is
+		// itself unreachable (tuner down), warmingUp stays false and we proceed
+		// with current model data (fault tolerance preserved).
+		warmUpKnown := false
+		if wu, wuErr := GETWarmUp(); wuErr != nil {
+			fmt.Printf("%v: tuner /warmup warning (proceeding with optimize): %s\n",
+				time.Now().Format("15:04:05.000"), wuErr.Error())
 		} else {
-			if wu, wuErr := GETWarmUp(); wuErr != nil {
-				fmt.Printf("%v: tuner /warmup warning (proceeding with optimize): %s\n",
-					time.Now().Format("15:04:05.000"), wuErr.Error())
+			warmingUp = wu
+			warmUpKnown = true
+		}
+		if warmUpKnown && !warmingUp {
+			mergedModelData, mergeErr := POSTMerge(&a.State.currentModelData)
+			if mergeErr != nil {
+				fmt.Printf("%v: tuner /merge warning (continuing with current model data): %s\n",
+					time.Now().Format("15:04:05.000"), mergeErr.Error())
 			} else {
-				warmingUp = wu
-			}
-			if !warmingUp {
-				mergedModelData, mergeErr := POSTMerge(&a.State.currentModelData)
-				if mergeErr != nil {
-					fmt.Printf("%v: tuner /merge warning (continuing with current model data): %s\n",
-						time.Now().Format("15:04:05.000"), mergeErr.Error())
-				} else {
-					a.State.currentModelData = *mergedModelData
-					a.State.SystemData.Spec.Models = a.State.currentModelData
-				}
+				a.State.currentModelData = *mergedModelData
+				a.State.SystemData.Spec.Models = a.State.currentModelData
 			}
 		}
 		tuneTime = time.Since(startTime) - collectTime
