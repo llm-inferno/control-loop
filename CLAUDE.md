@@ -131,7 +131,7 @@ See [`docs/superpowers/specs/2026-05-29-actuator-vllm-pairing-design.md`](docs/s
 | `INFERNO_LOAD_INTERVAL` | `20` | Load emulator update interval in seconds |
 | `INFERNO_LOAD_ALPHA` | `0.1` | Load emulator noise magnitude relative to nominal |
 | `INFERNO_LOAD_THETA` | `0.2` | Load emulator mean-reversion strength |
-| `INFERNO_LOAD_SKEW` | `0.3` | Load emulator pod skew factor (0=equal, 1=fully random) |
+| `INFERNO_LOAD_SKEW` | `0.3` | Load emulator pod skew factor. Splits RPM across a deployment's pods (0=equal split, 1=fully random) **and** perturbs each pod's input/output token counts by ±skew around the deployment nominal (independent draws, clamped to the `LoadRangeFactor` band). The per-replica token spread gives the tuner's EKF a range of operating points within a single cycle so it can identify the per-token (beta) and batch (gamma) coefficients separately rather than collapsing them into alpha. `0` reproduces the legacy behaviour (equal split, identical token counts broadcast to all pods). |
 | `INFERNO_LOAD_PHASES` | `""` (disabled) | Path to YAML phase config file for the load emulator. When set, the nominal RPM follows the configured phase sequence (linear ramp between phases). Empty = static nominal (current behavior). |
 | `INFERNO_PAIRING_TICK_SEC` | `5` | Actuator pairing-reconciler tick interval (seconds). `0` disables the reconciler. |
 | `INFERNO_PAIRING_LOG_LEVEL` | `info` | Pairing-reconciler log verbosity. `info` = state-change logs only (scaling, binding, errors); `debug` = additionally logs a line per tick showing how many managed deployments were found. |

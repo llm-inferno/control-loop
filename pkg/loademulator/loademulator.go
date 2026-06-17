@@ -132,7 +132,12 @@ func (lg *LoadEmulator) Run() {
 	}
 }
 
-// update pod labels: split totalRPM across pods using skew, broadcast token counts
+// update pod labels: split totalRPM across pods using skew, and perturb each pod's
+// token counts around the deployment nominal by the same skew factor (independent draws
+// for input and output). The per-replica token spread gives the tuner's EKF a range of
+// operating points within a single cycle, which is what lets it identify the per-token
+// (beta) and batch (gamma) coefficients separately instead of collapsing them into the
+// constant (alpha) term. skew=0 reproduces the previous behaviour (equal split, broadcast).
 // pods are resolved via the ownership chain: Deployment UID → ReplicaSet → Pods
 func (lg *LoadEmulator) updatePodLabels(namespace, selectorStr string, deploymentUID types.UID, totalRPM float64, inTokens, outTokens int) error {
 	// find ReplicaSets owned by this deployment
@@ -186,8 +191,8 @@ func (lg *LoadEmulator) updatePodLabels(namespace, selectorStr string, deploymen
 	for j, i := range running {
 		p := pods.Items[i]
 		p.Labels[ctrl.KeyArrivalRate] = fmt.Sprintf("%.4f", podRPMs[j])
-		p.Labels[ctrl.KeyInTokens] = fmt.Sprintf("%d", inTokens)
-		p.Labels[ctrl.KeyOutTokens] = fmt.Sprintf("%d", outTokens)
+		p.Labels[ctrl.KeyInTokens] = fmt.Sprintf("%d", lg.perturbReplicaToken(inTokens))
+		p.Labels[ctrl.KeyOutTokens] = fmt.Sprintf("%d", lg.perturbReplicaToken(outTokens))
 		if _, err := lg.kubeClient.CoreV1().Pods(p.Namespace).Update(context.TODO(), &p, metav1.UpdateOptions{}); err != nil {
 			fmt.Println(err)
 		}
@@ -212,6 +217,23 @@ func (lg *LoadEmulator) perturbLoad(rpm *float64, inTok *int, outTok *int, nomRP
 	tokOutMin := max(int(math.Ceil(float64(nomOutTok)/LoadRangeFactor)), LoadRangeTokensFloor)
 	newOutTok := float64(*outTok) + lg.theta*(float64(nomOutTok)-float64(*outTok)) + rand.NormFloat64()*lg.alpha*float64(nomOutTok)
 	*outTok = min(max(int(math.Ceil(newOutTok)), tokOutMin), int(float64(nomOutTok)*LoadRangeFactor))
+}
+
+// perturbReplicaToken jitters a nominal token count for a single replica by ±skew around
+// the nominal (skew=0.3 ⇒ ±30%), clamped to the same [nominal/LoadRangeFactor,
+// nominal*LoadRangeFactor] band the mean-reverting walk uses. Unlike splitLoad, token
+// counts are an independent per-replica property (not a conserved total), so this is a
+// perturbation rather than a normalized split. skew<=0 returns the nominal unchanged
+// (broadcast). Call once per replica per token kind so input and output draws are independent.
+func (lg *LoadEmulator) perturbReplicaToken(nominal int) int {
+	if lg.skew <= 0 || nominal <= LoadRangeTokensFloor {
+		return nominal
+	}
+	j := (2*rand.Float64() - 1) * lg.skew // ∈ [-skew, +skew]
+	v := int(math.Round(float64(nominal) * (1 + j)))
+	lo := max(int(math.Ceil(float64(nominal)/LoadRangeFactor)), LoadRangeTokensFloor)
+	hi := int(float64(nominal) * LoadRangeFactor)
+	return min(max(v, lo), hi)
 }
 
 // split totalRPM across n pods using skew factor
