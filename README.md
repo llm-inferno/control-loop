@@ -126,6 +126,15 @@ Following are the steps to run the optimization control loop external to a clust
 
     Set `DEFAULT_MAX_BATCH_SIZE` to pin the batch size (max concurrency) for all servers — an explicit override that skips the optimizer's search. When unset or 0, the optimizer searches the optimal concurrency `M*` per server (the smallest max batch size reaching near-peak throughput under the SLO), bounded above by each model's `maxBatchSize` ceiling in `model-data.json`.
 
+    `DEFAULT_MAX_BATCH_SIZE` (on the **controller** container) is the *only* switch for this feature. The other fields named `maxBatchSize` are ceiling / fallback / seed values and do **not** toggle it:
+
+    | Where you see it | What it is | Toggles the feature? |
+    |---|---|---|
+    | `DEFAULT_MAX_BATCH_SIZE` env (controller) | on/off switch — pins the override when `> 0` | **Yes** |
+    | `maxBatchSize` in `model-data.json` | search ceiling (`0` ⇒ 256) | No |
+    | `maxBatchSize` in the evaluator configmap | server-sim sidecar's `/simulate` `maxConcurrency` fallback | No |
+    | `inferno.server.allocation.maxbatchsize` deployment label | seed; Actuator overwrites with the searched `M*` each cycle | No |
+
   - Tuner (purple, optional)
 
     The Tuner runs from the [model-tuner](https://github.com/llm-inferno/model-tuner) repository.
