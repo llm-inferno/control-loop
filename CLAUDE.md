@@ -182,6 +182,22 @@ The load emulator phase sequence is configured per-experiment via `manifests/{qa
   - The single knob that disables the feature is `DEFAULT_MAX_BATCH_SIZE` (see env table): when set it pins the override and the search never runs. It is left unset in `deploy-loop.yaml` and the deploy scripts.
   - Runtime behaviour lives in the `inferno-optimizer-light:latest` image; rebuild it (and `inferno-tuner:latest`, which also dropped `atTokens`) from the v0.8.0 modules. The control-loop's `optimizer`/`optimizer-light` go.mod pins are bumped to v0.8.0 for shared-config-type consistency.
 
+**Enabling / disabling concurrency control**: The feature is the optimizer's per-`(server, accelerator)` optimal-concurrency *search* (above). The single switch is the `DEFAULT_MAX_BATCH_SIZE` env var on the **controller** container:
+
+- **Unset / empty / `0` → search ENABLED** (default; not present in `deploy-loop.yaml`). The optimizer searches `M*` every cycle.
+- **`> 0` → search DISABLED.** The controller pins `ServerSpec.MaxBatchSize` on every server (`pkg/controller/controller.go:241`, applied only when not already set), which the optimizer treats as an explicit concurrency **override**, skipping the search.
+
+The switch is *not* any of the several other fields also named `maxBatchSize` — these are ceiling / fallback / seed values that do not toggle the feature:
+
+| Where you see it | Example | What it actually is | Toggles the feature? |
+|---|---|---|---|
+| `DEFAULT_MAX_BATCH_SIZE` env on the **controller** | `"128"` | The on/off switch — pins the optimizer override when `> 0` | **Yes — this is the knob** |
+| `maxBatchSize` in `inferno-data/*/model-data.json` | `128` | Search **ceiling** (`0` ⇒ 256); bounds `M*` from above | No |
+| `maxBatchSize` in the evaluator config (`manifests/qa/configmap-qa-small.yaml`) | `128` | The **server-sim/evaluator sidecar's** per-model concurrency, used as the `/simulate` `maxConcurrency` fallback when the request sends `0` | No |
+| `inferno.server.allocation.maxbatchsize` label on `dep-qa-*.yaml` | `"128"` | **Seed** value; the Actuator overwrites it with the searched `M*` each cycle, and the Collector reads it back (informational + the `/simulate` `maxConcurrency`) | No |
+
+When the search is enabled the deployment label changes cycle-to-cycle (Actuator writes `M*`); when disabled it stays pinned to whatever fixed value you set. To run an A/B contrast of the feature: Arm A leaves `DEFAULT_MAX_BATCH_SIZE` unset (search on); Arm B sets it to a fixed value (e.g. `128`, matching the seeds) on the controller container (search off, legacy fixed-batch behaviour).
+
 **Tuner fault tolerance**: If the tuner container is not ready or crashes, `POSTTune` fails with a connection error. The controller logs a warning (`tuner /tune warning: ...`) and continues the cycle using `currentModelData` unchanged. The tune timing column shows ~1ms (fast fail). Cycles remain uninterrupted.
 
 **Server startup delay** (`INFERNO_STARTUP_DELAY`): When set to a positive integer (seconds), both the Collector and Load Emulator ignore pods whose `Status.StartTime` is less than that many seconds ago. This prevents collecting metrics from or assigning traffic labels to pods still loading model weights. The check uses `pod.Status.StartTime` (set by the kubelet when the pod begins running), not `CreationTimestamp`. Default is `0` (no delay, fully backward-compatible). During the delay window the pod is excluded from `ReplicaSpecs` (Tuner is skipped for it) and receives no load labels.
