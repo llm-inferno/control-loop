@@ -5,9 +5,14 @@ metadata:
   namespace: inferno-system
 data:
   phases.yaml: |
-    # vllm-gpu experiment: 5-phase 1x -> 3x -> 1x ramp, 6 minutes per phase.
-    # Total active phase sequence ~24 min, then hold at 1x indefinitely.
-    # Stays under the 30-min gpu-reaper.io idle threshold.
+    # vllm-gpu experiment (run16 concurrency A/B): 5-phase 1x -> 2x -> 1x ramp,
+    # 6 minutes per phase. Total active phase sequence ~24 min, then hold at 1x
+    # indefinitely. Stays under the 30-min gpu-reaper.io idle threshold.
+    #
+    # Peak is 2x (not 3x): at 3x the optimizer hit the 6-H100 cap, which would
+    # make the search-ON arm capacity-bound and collapse the A/B contrast. With
+    # a small searched M* the search arm needs MORE replicas to serve the same
+    # RPM, so the conservative 2x peak keeps it under the cap.
     #
     # Ratios are chained-multiplicative; hold phases use ratio: 1.0 and
     # ramp phases carry the multiplier change. The load emulator
@@ -16,9 +21,9 @@ data:
       - duration: 6m
         ratio: 1.0       # hold at 1x
       - duration: 6m
-        ratio: 3.0       # linear ramp 1x -> 3x
+        ratio: 2.0       # linear ramp 1x -> 2x
       - duration: 6m
-        ratio: 1.0       # hold at 3x
+        ratio: 1.0       # hold at 2x
       - duration: 6m
-        ratio: 0.333     # linear ramp 3x -> 1x
+        ratio: 0.5       # linear ramp 2x -> 1x
       - duration: 0s     # hold at 1x forever

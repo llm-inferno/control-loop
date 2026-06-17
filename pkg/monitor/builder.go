@@ -56,6 +56,7 @@ func BuildRecord(
 		if alloc, ok := solution[s.Name]; ok {
 			sr.Accelerator = alloc.Accelerator
 			sr.NumReplicas = alloc.NumReplicas
+			sr.MaxBatch = alloc.MaxBatch
 			sr.Cost = alloc.Cost
 			totalCost += alloc.Cost
 		}

@@ -10,7 +10,7 @@ metadata:
     inferno.server.class: Premium
     inferno.server.evaluator: vllm-server
     inferno.server.allocation.accelerator: H100
-    inferno.server.allocation.maxbatchsize: "32"
+    inferno.server.allocation.maxbatchsize: "128"
     inferno.server.allocation.maxqueuesize: "64"
     inferno.server.vllm-deployment: vllm-llama-gpu
     inferno.server.vllm-namespace: inferno-workload
