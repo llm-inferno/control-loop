@@ -5,25 +5,38 @@ metadata:
   namespace: inferno-system
 data:
   phases.yaml: |
-    # vllm-gpu experiment (run16 concurrency A/B): 5-phase 1x -> 2x -> 1x ramp,
-    # 6 minutes per phase. Total active phase sequence ~24 min, then hold at 1x
-    # indefinitely. Stays under the 30-min gpu-reaper.io idle threshold.
+    # run16 concurrency A/B — STEP-SURGE profile (single model: qwen, 1024/512).
     #
-    # Peak is 2x (not 3x): at 3x the optimizer hit the 6-H100 cap, which would
-    # make the search-ON arm capacity-bound and collapse the A/B contrast. With
-    # a small searched M* the search arm needs MORE replicas to serve the same
-    # RPM, so the conservative 2x peak keeps it under the cap.
+    # Theory (delay-throughput knee): the advantage of concurrency control (Arm A,
+    # searched M*) over none (Arm B, pinned 128) is a TRANSIENT. In steady state both
+    # arms provision to meet the ITL SLO and sit at the knee identically. During a
+    # load SURGE, before the controller scales out (120s period + vLLM startup, ~2-3
+    # min lag), the existing replica is overloaded: Arm A's M*~64 in-flight cap holds
+    # it AT the knee (ITL ~SLO, sheds excess) while Arm B's 128 cap lets the operating
+    # point slide up the steep part of the curve (ITL inflates, SLO violated). After
+    # scale-out both recover. So we need a STEP surge, not a gradual ramp, and the
+    # contrast lives in the surge window.
     #
-    # Ratios are chained-multiplicative; hold phases use ratio: 1.0 and
-    # ramp phases carry the multiplier change. The load emulator
-    # interpolates linearly within a phase based on its ratio.
+    # Real qwen curve (single H100, in-cluster sweep, experiments/run16/preflight/
+    # curve-qwen-real.csv): knee ~conc 64 / ~384 RPM / ITL ~20ms; soft (no KV cliff).
+    # Baseline 1x is set BELOW the knee so 1 replica is comfortably within SLO
+    # (~conc 32-40, ITL ~15-17). The qwen deployment's nominal.rpm = 250 sets 1x.
+    #
+    # Sequence: baseline 250 RPM (8m, steady 1 replica) -> STEP to 2x=500 RPM (1m ramp,
+    # ~instant vs the 120s control period) -> hold 500 (8m: capture the overload
+    # transient, the optimizer scaling to 2, and recovery) -> ramp back to 250 (2m) ->
+    # hold. ~19 min active, under the 30-min gpu-reaper idle threshold.
+    #
+    # Ratios are chained-multiplicative; hold phases use ratio: 1.0 and ramp phases
+    # carry the multiplier change. The load emulator interpolates linearly within a
+    # phase based on its ratio.
     phases:
-      - duration: 6m
-        ratio: 1.0       # hold at 1x
-      - duration: 6m
-        ratio: 2.0       # linear ramp 1x -> 2x
-      - duration: 6m
-        ratio: 1.0       # hold at 2x
-      - duration: 6m
-        ratio: 0.5       # linear ramp 2x -> 1x
+      - duration: 8m
+        ratio: 1.0       # baseline hold at 1x (250 RPM, below knee, 1 replica)
+      - duration: 1m
+        ratio: 2.0       # STEP surge 1x -> 2x (250 -> 500 RPM), ~instant vs 120s period
+      - duration: 8m
+        ratio: 1.0       # hold at 2x (500 RPM): transient + scale-out + recovery
+      - duration: 2m
+        ratio: 0.5       # ramp 2x -> 1x (500 -> 250 RPM)
       - duration: 0s     # hold at 1x forever

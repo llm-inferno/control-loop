@@ -1,0 +1,54 @@
+== baseline ==
+vllm:num_requests_running{engine="0",model_name="llama"} 0.0
+vllm:num_requests_waiting{engine="0",model_name="llama"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="llama",reason="capacity"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="llama",reason="deferred"} 0.0
+vllm:num_preemptions_total{engine="0",model_name="llama"} 0.0
+== t=15s ==
+vllm:num_requests_running{engine="0",model_name="llama"} 0.0
+vllm:num_requests_waiting{engine="0",model_name="llama"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="llama",reason="capacity"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="llama",reason="deferred"} 0.0
+vllm:num_preemptions_total{engine="0",model_name="llama"} 0.0
+== t=30s ==
+vllm:num_requests_running{engine="0",model_name="llama"} 0.0
+vllm:num_requests_waiting{engine="0",model_name="llama"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="llama",reason="capacity"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="llama",reason="deferred"} 0.0
+vllm:num_preemptions_total{engine="0",model_name="llama"} 0.0
+== t=45s ==
+vllm:num_requests_running{engine="0",model_name="llama"} 0.0
+vllm:num_requests_waiting{engine="0",model_name="llama"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="llama",reason="capacity"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="llama",reason="deferred"} 0.0
+vllm:num_preemptions_total{engine="0",model_name="llama"} 0.0
+== t=60s ==
+vllm:num_requests_running{engine="0",model_name="llama"} 121.0
+vllm:num_requests_waiting{engine="0",model_name="llama"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="llama",reason="capacity"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="llama",reason="deferred"} 0.0
+vllm:num_preemptions_total{engine="0",model_name="llama"} 0.0
+== t=75s ==
+vllm:num_requests_running{engine="0",model_name="llama"} 128.0
+vllm:num_requests_waiting{engine="0",model_name="llama"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="llama",reason="capacity"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="llama",reason="deferred"} 0.0
+vllm:num_preemptions_total{engine="0",model_name="llama"} 0.0
+== t=90s ==
+vllm:num_requests_running{engine="0",model_name="llama"} 128.0
+vllm:num_requests_waiting{engine="0",model_name="llama"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="llama",reason="capacity"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="llama",reason="deferred"} 0.0
+vllm:num_preemptions_total{engine="0",model_name="llama"} 0.0
+== t=105s ==
+vllm:num_requests_running{engine="0",model_name="llama"} 128.0
+vllm:num_requests_waiting{engine="0",model_name="llama"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="llama",reason="capacity"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="llama",reason="deferred"} 0.0
+vllm:num_preemptions_total{engine="0",model_name="llama"} 0.0
+== t=120s ==
+vllm:num_requests_running{engine="0",model_name="llama"} 128.0
+vllm:num_requests_waiting{engine="0",model_name="llama"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="llama",reason="capacity"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="llama",reason="deferred"} 0.0
+vllm:num_preemptions_total{engine="0",model_name="llama"} 0.0

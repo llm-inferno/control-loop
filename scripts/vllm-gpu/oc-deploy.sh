@@ -26,6 +26,15 @@ EXP="$REPO_ROOT/manifests/vllm-gpu"
 SYS_NS="inferno-system"
 WORK_NS="inferno-workload"
 
+# Models to deploy. Default "qwen llama" preserves the original two-model scenario.
+# Set MODELS="qwen" for the run16 single-model concurrency surge experiment (no GPU
+# split; lets qwen scale freely within the 6-H100 cap during the surge).
+MODELS="${MODELS:-qwen llama}"
+
+# Optional A/B arm selector. Unset (default) => search ON (Arm A, optimizer searches M*).
+# Set ARM_MAXBATCH=128 => search OFF (Arm B): pins DEFAULT_MAX_BATCH_SIZE on the controller.
+ARM_MAXBATCH="${ARM_MAXBATCH:-}"
+
 # Rewrite hard-coded `namespace: inferno` lines in shared common YAMLs
 # (deploy-loop.yaml, configmap-tuner.yaml) to target the new system namespace.
 # The end-anchor on `inferno$` ensures `namespace: inferno-workload` is not
@@ -87,7 +96,9 @@ rewrite_ns < "$COMMON/deploy-loop.yaml" \
   | oc apply -f -
 
 # Override env to match the vllm-gpu scenario:
-#   - 120s control period covers worst-case collect time (2 deployments x 30s window)
+#   - 120s control period: covers worst-case collect time (each managed deployment adds
+#     a ~30s eval window) AND deliberately lengthens the scale-out reaction lag, which is
+#     what exposes the concurrency-control transient in the single-model surge experiment.
 #   - INFERNO_WARM_UP_TIMEOUT=10 default (perfParms are seeded; warm-up is fast)
 #   - DEFAULT_MAX_BATCH_SIZE intentionally unset for the search-ON arm: the optimizer
 #     searches the optimal concurrency M* (optimizer-light v0.8.0). The per-model
@@ -104,6 +115,16 @@ oc set env deployment/inferno -n "$SYS_NS" -c controller \
   INFERNO_WARM_UP_TIMEOUT=10 \
   INFERNO_CYCLE_LOG=/tmp/inferno-cycles.jsonl
 
+# Arm B (search OFF): pin the optimizer concurrency override when ARM_MAXBATCH is set.
+# Leave unset for Arm A (search ON). Either way the value is explicit per run.
+if [[ -n "$ARM_MAXBATCH" ]]; then
+  echo "    ARM_MAXBATCH set => Arm B (search OFF), pinning DEFAULT_MAX_BATCH_SIZE=$ARM_MAXBATCH"
+  oc set env deployment/inferno -n "$SYS_NS" -c controller DEFAULT_MAX_BATCH_SIZE="$ARM_MAXBATCH"
+else
+  echo "    ARM_MAXBATCH unset => Arm A (search ON); DEFAULT_MAX_BATCH_SIZE not pinned"
+  oc set env deployment/inferno -n "$SYS_NS" -c controller DEFAULT_MAX_BATCH_SIZE-
+fi
+
 # Collector simulate timeout > 2x maxWindowSec=30
 # WATCH_NAMESPACE scopes the managed-deployment watch to inferno-workload so we
 # don't iterate the other team's deployments on the shared cluster (PR #35).
@@ -117,22 +138,31 @@ oc set env deployment/inferno -n "$SYS_NS" -c actuator \
 
 oc rollout status deployment/inferno -n "$SYS_NS" --timeout=180s
 
-echo "==> Deploying vLLM servers (Qwen2.5-14B + Llama-3.1-8B on H100)"
-oc apply -f "$EXP/deployment-vllm-qwen.yaml"
-oc apply -f "$EXP/deployment-vllm-llama.yaml"
+# Resolve the per-model manifest files + deployment names for the selected MODELS.
+vdeps=""; vnames=""; wraps=""; wnames=""
+for m in $MODELS; do
+  case "$m" in
+    qwen)
+      vdeps="$vdeps deployment-vllm-qwen.yaml";  vnames="$vnames vllm-qwen-14b-gpu"
+      wraps="$wraps dep-vllm-qwen-server.yaml";  wnames="$wnames vllm-qwen-14b-server" ;;
+    llama)
+      vdeps="$vdeps deployment-vllm-llama.yaml"; vnames="$vnames vllm-llama-gpu"
+      wraps="$wraps dep-vllm-llama-server.yaml"; wnames="$wnames vllm-llama-server" ;;
+    *) echo "ERROR: unknown model '$m' in MODELS (expected qwen|llama)" >&2; exit 1 ;;
+  esac
+done
 
-echo "    First-run weight download to PVC may take ~15-30 min for both models."
-echo "    Waiting for both vLLM Deployments to become Available..."
-oc wait --for=condition=available deployment/vllm-qwen-14b-gpu -n "$WORK_NS" --timeout=1800s
-oc wait --for=condition=available deployment/vllm-llama-gpu    -n "$WORK_NS" --timeout=1800s
+echo "==> Deploying vLLM servers ($MODELS) on H100"
+for f in $vdeps; do oc apply -f "$EXP/$f"; done
+echo "    First-run weight download to PVC may take ~15-30 min."
+echo "    Waiting for vLLM Deployment(s) to become Available..."
+for n in $vnames; do oc wait --for=condition=available deployment/"$n" -n "$WORK_NS" --timeout=1800s; done
 
 echo "==> Deploying managed wrappers (server-sim + vllm-server evaluator)"
-oc apply -f "$EXP/dep-vllm-qwen-server.yaml"
-oc apply -f "$EXP/dep-vllm-llama-server.yaml"
-oc rollout status deployment/vllm-qwen-14b-server -n "$WORK_NS" --timeout=300s
-oc rollout status deployment/vllm-llama-server    -n "$WORK_NS" --timeout=300s
+for f in $wraps; do oc apply -f "$EXP/$f"; done
+for n in $wnames; do oc rollout status deployment/"$n" -n "$WORK_NS" --timeout=300s; done
 
-echo "==> Deploying load emulator (5-phase 1x->3x->1x ramp, 6 min per phase)"
+echo "==> Deploying load emulator (profile from configmap-load-phases.yaml)"
 oc apply -f "$EXP/configmap-load-phases.yaml"
 oc delete pod load-emulator -n "$SYS_NS" --ignore-not-found
 oc apply -f "$EXP/load-emulator.yaml"

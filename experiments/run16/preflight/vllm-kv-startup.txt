@@ -1,0 +1,11 @@
+### vllm-llama-gpu (Meta-Llama-3.1-8B-Instruct, H100, --max-num-seqs 128, gpu-mem-util 0.90)
+(APIServer pid=44) INFO 06-17 18:49:20 [utils.py:240] non-default args: {'model_tag': 'unsloth/Meta-Llama-3.1-8B-Instruct', 'model': 'unsloth/Meta-Llama-3.1-8B-Instruct', 'trust_remote_code': True, 'dtype': 'bfloat16', 'max_model_len': 8192, 'served_model_name': ['llama'], 'generation_config': 'vllm', 'download_dir': '/models-cache', 'gpu_memory_utilization': 0.9, 'enable_prefix_caching': False, 'max_num_seqs': 128}
+(EngineCore pid=458) INFO 06-17 18:51:05 [gpu_worker.py:462] Available KV cache memory: 54.68 GiB
+(EngineCore pid=458) INFO 06-17 18:51:05 [kv_cache_utils.py:1710] GPU KV cache size: 447,936 tokens
+(EngineCore pid=458) INFO 06-17 18:51:05 [kv_cache_utils.py:1711] Maximum concurrency for 8,192 tokens per request: 54.68x
+
+### vllm-qwen-14b-gpu (Qwen2.5-14B-Instruct, H100, --max-num-seqs 128, gpu-mem-util 0.90)
+(APIServer pid=44) INFO 06-17 18:49:20 [utils.py:240] non-default args: {'model_tag': 'Qwen/Qwen2.5-14B-Instruct', 'model': 'Qwen/Qwen2.5-14B-Instruct', 'trust_remote_code': True, 'dtype': 'bfloat16', 'max_model_len': 4096, 'served_model_name': ['qwen'], 'generation_config': 'vllm', 'download_dir': '/models-cache', 'gpu_memory_utilization': 0.9, 'enable_prefix_caching': False, 'max_num_seqs': 128}
+(EngineCore pid=440) INFO 06-17 18:51:34 [gpu_worker.py:462] Available KV cache memory: 41.57 GiB
+(EngineCore pid=440) INFO 06-17 18:51:34 [kv_cache_utils.py:1710] GPU KV cache size: 226,992 tokens
+(EngineCore pid=440) INFO 06-17 18:51:34 [kv_cache_utils.py:1711] Maximum concurrency for 4,096 tokens per request: 55.42x
