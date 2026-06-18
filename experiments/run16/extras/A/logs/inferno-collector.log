@@ -1,0 +1,337 @@
+Running internal in the cluster
+Kube client created
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] GET    /collect                  --> github.com/llm-inferno/control-loop/pkg/collector.collect (3 handlers)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://github.com/gin-gonic/gin/blob/master/docs/doc.md#dont-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :3301
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label exists ...
+Average arrival rate / throughput 228.315796 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.intokens exists ...
+Average input tokens per request 997.000000 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.outtokens exists ...
+Average output tokens per request 470.000000 
+simulation job 1a289d8b-883d-47f1-ac9b-7f94640aadc5 submitted
+pod vllm-qwen-14b-server-68c7bcdc8-xhkhv: TTFT=80.5ms ITL=15.3ms throughput=3.57req/s maxRPS=0.00
+curAlloc[vllm-qwen-14b]: replicas=1 acc=H100 maxBatch=128 ITL=15.3ms TTFT=80.5ms arrivalRateRPM=228.32 throughputRPM=214.00 inTok=997 outTok=470
+replicaAlloc[vllm-qwen-14b/vllm-qwen-14b-server-68c7bcdc8-xhkhv]: acc=H100 maxBatch=128 ITL=15.3ms TTFT=80.5ms arrivalRateRPM=214.00 throughputRPM=214.00 inTok=997 outTok=470
+[GIN] 2026/06/18 - 18:56:21 | 200 | 41.132367544s |             ::1 | GET      "/collect"
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label exists ...
+Average arrival rate / throughput 234.360001 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.intokens exists ...
+Average input tokens per request 1037.000000 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.outtokens exists ...
+Average output tokens per request 519.000000 
+simulation job 91176d17-2e5b-44aa-b273-99f039fcaf0f submitted
+pod vllm-qwen-14b-server-68c7bcdc8-xhkhv: TTFT=81.4ms ITL=15.8ms throughput=3.87req/s maxRPS=0.00
+curAlloc[vllm-qwen-14b]: replicas=1 acc=H100 maxBatch=128 ITL=15.8ms TTFT=81.4ms arrivalRateRPM=234.36 throughputRPM=232.00 inTok=1037 outTok=519
+replicaAlloc[vllm-qwen-14b/vllm-qwen-14b-server-68c7bcdc8-xhkhv]: acc=H100 maxBatch=128 ITL=15.8ms TTFT=81.4ms arrivalRateRPM=232.00 throughputRPM=232.00 inTok=1037 outTok=519
+[GIN] 2026/06/18 - 18:58:21 | 200 |  41.01616954s |             ::1 | GET      "/collect"
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label exists ...
+Average arrival rate / throughput 235.252701 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.intokens exists ...
+Average input tokens per request 988.000000 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.outtokens exists ...
+Average output tokens per request 488.000000 
+simulation job ada8d64f-459d-4f96-bd09-93eb2b4e95f7 submitted
+pod vllm-qwen-14b-server-68c7bcdc8-xhkhv: TTFT=83.1ms ITL=16.8ms throughput=3.92req/s maxRPS=0.00
+curAlloc[vllm-qwen-14b]: replicas=1 acc=H100 maxBatch=128 ITL=16.8ms TTFT=83.1ms arrivalRateRPM=235.25 throughputRPM=235.25 inTok=988 outTok=488
+replicaAlloc[vllm-qwen-14b/vllm-qwen-14b-server-68c7bcdc8-xhkhv]: acc=H100 maxBatch=128 ITL=16.8ms TTFT=83.1ms arrivalRateRPM=235.25 throughputRPM=235.25 inTok=988 outTok=488
+[GIN] 2026/06/18 - 19:00:21 | 200 | 41.019318372s |             ::1 | GET      "/collect"
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label exists ...
+Average arrival rate / throughput 249.800903 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.intokens exists ...
+Average input tokens per request 1252.000000 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.outtokens exists ...
+Average output tokens per request 432.000000 
+simulation job 6daba995-ebee-4a9e-9bfb-db5a83492687 submitted
+pod vllm-qwen-14b-server-68c7bcdc8-xhkhv: saturated (overloaded); vllm-server backend, passing through
+pod vllm-qwen-14b-server-68c7bcdc8-xhkhv: TTFT=105.5ms ITL=18.5ms throughput=4.16req/s maxRPS=0.00
+curAlloc[vllm-qwen-14b]: replicas=1 acc=H100 maxBatch=128 ITL=18.5ms TTFT=105.5ms arrivalRateRPM=249.80 throughputRPM=249.80 inTok=1252 outTok=432
+replicaAlloc[vllm-qwen-14b/vllm-qwen-14b-server-68c7bcdc8-xhkhv]: acc=H100 maxBatch=128 ITL=18.5ms TTFT=105.5ms arrivalRateRPM=249.80 throughputRPM=249.80 inTok=1252 outTok=432
+[GIN] 2026/06/18 - 19:02:21 | 200 | 41.024060354s |             ::1 | GET      "/collect"
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label exists ...
+Average arrival rate / throughput 378.861603 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.intokens exists ...
+Average input tokens per request 1069.000000 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.outtokens exists ...
+Average output tokens per request 571.000000 
+simulation job e4293816-4249-42e1-9a87-4e9579e89bca submitted
+pod vllm-qwen-14b-server-68c7bcdc8-xhkhv: saturated (overloaded); vllm-server backend, passing through
+pod vllm-qwen-14b-server-68c7bcdc8-xhkhv: TTFT=103.1ms ITL=22.9ms throughput=5.70req/s maxRPS=0.00
+curAlloc[vllm-qwen-14b]: replicas=1 acc=H100 maxBatch=128 ITL=22.9ms TTFT=103.1ms arrivalRateRPM=378.86 throughputRPM=341.99 inTok=1069 outTok=571
+replicaAlloc[vllm-qwen-14b/vllm-qwen-14b-server-68c7bcdc8-xhkhv]: acc=H100 maxBatch=128 ITL=22.9ms TTFT=103.1ms arrivalRateRPM=341.99 throughputRPM=341.99 inTok=1069 outTok=571
+[GIN] 2026/06/18 - 19:04:21 | 200 | 41.017309856s |             ::1 | GET      "/collect"
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label exists ...
+Average arrival rate / throughput 242.615204 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.intokens exists ...
+Average input tokens per request 1099.000000 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.outtokens exists ...
+Average output tokens per request 507.000000 
+simulation job 05a8820c-f5b9-4668-a403-20f5b2e5ed56 submitted
+simulation job b794cc5d-60c4-4389-b14b-82db02504e83 submitted
+pod vllm-qwen-14b-server-68c7bcdc8-58wz2 simulation error: simulation failed: evaluator returned status 503
+pod vllm-qwen-14b-server-68c7bcdc8-xhkhv: TTFT=82.4ms ITL=13.5ms throughput=1.83req/s maxRPS=0.00
+curAlloc[vllm-qwen-14b]: replicas=2 acc=H100 maxBatch=61 ITL=13.5ms TTFT=82.4ms arrivalRateRPM=242.62 throughputRPM=110.00 inTok=1099 outTok=507
+replicaAlloc[vllm-qwen-14b/vllm-qwen-14b-server-68c7bcdc8-xhkhv]: acc=H100 maxBatch=61 ITL=13.5ms TTFT=82.4ms arrivalRateRPM=110.00 throughputRPM=110.00 inTok=1099 outTok=507
+[GIN] 2026/06/18 - 19:06:21 | 200 | 41.025545452s |             ::1 | GET      "/collect"
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label exists ...
+Average arrival rate / throughput 247.860306 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.intokens exists ...
+Average input tokens per request 1054.000000 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.outtokens exists ...
+Average output tokens per request 524.000000 
+simulation job 80fd2e11-f447-4be1-b609-71e5b364735e submitted
+pod vllm-qwen-14b-server-68c7bcdc8-xhkhv: TTFT=84.1ms ITL=17.3ms throughput=4.13req/s maxRPS=0.00
+curAlloc[vllm-qwen-14b]: replicas=1 acc=H100 maxBatch=56 ITL=17.3ms TTFT=84.1ms arrivalRateRPM=247.86 throughputRPM=247.86 inTok=1054 outTok=524
+replicaAlloc[vllm-qwen-14b/vllm-qwen-14b-server-68c7bcdc8-xhkhv]: acc=H100 maxBatch=56 ITL=17.3ms TTFT=84.1ms arrivalRateRPM=247.86 throughputRPM=247.86 inTok=1054 outTok=524
+[GIN] 2026/06/18 - 19:08:21 | 200 |  41.00885507s |             ::1 | GET      "/collect"
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label exists ...
+Average arrival rate / throughput 243.547607 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.intokens exists ...
+Average input tokens per request 1073.000000 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.outtokens exists ...
+Average output tokens per request 384.000000 
+simulation job c59ce78e-a8b6-49bb-95be-a7fe367957f9 submitted
+pod vllm-qwen-14b-server-68c7bcdc8-xhkhv: TTFT=83.0ms ITL=15.4ms throughput=4.03req/s maxRPS=0.00
+curAlloc[vllm-qwen-14b]: replicas=1 acc=H100 maxBatch=62 ITL=15.4ms TTFT=83.0ms arrivalRateRPM=243.55 throughputRPM=241.99 inTok=1073 outTok=384
+replicaAlloc[vllm-qwen-14b/vllm-qwen-14b-server-68c7bcdc8-xhkhv]: acc=H100 maxBatch=62 ITL=15.4ms TTFT=83.0ms arrivalRateRPM=241.99 throughputRPM=241.99 inTok=1073 outTok=384
+[GIN] 2026/06/18 - 19:10:21 | 200 | 41.007899464s |             ::1 | GET      "/collect"
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label exists ...
+Average arrival rate / throughput 230.708206 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.intokens exists ...
+Average input tokens per request 989.000000 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.outtokens exists ...
+Average output tokens per request 509.000000 
+simulation job 5dbb0558-0322-45c8-9224-fa524cc04fd2 submitted
+pod vllm-qwen-14b-server-68c7bcdc8-xhkhv: TTFT=82.2ms ITL=16.6ms throughput=3.85req/s maxRPS=0.00
+curAlloc[vllm-qwen-14b]: replicas=1 acc=H100 maxBatch=51 ITL=16.6ms TTFT=82.2ms arrivalRateRPM=230.71 throughputRPM=230.71 inTok=989 outTok=509
+replicaAlloc[vllm-qwen-14b/vllm-qwen-14b-server-68c7bcdc8-xhkhv]: acc=H100 maxBatch=51 ITL=16.6ms TTFT=82.2ms arrivalRateRPM=230.71 throughputRPM=230.71 inTok=989 outTok=509
+[GIN] 2026/06/18 - 19:12:21 | 200 | 41.017346918s |             ::1 | GET      "/collect"
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label exists ...
+Average arrival rate / throughput 340.624390 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.intokens exists ...
+Average input tokens per request 1022.000000 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.outtokens exists ...
+Average output tokens per request 453.000000 
+simulation job ca8453d8-41ab-4667-9044-9e512c84140f submitted
+pod vllm-qwen-14b-server-68c7bcdc8-xhkhv: TTFT=91.1ms ITL=18.8ms throughput=5.47req/s maxRPS=0.00
+curAlloc[vllm-qwen-14b]: replicas=1 acc=H100 maxBatch=63 ITL=18.8ms TTFT=91.1ms arrivalRateRPM=340.62 throughputRPM=328.00 inTok=1022 outTok=453
+replicaAlloc[vllm-qwen-14b/vllm-qwen-14b-server-68c7bcdc8-xhkhv]: acc=H100 maxBatch=63 ITL=18.8ms TTFT=91.1ms arrivalRateRPM=328.00 throughputRPM=328.00 inTok=1022 outTok=453
+[GIN] 2026/06/18 - 19:14:21 | 200 |  41.01782699s |             ::1 | GET      "/collect"
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label exists ...
+Average arrival rate / throughput 561.258789 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.intokens exists ...
+Average input tokens per request 1119.000000 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.outtokens exists ...
+Average output tokens per request 401.000000 
+simulation job 9a97de76-18fa-4952-b22a-95fdbc22bc4c submitted
+pod vllm-qwen-14b-server-68c7bcdc8-xhkhv: TTFT=105.7ms ITL=21.1ms throughput=6.60req/s maxRPS=0.00
+curAlloc[vllm-qwen-14b]: replicas=1 acc=H100 maxBatch=57 ITL=21.1ms TTFT=105.7ms arrivalRateRPM=561.26 throughputRPM=395.99 inTok=1119 outTok=401
+replicaAlloc[vllm-qwen-14b/vllm-qwen-14b-server-68c7bcdc8-xhkhv]: acc=H100 maxBatch=57 ITL=21.1ms TTFT=105.7ms arrivalRateRPM=395.99 throughputRPM=395.99 inTok=1119 outTok=401
+[GIN] 2026/06/18 - 19:16:21 | 200 |  41.01562742s |             ::1 | GET      "/collect"
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label exists ...
+Average arrival rate / throughput 515.847717 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.intokens exists ...
+Average input tokens per request 1079.000000 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.outtokens exists ...
+Average output tokens per request 597.000000 
+simulation job 68d9180e-e82b-4dbf-a214-e432a4300710 submitted
+simulation job daf1e0a9-fd26-408c-b430-e9c9d1608853 submitted
+pod vllm-qwen-14b-server-68c7bcdc8-lwnzb: TTFT=84.3ms ITL=16.7ms throughput=3.73req/s maxRPS=0.00
+pod vllm-qwen-14b-server-68c7bcdc8-xhkhv: TTFT=91.8ms ITL=18.0ms throughput=4.20req/s maxRPS=0.00
+curAlloc[vllm-qwen-14b]: replicas=2 acc=H100 maxBatch=51 ITL=17.4ms TTFT=88.3ms arrivalRateRPM=515.85 throughputRPM=475.99 inTok=1079 outTok=597
+replicaAlloc[vllm-qwen-14b/vllm-qwen-14b-server-68c7bcdc8-lwnzb]: acc=H100 maxBatch=51 ITL=16.7ms TTFT=84.3ms arrivalRateRPM=224.00 throughputRPM=224.00 inTok=1079 outTok=597
+replicaAlloc[vllm-qwen-14b/vllm-qwen-14b-server-68c7bcdc8-xhkhv]: acc=H100 maxBatch=51 ITL=18.0ms TTFT=91.8ms arrivalRateRPM=252.00 throughputRPM=252.00 inTok=1079 outTok=597
+[GIN] 2026/06/18 - 19:18:21 | 200 | 41.056878825s |             ::1 | GET      "/collect"
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label exists ...
+Average arrival rate / throughput 458.636108 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.intokens exists ...
+Average input tokens per request 1019.000000 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.outtokens exists ...
+Average output tokens per request 538.000000 
+simulation job 7e7407aa-6af9-469e-9a80-ce8e55c157b8 submitted
+simulation job 9d66663a-4fda-41a7-bb34-ab64f4350058 submitted
+pod vllm-qwen-14b-server-68c7bcdc8-lwnzb: TTFT=78.2ms ITL=16.6ms throughput=3.82req/s maxRPS=0.00
+pod vllm-qwen-14b-server-68c7bcdc8-xhkhv: TTFT=82.8ms ITL=16.3ms throughput=3.77req/s maxRPS=0.00
+curAlloc[vllm-qwen-14b]: replicas=2 acc=H100 maxBatch=67 ITL=16.4ms TTFT=80.5ms arrivalRateRPM=458.64 throughputRPM=455.31 inTok=1019 outTok=538
+replicaAlloc[vllm-qwen-14b/vllm-qwen-14b-server-68c7bcdc8-lwnzb]: acc=H100 maxBatch=67 ITL=16.6ms TTFT=78.2ms arrivalRateRPM=229.32 throughputRPM=229.32 inTok=1019 outTok=538
+replicaAlloc[vllm-qwen-14b/vllm-qwen-14b-server-68c7bcdc8-xhkhv]: acc=H100 maxBatch=67 ITL=16.3ms TTFT=82.8ms arrivalRateRPM=226.00 throughputRPM=226.00 inTok=1019 outTok=538
+[GIN] 2026/06/18 - 19:20:21 | 200 | 41.029187021s |             ::1 | GET      "/collect"
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label exists ...
+Average arrival rate / throughput 427.589905 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.intokens exists ...
+Average input tokens per request 1055.000000 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.outtokens exists ...
+Average output tokens per request 495.000000 
+simulation job 79228cd0-c336-4a33-bd4c-91385266c7c3 submitted
+simulation job ef1a7440-0cfd-4ad7-b270-5bb5e2f3aa90 submitted
+pod vllm-qwen-14b-server-68c7bcdc8-lwnzb: TTFT=83.8ms ITL=15.8ms throughput=3.56req/s maxRPS=0.00
+pod vllm-qwen-14b-server-68c7bcdc8-xhkhv: TTFT=84.5ms ITL=15.4ms throughput=3.27req/s maxRPS=0.00
+curAlloc[vllm-qwen-14b]: replicas=2 acc=H100 maxBatch=65 ITL=15.6ms TTFT=84.1ms arrivalRateRPM=427.59 throughputRPM=409.79 inTok=1055 outTok=495
+replicaAlloc[vllm-qwen-14b/vllm-qwen-14b-server-68c7bcdc8-lwnzb]: acc=H100 maxBatch=65 ITL=15.8ms TTFT=83.8ms arrivalRateRPM=213.79 throughputRPM=213.79 inTok=1055 outTok=495
+replicaAlloc[vllm-qwen-14b/vllm-qwen-14b-server-68c7bcdc8-xhkhv]: acc=H100 maxBatch=65 ITL=15.4ms TTFT=84.5ms arrivalRateRPM=196.00 throughputRPM=196.00 inTok=1055 outTok=495
+[GIN] 2026/06/18 - 19:22:21 | 200 | 41.038451064s |             ::1 | GET      "/collect"
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label exists ...
+Average arrival rate / throughput 377.068604 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.intokens exists ...
+Average input tokens per request 1040.000000 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.outtokens exists ...
+Average output tokens per request 468.000000 
+simulation job 1e1809c0-9343-46fb-a7a3-4c65eddd4355 submitted
+simulation job 13524d30-0705-4b9f-a8d9-860de6f990a6 submitted
+pod vllm-qwen-14b-server-68c7bcdc8-lwnzb: TTFT=78.2ms ITL=15.5ms throughput=3.14req/s maxRPS=0.00
+pod vllm-qwen-14b-server-68c7bcdc8-xhkhv: TTFT=70.0ms ITL=14.9ms throughput=3.14req/s maxRPS=0.00
+curAlloc[vllm-qwen-14b]: replicas=2 acc=H100 maxBatch=60 ITL=15.2ms TTFT=74.1ms arrivalRateRPM=377.07 throughputRPM=377.07 inTok=1040 outTok=468
+replicaAlloc[vllm-qwen-14b/vllm-qwen-14b-server-68c7bcdc8-lwnzb]: acc=H100 maxBatch=60 ITL=15.5ms TTFT=78.2ms arrivalRateRPM=188.53 throughputRPM=188.53 inTok=1040 outTok=468
+replicaAlloc[vllm-qwen-14b/vllm-qwen-14b-server-68c7bcdc8-xhkhv]: acc=H100 maxBatch=60 ITL=14.9ms TTFT=70.0ms arrivalRateRPM=188.53 throughputRPM=188.53 inTok=1040 outTok=468
+[GIN] 2026/06/18 - 19:24:21 | 200 | 41.018512616s |             ::1 | GET      "/collect"
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label exists ...
+Average arrival rate / throughput 207.735901 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.intokens exists ...
+Average input tokens per request 1066.000000 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.outtokens exists ...
+Average output tokens per request 493.000000 
+simulation job 80ec7dc6-41bb-40cd-ad70-91e3a6e5f7c6 submitted
+simulation job afb2de27-befd-40ee-ac57-6f84e78a2407 submitted
+pod vllm-qwen-14b-server-68c7bcdc8-lwnzb: TTFT=70.0ms ITL=13.2ms throughput=1.63req/s maxRPS=0.00
+pod vllm-qwen-14b-server-68c7bcdc8-xhkhv: TTFT=73.0ms ITL=13.8ms throughput=1.73req/s maxRPS=0.00
+curAlloc[vllm-qwen-14b]: replicas=2 acc=H100 maxBatch=58 ITL=13.5ms TTFT=71.5ms arrivalRateRPM=207.74 throughputRPM=201.87 inTok=1066 outTok=493
+replicaAlloc[vllm-qwen-14b/vllm-qwen-14b-server-68c7bcdc8-lwnzb]: acc=H100 maxBatch=58 ITL=13.2ms TTFT=70.0ms arrivalRateRPM=98.00 throughputRPM=98.00 inTok=1066 outTok=493
+replicaAlloc[vllm-qwen-14b/vllm-qwen-14b-server-68c7bcdc8-xhkhv]: acc=H100 maxBatch=58 ITL=13.8ms TTFT=73.0ms arrivalRateRPM=103.87 throughputRPM=103.87 inTok=1066 outTok=493
+[GIN] 2026/06/18 - 19:26:21 | 200 | 41.016748868s |             ::1 | GET      "/collect"
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label exists ...
+Average arrival rate / throughput 235.781097 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.intokens exists ...
+Average input tokens per request 1009.000000 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.outtokens exists ...
+Average output tokens per request 573.000000 
+simulation job c15c086f-f4e5-4aa4-91c8-1dfec77fecb1 submitted
+pod vllm-qwen-14b-server-68c7bcdc8-xhkhv: saturated (overloaded); vllm-server backend, passing through
+pod vllm-qwen-14b-server-68c7bcdc8-xhkhv: TTFT=91.7ms ITL=17.1ms throughput=3.83req/s maxRPS=0.00
+curAlloc[vllm-qwen-14b]: replicas=1 acc=H100 maxBatch=59 ITL=17.1ms TTFT=91.7ms arrivalRateRPM=235.78 throughputRPM=229.99 inTok=1009 outTok=573
+replicaAlloc[vllm-qwen-14b/vllm-qwen-14b-server-68c7bcdc8-xhkhv]: acc=H100 maxBatch=59 ITL=17.1ms TTFT=91.7ms arrivalRateRPM=229.99 throughputRPM=229.99 inTok=1009 outTok=573
+[GIN] 2026/06/18 - 19:28:21 | 200 | 41.034532546s |             ::1 | GET      "/collect"
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label exists ...
+Average arrival rate / throughput 250.837799 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.intokens exists ...
+Average input tokens per request 961.000000 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.outtokens exists ...
+Average output tokens per request 503.000000 
+simulation job 58af4ef7-ce9b-4628-a9f4-3ccf869cf01f submitted
+pod vllm-qwen-14b-server-68c7bcdc8-xhkhv: TTFT=80.8ms ITL=16.9ms throughput=4.18req/s maxRPS=0.00
+curAlloc[vllm-qwen-14b]: replicas=1 acc=H100 maxBatch=68 ITL=16.9ms TTFT=80.8ms arrivalRateRPM=250.84 throughputRPM=250.84 inTok=961 outTok=503
+replicaAlloc[vllm-qwen-14b/vllm-qwen-14b-server-68c7bcdc8-xhkhv]: acc=H100 maxBatch=68 ITL=16.9ms TTFT=80.8ms arrivalRateRPM=250.84 throughputRPM=250.84 inTok=961 outTok=503
+[GIN] 2026/06/18 - 19:30:21 | 200 | 41.022339611s |             ::1 | GET      "/collect"
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label exists ...
+Average arrival rate / throughput 257.823212 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.intokens exists ...
+Average input tokens per request 1121.000000 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.outtokens exists ...
+Average output tokens per request 445.000000 
+simulation job 6486d08a-e7f6-4ba5-908a-abeb62dff519 submitted
+pod vllm-qwen-14b-server-68c7bcdc8-xhkhv: saturated (overloaded); vllm-server backend, passing through
+pod vllm-qwen-14b-server-68c7bcdc8-xhkhv: TTFT=88.8ms ITL=16.7ms throughput=4.10req/s maxRPS=0.00
+curAlloc[vllm-qwen-14b]: replicas=1 acc=H100 maxBatch=64 ITL=16.7ms TTFT=88.8ms arrivalRateRPM=257.82 throughputRPM=246.00 inTok=1121 outTok=445
+replicaAlloc[vllm-qwen-14b/vllm-qwen-14b-server-68c7bcdc8-xhkhv]: acc=H100 maxBatch=64 ITL=16.7ms TTFT=88.8ms arrivalRateRPM=246.00 throughputRPM=246.00 inTok=1121 outTok=445
+[GIN] 2026/06/18 - 19:32:21 | 200 | 41.020660385s |             ::1 | GET      "/collect"
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label exists ...
+Average arrival rate / throughput 246.510696 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.intokens exists ...
+Average input tokens per request 951.000000 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.outtokens exists ...
+Average output tokens per request 542.000000 
+simulation job 57623fec-a5ba-4f5c-9018-3cf981fd70e4 submitted
+pod vllm-qwen-14b-server-68c7bcdc8-xhkhv: TTFT=81.5ms ITL=17.0ms throughput=4.11req/s maxRPS=0.00
+curAlloc[vllm-qwen-14b]: replicas=1 acc=H100 maxBatch=53 ITL=17.0ms TTFT=81.5ms arrivalRateRPM=246.51 throughputRPM=246.51 inTok=951 outTok=542
+replicaAlloc[vllm-qwen-14b/vllm-qwen-14b-server-68c7bcdc8-xhkhv]: acc=H100 maxBatch=53 ITL=17.0ms TTFT=81.5ms arrivalRateRPM=246.51 throughputRPM=246.51 inTok=951 outTok=542
+[GIN] 2026/06/18 - 19:34:21 | 200 | 41.022182067s |             ::1 | GET      "/collect"
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label exists ...
+Average arrival rate / throughput 265.420593 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.intokens exists ...
+Average input tokens per request 891.000000 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.outtokens exists ...
+Average output tokens per request 562.000000 
+simulation job 1cf50111-472b-4ff5-a4b1-a0c49b223e3a submitted
+pod vllm-qwen-14b-server-68c7bcdc8-xhkhv: TTFT=75.5ms ITL=16.5ms throughput=4.17req/s maxRPS=0.00
+curAlloc[vllm-qwen-14b]: replicas=1 acc=H100 maxBatch=68 ITL=16.5ms TTFT=75.5ms arrivalRateRPM=265.42 throughputRPM=250.00 inTok=891 outTok=562
+replicaAlloc[vllm-qwen-14b/vllm-qwen-14b-server-68c7bcdc8-xhkhv]: acc=H100 maxBatch=68 ITL=16.5ms TTFT=75.5ms arrivalRateRPM=250.00 throughputRPM=250.00 inTok=891 outTok=562
+[GIN] 2026/06/18 - 19:36:21 | 200 | 41.015666972s |             ::1 | GET      "/collect"
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label exists ...
+Average arrival rate / throughput 236.961700 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.intokens exists ...
+Average input tokens per request 1104.000000 
+error querying Prometheus: Post "http://localhost:9090/api/v1/query": dial tcp [::1]:9090: connect: connection refused
+checking if label inferno.server.load.outtokens exists ...
+Average output tokens per request 524.000000 
+simulation job 798a7e9e-002f-4c4d-9ae9-0b4c2e0b33e2 submitted

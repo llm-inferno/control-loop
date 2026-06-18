@@ -1,0 +1,143 @@
+2026/06/18 18:53:43 INFO Starting TunerService host=0.0.0.0 port=3304 warmUpCycles=3 initObs=3 holdBack=true estimatorMode=sliding-window windowSize=10 residualThreshold=0.5 initFitThreshold=10 maxConditionNumber=1000
+2026/06/18 18:53:43 INFO starting TunerServer addr=0.0.0.0:3304
+[GIN] 2026/06/18 - 18:56:21 | 422 |     288.834µs |             ::1 | POST     "/tune"
+2026/06/18 18:56:21 INFO replica environment model=qwen_2_5_14b accelerator=H100 replica=0 arrivalRateRPM=213.9979248046875 maxBatch=128 avgInTokens=997 avgOutTokens=470 avgTTFT=80.50643157958984 avgITL=15.267339706420898
+2026/06/18 18:56:21 INFO collecting initial observations model=qwen_2_5_14b accelerator=H100 count=1 minObs=3
+2026/06/18 18:56:21 WARN tuning failed for group key=qwen_2_5_14b/H100 err="collecting initial observations for qwen_2_5_14b/H100 (1/3)"
+[GIN] 2026/06/18 - 18:56:21 | 200 |      73.004µs |             ::1 | GET      "/warmup"
+2026/06/18 18:58:21 INFO replica environment model=qwen_2_5_14b accelerator=H100 replica=0 arrivalRateRPM=231.99624633789062 maxBatch=128 avgInTokens=1037 avgOutTokens=519 avgTTFT=81.3559341430664 avgITL=15.819426536560059
+2026/06/18 18:58:21 INFO collecting initial observations model=qwen_2_5_14b accelerator=H100 count=2 minObs=3
+2026/06/18 18:58:21 WARN tuning failed for group key=qwen_2_5_14b/H100 err="collecting initial observations for qwen_2_5_14b/H100 (2/3)"
+[GIN] 2026/06/18 - 18:58:21 | 422 |     236.195µs |             ::1 | POST     "/tune"
+[GIN] 2026/06/18 - 18:58:21 | 200 |       35.91µs |             ::1 | GET      "/warmup"
+2026/06/18 19:00:21 INFO replica environment model=qwen_2_5_14b accelerator=H100 replica=0 arrivalRateRPM=235.25270080566406 maxBatch=128 avgInTokens=988 avgOutTokens=488 avgTTFT=83.12390899658203 avgITL=16.774383544921875
+2026/06/18 19:00:21 WARN InitEstimator: ill-conditioned fit, using GuessInitState fallback kappa=+Inf max=1000 alpha=11.35857565329154 beta=0.04956443071996553 gamma=6.124649431506794e-10
+2026/06/18 19:00:21 INFO SlidingWindowEstimator: Fit complete alpha=11.35857565329154 beta=0.04956443071996553 gamma=6.124649431506794e-10 observations=3 funcValue=0.004651382222793007
+2026/06/18 19:00:21 WARN SlidingWindowEstimator: ill-conditioned fit, holding previous params kappa=+Inf max=1000 alpha=11.35857565329154 beta=0.04956443071996553 gamma=6.124649431506794e-10
+2026/06/18 19:00:21 INFO sliding-window tuned parameters model=qwen_2_5_14b accelerator=H100 alpha=13.740605735778809 beta=0.06578136894138928 gamma=0.0011853570804873834 updateCount=1
+[GIN] 2026/06/18 - 19:00:21 | 200 |    17.59364ms |             ::1 | POST     "/tune"
+[GIN] 2026/06/18 - 19:00:21 | 200 |      13.216µs |             ::1 | GET      "/warmup"
+2026/06/18 19:02:21 INFO replica environment model=qwen_2_5_14b accelerator=H100 replica=0 arrivalRateRPM=249.80088806152344 maxBatch=128 avgInTokens=1252 avgOutTokens=432 avgTTFT=105.54589080810547 avgITL=18.535816192626953
+2026/06/18 19:02:21 INFO SlidingWindowEstimator: Fit complete alpha=10.180265922813318 beta=0.051032876046194144 gamma=2.783937750338643e-05 observations=4 funcValue=0.010427196543218987
+2026/06/18 19:02:21 INFO sliding-window tuned parameters model=qwen_2_5_14b accelerator=H100 alpha=10.180265922813318 beta=0.051032876046194144 gamma=2.783937750338643e-05 updateCount=2
+[GIN] 2026/06/18 - 19:02:21 | 200 |   10.134306ms |             ::1 | POST     "/tune"
+[GIN] 2026/06/18 - 19:02:21 | 200 |      22.851µs |             ::1 | GET      "/warmup"
+2026/06/18 19:04:21 INFO replica environment model=qwen_2_5_14b accelerator=H100 replica=0 arrivalRateRPM=341.994140625 maxBatch=128 avgInTokens=1069 avgOutTokens=571 avgTTFT=103.07522583007812 avgITL=22.945478439331055
+2026/06/18 19:04:21 INFO SlidingWindowEstimator: Fit complete alpha=10.820235924786397 beta=0.05139385053596596 gamma=1.0988683882113519e-05 observations=5 funcValue=0.011319293889534466
+2026/06/18 19:04:21 INFO sliding-window tuned parameters model=qwen_2_5_14b accelerator=H100 alpha=10.820235924786397 beta=0.05139385053596596 gamma=1.0988683882113519e-05 updateCount=3
+[GIN] 2026/06/18 - 19:04:21 | 200 |    12.05859ms |             ::1 | POST     "/tune"
+[GIN] 2026/06/18 - 19:04:21 | 200 |      14.481µs |             ::1 | GET      "/warmup"
+[GIN] 2026/06/18 - 19:04:21 | 200 |      39.825µs |             ::1 | POST     "/merge"
+2026/06/18 19:06:21 INFO replica environment model=qwen_2_5_14b accelerator=H100 replica=0 arrivalRateRPM=109.99982452392578 maxBatch=61 avgInTokens=1099 avgOutTokens=507 avgTTFT=82.37814331054688 avgITL=13.475950241088867
+2026/06/18 19:06:21 INFO SlidingWindowEstimator: Fit complete alpha=10.975002829137237 beta=0.05119871998304506 gamma=9.434026016023421e-06 observations=6 funcValue=0.011938220695708072
+2026/06/18 19:06:21 INFO sliding-window tuned parameters model=qwen_2_5_14b accelerator=H100 alpha=10.975002829137237 beta=0.05119871998304506 gamma=9.434026016023421e-06 updateCount=4
+[GIN] 2026/06/18 - 19:06:21 | 200 |   14.478633ms |             ::1 | POST     "/tune"
+[GIN] 2026/06/18 - 19:06:21 | 200 |      21.283µs |             ::1 | GET      "/warmup"
+[GIN] 2026/06/18 - 19:06:21 | 200 |      54.299µs |             ::1 | POST     "/merge"
+2026/06/18 19:08:21 INFO replica environment model=qwen_2_5_14b accelerator=H100 replica=0 arrivalRateRPM=247.86032104492188 maxBatch=56 avgInTokens=1054 avgOutTokens=524 avgTTFT=84.09872436523438 avgITL=17.323013305664062
+2026/06/18 19:08:21 INFO SlidingWindowEstimator: Fit complete alpha=11.105069648835494 beta=0.05031148399973601 gamma=1.921507237785241e-06 observations=7 funcValue=0.03917853887416965
+2026/06/18 19:08:21 INFO sliding-window tuned parameters model=qwen_2_5_14b accelerator=H100 alpha=11.105069648835494 beta=0.05031148399973601 gamma=1.921507237785241e-06 updateCount=5
+[GIN] 2026/06/18 - 19:08:21 | 200 |    15.70317ms |             ::1 | POST     "/tune"
+[GIN] 2026/06/18 - 19:08:21 | 200 |      21.294µs |             ::1 | GET      "/warmup"
+[GIN] 2026/06/18 - 19:08:21 | 200 |      49.183µs |             ::1 | POST     "/merge"
+2026/06/18 19:10:21 INFO replica environment model=qwen_2_5_14b accelerator=H100 replica=0 arrivalRateRPM=241.99484252929688 maxBatch=62 avgInTokens=1073 avgOutTokens=384 avgTTFT=83.0165023803711 avgITL=15.412923812866211
+2026/06/18 19:10:21 INFO SlidingWindowEstimator: Fit complete alpha=11.080562378189496 beta=0.05013968087247024 gamma=2.1239737271351725e-06 observations=8 funcValue=0.04138352406297379
+2026/06/18 19:10:21 INFO sliding-window tuned parameters model=qwen_2_5_14b accelerator=H100 alpha=11.080562378189496 beta=0.05013968087247024 gamma=2.1239737271351725e-06 updateCount=6
+[GIN] 2026/06/18 - 19:10:21 | 200 |   17.587178ms |             ::1 | POST     "/tune"
+[GIN] 2026/06/18 - 19:10:21 | 200 |      18.183µs |             ::1 | GET      "/warmup"
+[GIN] 2026/06/18 - 19:10:21 | 200 |      51.258µs |             ::1 | POST     "/merge"
+2026/06/18 19:12:21 INFO replica environment model=qwen_2_5_14b accelerator=H100 replica=0 arrivalRateRPM=230.7082061767578 maxBatch=51 avgInTokens=989 avgOutTokens=509 avgTTFT=82.16044616699219 avgITL=16.611801147460938
+2026/06/18 19:12:21 INFO SlidingWindowEstimator: Fit complete alpha=11.147370465671022 beta=0.049797510160145456 gamma=2.2347362195062595e-06 observations=9 funcValue=0.04403149227329692
+2026/06/18 19:12:21 INFO sliding-window tuned parameters model=qwen_2_5_14b accelerator=H100 alpha=11.147370465671022 beta=0.049797510160145456 gamma=2.2347362195062595e-06 updateCount=7
+[GIN] 2026/06/18 - 19:12:21 | 200 |   18.429146ms |             ::1 | POST     "/tune"
+[GIN] 2026/06/18 - 19:12:21 | 200 |      23.205µs |             ::1 | GET      "/warmup"
+[GIN] 2026/06/18 - 19:12:21 | 200 |      34.707µs |             ::1 | POST     "/merge"
+2026/06/18 19:14:21 INFO replica environment model=qwen_2_5_14b accelerator=H100 replica=0 arrivalRateRPM=327.99609375 maxBatch=63 avgInTokens=1022 avgOutTokens=453 avgTTFT=91.09101867675781 avgITL=18.81429100036621
+2026/06/18 19:14:21 INFO SlidingWindowEstimator: Fit complete alpha=11.035930485828036 beta=0.04716921563899549 gamma=1.835335013157127e-09 observations=10 funcValue=0.13141551074558577
+2026/06/18 19:14:21 WARN SlidingWindowEstimator: ill-conditioned fit, holding previous params kappa=1001.1581763921993 max=1000 alpha=11.035930485828036 beta=0.04716921563899549 gamma=1.835335013157127e-09
+2026/06/18 19:14:21 INFO sliding-window tuned parameters model=qwen_2_5_14b accelerator=H100 alpha=11.147370465671022 beta=0.049797510160145456 gamma=2.2347362195062595e-06 updateCount=8
+[GIN] 2026/06/18 - 19:14:21 | 200 |     19.2909ms |             ::1 | POST     "/tune"
+[GIN] 2026/06/18 - 19:14:21 | 200 |      10.638µs |             ::1 | GET      "/warmup"
+[GIN] 2026/06/18 - 19:14:21 | 200 |      46.279µs |             ::1 | POST     "/merge"
+2026/06/18 19:16:21 INFO replica environment model=qwen_2_5_14b accelerator=H100 replica=0 arrivalRateRPM=395.9939880371094 maxBatch=57 avgInTokens=1119 avgOutTokens=401 avgTTFT=105.67426300048828 avgITL=21.098773956298828
+2026/06/18 19:16:21 INFO SlidingWindowEstimator: Fit complete alpha=10.02945358649066 beta=0.037394317154026975 gamma=1.8377457533597772e-10 observations=10 funcValue=1.14961084487582
+[GIN] 2026/06/18 - 19:16:21 | 200 |   17.971893ms |             ::1 | POST     "/tune"
+2026/06/18 19:16:21 WARN SlidingWindowEstimator: ill-conditioned fit, holding previous params kappa=4248.951507074977 max=1000 alpha=10.02945358649066 beta=0.037394317154026975 gamma=1.8377457533597772e-10
+2026/06/18 19:16:21 INFO sliding-window tuned parameters model=qwen_2_5_14b accelerator=H100 alpha=11.147370465671022 beta=0.049797510160145456 gamma=2.2347362195062595e-06 updateCount=9
+[GIN] 2026/06/18 - 19:16:21 | 200 |      19.642µs |             ::1 | GET      "/warmup"
+[GIN] 2026/06/18 - 19:16:21 | 200 |      39.364µs |             ::1 | POST     "/merge"
+2026/06/18 19:18:21 INFO replica environment model=qwen_2_5_14b accelerator=H100 replica=0 arrivalRateRPM=223.997314453125 maxBatch=51 avgInTokens=1079 avgOutTokens=597 avgTTFT=84.2583999633789 avgITL=16.706226348876953
+2026/06/18 19:18:21 INFO replica environment model=qwen_2_5_14b accelerator=H100 replica=1 arrivalRateRPM=251.99627685546875 maxBatch=51 avgInTokens=1079 avgOutTokens=597 avgTTFT=91.84432983398438 avgITL=18.000335693359375
+2026/06/18 19:18:21 INFO SlidingWindowEstimator: Fit complete alpha=10.0323459128768 beta=0.03748419390858054 gamma=3.412291269535249e-10 observations=10 funcValue=1.1611905478231601
+2026/06/18 19:18:21 WARN SlidingWindowEstimator: ill-conditioned fit, holding previous params kappa=18929.547761181493 max=1000 alpha=10.0323459128768 beta=0.03748419390858054 gamma=3.412291269535249e-10
+2026/06/18 19:18:21 INFO sliding-window tuned parameters model=qwen_2_5_14b accelerator=H100 alpha=11.147370465671022 beta=0.049797510160145456 gamma=2.2347362195062595e-06 updateCount=10
+[GIN] 2026/06/18 - 19:18:21 | 200 |   19.119532ms |             ::1 | POST     "/tune"
+[GIN] 2026/06/18 - 19:18:21 | 200 |      19.134µs |             ::1 | GET      "/warmup"
+[GIN] 2026/06/18 - 19:18:21 | 200 |      39.343µs |             ::1 | POST     "/merge"
+2026/06/18 19:20:21 INFO replica environment model=qwen_2_5_14b accelerator=H100 replica=0 arrivalRateRPM=229.31809997558594 maxBatch=67 avgInTokens=1019 avgOutTokens=538 avgTTFT=78.24803924560547 avgITL=16.59095001220703
+2026/06/18 19:20:21 INFO replica environment model=qwen_2_5_14b accelerator=H100 replica=1 arrivalRateRPM=225.9962158203125 maxBatch=67 avgInTokens=1019 avgOutTokens=538 avgTTFT=82.81175994873047 avgITL=16.285015106201172
+2026/06/18 19:20:21 INFO SlidingWindowEstimator: Fit complete alpha=10.049491661226295 beta=0.03738872938064502 gamma=1.3168877019370175e-10 observations=10 funcValue=1.1270107255144861
+2026/06/18 19:20:21 WARN SlidingWindowEstimator: ill-conditioned fit, holding previous params kappa=+Inf max=1000 alpha=10.049491661226295 beta=0.03738872938064502 gamma=1.3168877019370175e-10
+2026/06/18 19:20:21 INFO sliding-window tuned parameters model=qwen_2_5_14b accelerator=H100 alpha=11.147370465671022 beta=0.049797510160145456 gamma=2.2347362195062595e-06 updateCount=11
+[GIN] 2026/06/18 - 19:20:21 | 200 |   16.535559ms |             ::1 | POST     "/tune"
+[GIN] 2026/06/18 - 19:20:21 | 200 |      14.259µs |             ::1 | GET      "/warmup"
+[GIN] 2026/06/18 - 19:20:21 | 200 |      38.723µs |             ::1 | POST     "/merge"
+2026/06/18 19:22:21 INFO replica environment model=qwen_2_5_14b accelerator=H100 replica=0 arrivalRateRPM=213.79490661621094 maxBatch=65 avgInTokens=1055 avgOutTokens=495 avgTTFT=83.83673858642578 avgITL=15.8343505859375
+2026/06/18 19:22:21 INFO replica environment model=qwen_2_5_14b accelerator=H100 replica=1 arrivalRateRPM=195.99505615234375 maxBatch=65 avgInTokens=1055 avgOutTokens=495 avgTTFT=84.47368621826172 avgITL=15.427642822265625
+2026/06/18 19:22:21 INFO SlidingWindowEstimator: Fit complete alpha=10.143895740007252 beta=0.03690717138145575 gamma=8.851709307681478e-10 observations=10 funcValue=1.0598968681296839
+2026/06/18 19:22:21 WARN SlidingWindowEstimator: ill-conditioned fit, holding previous params kappa=409052.5239577242 max=1000 alpha=10.143895740007252 beta=0.03690717138145575 gamma=8.851709307681478e-10
+2026/06/18 19:22:21 INFO sliding-window tuned parameters model=qwen_2_5_14b accelerator=H100 alpha=11.147370465671022 beta=0.049797510160145456 gamma=2.2347362195062595e-06 updateCount=12
+[GIN] 2026/06/18 - 19:22:21 | 200 |   18.664166ms |             ::1 | POST     "/tune"
+[GIN] 2026/06/18 - 19:22:21 | 200 |      16.601µs |             ::1 | GET      "/warmup"
+[GIN] 2026/06/18 - 19:22:21 | 200 |      49.684µs |             ::1 | POST     "/merge"
+2026/06/18 19:24:21 INFO replica environment model=qwen_2_5_14b accelerator=H100 replica=0 arrivalRateRPM=188.5343017578125 maxBatch=60 avgInTokens=1040 avgOutTokens=468 avgTTFT=78.17202758789062 avgITL=15.495694160461426
+2026/06/18 19:24:21 INFO replica environment model=qwen_2_5_14b accelerator=H100 replica=1 arrivalRateRPM=188.5343017578125 maxBatch=60 avgInTokens=1040 avgOutTokens=468 avgTTFT=69.95922088623047 avgITL=14.937026023864746
+2026/06/18 19:24:21 INFO SlidingWindowEstimator: Fit complete alpha=10.399049860369871 beta=0.03560178803004421 gamma=2.8766733140272724e-10 observations=10 funcValue=0.933285753952254
+2026/06/18 19:24:21 WARN SlidingWindowEstimator: ill-conditioned fit, holding previous params kappa=+Inf max=1000 alpha=10.399049860369871 beta=0.03560178803004421 gamma=2.8766733140272724e-10
+2026/06/18 19:24:21 INFO sliding-window tuned parameters model=qwen_2_5_14b accelerator=H100 alpha=11.147370465671022 beta=0.049797510160145456 gamma=2.2347362195062595e-06 updateCount=13
+[GIN] 2026/06/18 - 19:24:21 | 200 |   14.831037ms |             ::1 | POST     "/tune"
+[GIN] 2026/06/18 - 19:24:21 | 200 |      22.504µs |             ::1 | GET      "/warmup"
+[GIN] 2026/06/18 - 19:24:21 | 200 |      34.686µs |             ::1 | POST     "/merge"
+2026/06/18 19:26:21 INFO replica environment model=qwen_2_5_14b accelerator=H100 replica=0 arrivalRateRPM=97.99957275390625 maxBatch=58 avgInTokens=1066 avgOutTokens=493 avgTTFT=70.04912567138672 avgITL=13.202956199645996
+2026/06/18 19:26:21 INFO replica environment model=qwen_2_5_14b accelerator=H100 replica=1 arrivalRateRPM=103.86799621582031 maxBatch=58 avgInTokens=1066 avgOutTokens=493 avgTTFT=72.96250915527344 avgITL=13.802253723144531
+2026/06/18 19:26:21 INFO SlidingWindowEstimator: Fit complete alpha=10.446116802546843 beta=0.03535828038709937 gamma=6.246520140441453e-10 observations=10 funcValue=0.8902250567908885
+2026/06/18 19:26:21 WARN SlidingWindowEstimator: ill-conditioned fit, holding previous params kappa=404620.1523657378 max=1000 alpha=10.446116802546843 beta=0.03535828038709937 gamma=6.246520140441453e-10
+2026/06/18 19:26:21 INFO sliding-window tuned parameters model=qwen_2_5_14b accelerator=H100 alpha=11.147370465671022 beta=0.049797510160145456 gamma=2.2347362195062595e-06 updateCount=14
+[GIN] 2026/06/18 - 19:26:21 | 200 |   15.748883ms |             ::1 | POST     "/tune"
+[GIN] 2026/06/18 - 19:26:21 | 200 |      15.561µs |             ::1 | GET      "/warmup"
+[GIN] 2026/06/18 - 19:26:21 | 200 |       62.05µs |             ::1 | POST     "/merge"
+2026/06/18 19:28:21 INFO replica environment model=qwen_2_5_14b accelerator=H100 replica=0 arrivalRateRPM=229.9920654296875 maxBatch=59 avgInTokens=1009 avgOutTokens=573 avgTTFT=91.6808090209961 avgITL=17.079809188842773
+2026/06/18 19:28:21 INFO SlidingWindowEstimator: Fit complete alpha=10.438509891455224 beta=0.03538261613672711 gamma=7.426686498006636e-10 observations=10 funcValue=0.9409656644600077
+2026/06/18 19:28:21 WARN SlidingWindowEstimator: ill-conditioned fit, holding previous params kappa=+Inf max=1000 alpha=10.438509891455224 beta=0.03538261613672711 gamma=7.426686498006636e-10
+2026/06/18 19:28:21 INFO sliding-window tuned parameters model=qwen_2_5_14b accelerator=H100 alpha=11.147370465671022 beta=0.049797510160145456 gamma=2.2347362195062595e-06 updateCount=15
+[GIN] 2026/06/18 - 19:28:21 | 200 |   15.399893ms |             ::1 | POST     "/tune"
+[GIN] 2026/06/18 - 19:28:21 | 200 |      17.666µs |             ::1 | GET      "/warmup"
+[GIN] 2026/06/18 - 19:28:21 | 200 |      54.591µs |             ::1 | POST     "/merge"
+2026/06/18 19:30:21 INFO replica environment model=qwen_2_5_14b accelerator=H100 replica=0 arrivalRateRPM=250.8378143310547 maxBatch=68 avgInTokens=961 avgOutTokens=503 avgTTFT=80.79173278808594 avgITL=16.908864974975586
+2026/06/18 19:30:21 INFO SlidingWindowEstimator: Fit complete alpha=10.496975888023101 beta=0.035116939615309685 gamma=3.4636025438022536e-09 observations=10 funcValue=0.9758439388023198
+2026/06/18 19:30:21 WARN SlidingWindowEstimator: ill-conditioned fit, holding previous params kappa=4154.789272360495 max=1000 alpha=10.496975888023101 beta=0.035116939615309685 gamma=3.4636025438022536e-09
+2026/06/18 19:30:21 INFO sliding-window tuned parameters model=qwen_2_5_14b accelerator=H100 alpha=11.147370465671022 beta=0.049797510160145456 gamma=2.2347362195062595e-06 updateCount=16
+[GIN] 2026/06/18 - 19:30:21 | 200 |   13.796356ms |             ::1 | POST     "/tune"
+[GIN] 2026/06/18 - 19:30:21 | 200 |      21.165µs |             ::1 | GET      "/warmup"
+[GIN] 2026/06/18 - 19:30:21 | 200 |      31.421µs |             ::1 | POST     "/merge"
+2026/06/18 19:32:21 INFO replica environment model=qwen_2_5_14b accelerator=H100 replica=0 arrivalRateRPM=245.99801635742188 maxBatch=64 avgInTokens=1121 avgOutTokens=445 avgTTFT=88.75025177001953 avgITL=16.701797485351562
+2026/06/18 19:32:21 INFO SlidingWindowEstimator: Fit complete alpha=10.430084889214394 beta=0.03544518159587037 gamma=1.255903832930669e-10 observations=10 funcValue=0.965137143734975
+2026/06/18 19:32:21 WARN SlidingWindowEstimator: ill-conditioned fit, holding previous params kappa=+Inf max=1000 alpha=10.430084889214394 beta=0.03544518159587037 gamma=1.255903832930669e-10
+2026/06/18 19:32:21 INFO sliding-window tuned parameters model=qwen_2_5_14b accelerator=H100 alpha=11.147370465671022 beta=0.049797510160145456 gamma=2.2347362195062595e-06 updateCount=17
+[GIN] 2026/06/18 - 19:32:21 | 200 |   16.668437ms |             ::1 | POST     "/tune"
+[GIN] 2026/06/18 - 19:32:21 | 200 |      26.748µs |             ::1 | GET      "/warmup"
+[GIN] 2026/06/18 - 19:32:21 | 200 |      59.663µs |             ::1 | POST     "/merge"
+2026/06/18 19:34:21 INFO replica environment model=qwen_2_5_14b accelerator=H100 replica=0 arrivalRateRPM=246.51068115234375 maxBatch=53 avgInTokens=951 avgOutTokens=542 avgTTFT=81.48963928222656 avgITL=16.97406578063965
+2026/06/18 19:34:21 INFO SlidingWindowEstimator: Fit complete alpha=10.53546396980383 beta=0.03491227296041196 gamma=8.514284823653258e-10 observations=10 funcValue=0.9488331145691262
+2026/06/18 19:34:21 WARN SlidingWindowEstimator: ill-conditioned fit, holding previous params kappa=187707.26131061846 max=1000 alpha=10.53546396980383 beta=0.03491227296041196 gamma=8.514284823653258e-10
+2026/06/18 19:34:21 INFO sliding-window tuned parameters model=qwen_2_5_14b accelerator=H100 alpha=11.147370465671022 beta=0.049797510160145456 gamma=2.2347362195062595e-06 updateCount=18
+[GIN] 2026/06/18 - 19:34:21 | 200 |   14.729865ms |             ::1 | POST     "/tune"
+[GIN] 2026/06/18 - 19:34:21 | 200 |      13.956µs |             ::1 | GET      "/warmup"
+[GIN] 2026/06/18 - 19:34:21 | 200 |      45.262µs |             ::1 | POST     "/merge"
+2026/06/18 19:36:21 INFO replica environment model=qwen_2_5_14b accelerator=H100 replica=0 arrivalRateRPM=249.99996948242188 maxBatch=68 avgInTokens=891 avgOutTokens=562 avgTTFT=75.51958465576172 avgITL=16.464143753051758
+2026/06/18 19:36:21 INFO SlidingWindowEstimator: Fit complete alpha=11.101740408321294 beta=0.04570461798754868 gamma=1.37405744000393e-09 observations=10 funcValue=0.1353041617990302
+2026/06/18 19:36:21 WARN SlidingWindowEstimator: ill-conditioned fit, holding previous params kappa=223451.73116731254 max=1000 alpha=11.101740408321294 beta=0.04570461798754868 gamma=1.37405744000393e-09
+2026/06/18 19:36:21 INFO sliding-window tuned parameters model=qwen_2_5_14b accelerator=H100 alpha=11.147370465671022 beta=0.049797510160145456 gamma=2.2347362195062595e-06 updateCount=19
+[GIN] 2026/06/18 - 19:36:21 | 200 |   14.637978ms |             ::1 | POST     "/tune"
+[GIN] 2026/06/18 - 19:36:21 | 200 |      10.962µs |             ::1 | GET      "/warmup"
+[GIN] 2026/06/18 - 19:36:21 | 200 |      32.692µs |             ::1 | POST     "/merge"

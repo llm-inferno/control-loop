@@ -1,0 +1,35 @@
+Running with control period = 120 sec
+Running in dynamic mode = false
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] GET    /invoke                   --> github.com/llm-inferno/control-loop/pkg/controller.invoke (3 handlers)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://github.com/gin-gonic/gin/blob/master/docs/doc.md#dont-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :3300
+18:56:21.359: tuner /tune warning (continuing with current model data): tuner /tune failed: 422 Unprocessable Entity
+18:56:21.360:	 collect: 41134	 tune: 1	 (warm-up in progress — skipping optimize+actuate)
+18:58:21.243: tuner /tune warning (continuing with current model data): tuner /tune failed: 422 Unprocessable Entity
+18:58:21.243:	 collect: 41017	 tune: 1	 (warm-up in progress — skipping optimize+actuate)
+19:00:21.265:	 collect: 41020	 tune: 18	 (warm-up in progress — skipping optimize+actuate)
+19:02:21.264:	 collect: 41024	 tune: 11	 (warm-up in progress — skipping optimize+actuate)
+19:04:21.275:	 collect: 41017	 tune: 13	 optimize: 4	 actuate: 10	 total: 41046 msec
+19:06:21.287:	 collect: 41026	 tune: 15	 optimize: 2	 actuate: 9	 total: 41054 msec
+19:08:21.278:	 collect: 41009	 tune: 17	 optimize: 1	 actuate: 11	 total: 41040 msec
+19:10:21.289:	 collect: 41009	 tune: 18	 optimize: 1	 actuate: 11	 total: 41041 msec
+19:12:21.309:	 collect: 41018	 tune: 19	 optimize: 1	 actuate: 11	 total: 41050 msec
+19:14:21.323:	 collect: 41018	 tune: 20	 optimize: 1	 actuate: 14	 total: 41054 msec
+19:16:21.328:	 collect: 41016	 tune: 19	 optimize: 1	 actuate: 12	 total: 41049 msec
+19:18:21.398:	 collect: 41061	 tune: 20	 optimize: 1	 actuate: 10	 total: 41095 msec
+19:20:21.361:	 collect: 41029	 tune: 17	 optimize: 1	 actuate: 11	 total: 41060 msec
+19:22:21.301:	 collect: 41040	 tune: 19	 optimize: 1	 actuate: 12	 total: 41073 msec
+19:24:21.351:	 collect: 41019	 tune: 17	 optimize: 2	 actuate: 10	 total: 41049 msec
+19:26:21.270:	 collect: 41017	 tune: 16	 optimize: 1	 actuate: 10	 total: 41046 msec
+19:28:21.290:	 collect: 41035	 tune: 16	 optimize: 1	 actuate: 13	 total: 41066 msec
+19:30:21.273:	 collect: 41022	 tune: 15	 optimize: 1	 actuate: 9	 total: 41049 msec
+19:32:21.275:	 collect: 41021	 tune: 18	 optimize: 1	 actuate: 10	 total: 41051 msec
+19:34:21.279:	 collect: 41024	 tune: 16	 optimize: 1	 actuate: 12	 total: 41054 msec
+19:36:21.271:	 collect: 41016	 tune: 15	 optimize: 2	 actuate: 10	 total: 41044 msec
