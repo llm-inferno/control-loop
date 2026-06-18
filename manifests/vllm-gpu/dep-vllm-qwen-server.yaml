@@ -10,14 +10,14 @@ metadata:
     inferno.server.class: Bronze
     inferno.server.evaluator: vllm-server
     inferno.server.allocation.accelerator: H100
-    inferno.server.allocation.maxbatchsize: "32"
+    inferno.server.allocation.maxbatchsize: "128"
     inferno.server.allocation.maxqueuesize: "64"
     inferno.server.vllm-deployment: vllm-qwen-14b-gpu
     inferno.server.vllm-namespace: inferno-workload
-    inferno.server.load.rpm: "60"
+    inferno.server.load.rpm: "250"
     inferno.server.load.intokens: "1024"
     inferno.server.load.outtokens: "512"
-    inferno.server.load.nominal.rpm: "60"
+    inferno.server.load.nominal.rpm: "250"
     inferno.server.load.nominal.intokens: "1024"
     inferno.server.load.nominal.outtokens: "512"
 spec:

@@ -33,6 +33,7 @@ type ServerRecord struct {
 	// Controls: optimizer decisions
 	Accelerator string  `json:"accelerator"`
 	NumReplicas int     `json:"replicas"`
+	MaxBatch    int     `json:"maxBatch"` // searched (or pinned) optimal concurrency M*
 	Cost        float32 `json:"cost"`
 }
 

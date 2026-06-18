@@ -1,0 +1,77 @@
+== baseline ==
+vllm:num_requests_running{engine="0",model_name="qwen"} 0.0
+vllm:num_requests_waiting{engine="0",model_name="qwen"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="qwen",reason="capacity"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="qwen",reason="deferred"} 0.0
+vllm:kv_cache_usage_perc{engine="0",model_name="qwen"} 0.0
+vllm:num_preemptions_total{engine="0",model_name="qwen"} 0.0
+== t=15s ==
+vllm:num_requests_running{engine="0",model_name="qwen"} 0.0
+vllm:num_requests_waiting{engine="0",model_name="qwen"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="qwen",reason="capacity"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="qwen",reason="deferred"} 0.0
+vllm:kv_cache_usage_perc{engine="0",model_name="qwen"} 0.0
+vllm:num_preemptions_total{engine="0",model_name="qwen"} 0.0
+== t=30s ==
+vllm:num_requests_running{engine="0",model_name="qwen"} 0.0
+vllm:num_requests_waiting{engine="0",model_name="qwen"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="qwen",reason="capacity"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="qwen",reason="deferred"} 0.0
+vllm:kv_cache_usage_perc{engine="0",model_name="qwen"} 0.0
+vllm:num_preemptions_total{engine="0",model_name="qwen"} 0.0
+== t=45s ==
+vllm:num_requests_running{engine="0",model_name="qwen"} 0.0
+vllm:num_requests_waiting{engine="0",model_name="qwen"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="qwen",reason="capacity"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="qwen",reason="deferred"} 0.0
+vllm:kv_cache_usage_perc{engine="0",model_name="qwen"} 0.0
+vllm:num_preemptions_total{engine="0",model_name="qwen"} 0.0
+== t=60s ==
+vllm:num_requests_running{engine="0",model_name="qwen"} 0.0
+vllm:num_requests_waiting{engine="0",model_name="qwen"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="qwen",reason="capacity"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="qwen",reason="deferred"} 0.0
+vllm:kv_cache_usage_perc{engine="0",model_name="qwen"} 0.0
+vllm:num_preemptions_total{engine="0",model_name="qwen"} 0.0
+== t=75s ==
+vllm:num_requests_running{engine="0",model_name="qwen"} 0.0
+vllm:num_requests_waiting{engine="0",model_name="qwen"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="qwen",reason="capacity"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="qwen",reason="deferred"} 0.0
+vllm:kv_cache_usage_perc{engine="0",model_name="qwen"} 0.0
+vllm:num_preemptions_total{engine="0",model_name="qwen"} 0.0
+== t=90s ==
+vllm:num_requests_running{engine="0",model_name="qwen"} 0.0
+vllm:num_requests_waiting{engine="0",model_name="qwen"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="qwen",reason="capacity"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="qwen",reason="deferred"} 0.0
+vllm:kv_cache_usage_perc{engine="0",model_name="qwen"} 0.0
+vllm:num_preemptions_total{engine="0",model_name="qwen"} 0.0
+== t=105s ==
+vllm:num_requests_running{engine="0",model_name="qwen"} 0.0
+vllm:num_requests_waiting{engine="0",model_name="qwen"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="qwen",reason="capacity"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="qwen",reason="deferred"} 0.0
+vllm:kv_cache_usage_perc{engine="0",model_name="qwen"} 0.0
+vllm:num_preemptions_total{engine="0",model_name="qwen"} 0.0
+== t=120s ==
+vllm:num_requests_running{engine="0",model_name="qwen"} 47.0
+vllm:num_requests_waiting{engine="0",model_name="qwen"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="qwen",reason="capacity"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="qwen",reason="deferred"} 0.0
+vllm:kv_cache_usage_perc{engine="0",model_name="qwen"} 0.22825320738756516
+vllm:num_preemptions_total{engine="0",model_name="qwen"} 0.0
+== t=135s ==
+vllm:num_requests_running{engine="0",model_name="qwen"} 126.0
+vllm:num_requests_waiting{engine="0",model_name="qwen"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="qwen",reason="capacity"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="qwen",reason="deferred"} 0.0
+vllm:kv_cache_usage_perc{engine="0",model_name="qwen"} 0.8034682080924855
+vllm:num_preemptions_total{engine="0",model_name="qwen"} 0.0
+== final ==
+vllm:num_requests_running{engine="0",model_name="qwen"} 127.0
+vllm:num_requests_waiting{engine="0",model_name="qwen"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="qwen",reason="capacity"} 0.0
+vllm:num_requests_waiting_by_reason{engine="0",model_name="qwen",reason="deferred"} 0.0
+vllm:kv_cache_usage_perc{engine="0",model_name="qwen"} 0.8086846186380939
+vllm:num_preemptions_total{engine="0",model_name="qwen"} 0.0
