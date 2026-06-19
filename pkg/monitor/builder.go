@@ -36,6 +36,8 @@ func BuildRecord(
 			AvgOutTokens: s.CurrentAlloc.Load.AvgOutTokens,
 			ITL:          s.CurrentAlloc.ITLAverage,
 			TTFT:         s.CurrentAlloc.TTFTAverage,
+			OccPerReplica: s.CurrentAlloc.AvgConcurrency,
+			OccTotal:      s.CurrentAlloc.AvgConcurrency * float32(s.CurrentAlloc.NumReplicas),
 		}
 
 		// SLO targets: match service class name then model name

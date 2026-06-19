@@ -30,6 +30,10 @@ type ServerRecord struct {
 	SLO_ITL  float32 `json:"sloItl"`   // SLO target ITL (ms)
 	SLO_TTFT float32 `json:"sloTtft"` // SLO target TTFT (ms)
 
+	// Occupancy: average in-service concurrency (Little's Law)
+	OccPerReplica float32 `json:"occPerReplica"` // avg in-service occupancy per replica (batch fill)
+	OccTotal      float32 `json:"occTotal"`      // total in-service occupancy across replicas
+
 	// Controls: optimizer decisions
 	Accelerator string  `json:"accelerator"`
 	NumReplicas int     `json:"replicas"`
