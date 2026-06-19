@@ -49,6 +49,12 @@ func update(c *gin.Context) {
 			c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "kube client: " + err.Error()})
 			return
 		}
+		if u.Allocation.NumReplicas > 0 {
+			if err := patchPodsAllocation(context.Background(), KubeClient, u.Namespace, u.DeployName,
+				u.Allocation.Accelerator, u.Allocation.MaxBatch); err != nil {
+				fmt.Printf("srv=[%s/%s]: pod allocation patch warning: %v\n", u.ServerName, u.Namespace, err)
+			}
+		}
 	}
 
 	c.IndentedJSON(http.StatusOK, "Done")

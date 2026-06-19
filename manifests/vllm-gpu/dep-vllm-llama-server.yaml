@@ -30,6 +30,9 @@ spec:
       labels:
         app: vllm-llama-server
         inferno.server.vllm-deployment: vllm-llama-gpu
+        inferno.server.model: llama_3_1_8b
+        inferno.server.allocation.accelerator: H100
+        inferno.server.allocation.maxbatchsize: "128"
     spec:
       serviceAccountName: vllm-server-evaluator
       containers:
@@ -43,6 +46,13 @@ spec:
               value: http://localhost:8081
             - name: NOISE_ENABLED
               value: "false"
+            - name: SERVERSIM_CONTINUOUS
+              value: "true"
+            - name: SERVERSIM_SATURATION_POLICY
+              value: "pass-through"
+          volumeMounts:
+            - name: podinfo
+              mountPath: /etc/podinfo
           resources:
             requests:
               memory: 128Mi
@@ -94,3 +104,6 @@ spec:
               - path: vllm-deployment
                 fieldRef:
                   fieldPath: "metadata.labels['inferno.server.vllm-deployment']"
+              - path: labels
+                fieldRef:
+                  fieldPath: metadata.labels

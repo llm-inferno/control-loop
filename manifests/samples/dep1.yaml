@@ -25,6 +25,9 @@ spec:
     metadata:
       labels:
         app: vllm-001
+        inferno.server.model: llama_13b
+        inferno.server.allocation.accelerator: MI250
+        inferno.server.allocation.maxbatchsize: "8"
     spec:
       containers:
       - name: server-sim
@@ -39,6 +42,13 @@ spec:
           value: "true"
         - name: NOISE_STD_FRACTION
           value: "0.01"
+        - name: SERVERSIM_CONTINUOUS
+          value: "true"
+        - name: SERVERSIM_SATURATION_POLICY
+          value: "retry-at-lower-load"
+        volumeMounts:
+        - name: podinfo
+          mountPath: /etc/podinfo
         resources:
           requests:
             memory: "128Mi"
@@ -71,3 +81,9 @@ spec:
       - name: model-data
         configMap:
           name: server-sim-model-data
+      - name: podinfo
+        downwardAPI:
+          items:
+          - path: labels
+            fieldRef:
+              fieldPath: metadata.labels

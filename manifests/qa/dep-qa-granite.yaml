@@ -26,6 +26,9 @@ spec:
     metadata:
       labels:
         app: qa-granite
+        inferno.server.model: granite_8b
+        inferno.server.allocation.accelerator: H100
+        inferno.server.allocation.maxbatchsize: "128"
     spec:
       containers:
       - name: server-sim
@@ -40,6 +43,13 @@ spec:
           value: "true"
         - name: NOISE_STD_FRACTION
           value: "0.02"
+        - name: SERVERSIM_CONTINUOUS
+          value: "true"
+        - name: SERVERSIM_SATURATION_POLICY
+          value: "retry-at-lower-load"
+        volumeMounts:
+        - name: podinfo
+          mountPath: /etc/podinfo
         resources:
           requests:
             memory: "128Mi"
@@ -72,3 +82,9 @@ spec:
       - name: model-data
         configMap:
           name: server-sim-qa-small
+      - name: podinfo
+        downwardAPI:
+          items:
+          - path: labels
+            fieldRef:
+              fieldPath: metadata.labels

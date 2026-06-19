@@ -132,7 +132,7 @@ Following are the steps to run the optimization control loop external to a clust
     |---|---|---|
     | `DEFAULT_MAX_BATCH_SIZE` env (controller) | on/off switch — pins the override when `> 0` | **Yes** |
     | `maxBatchSize` in `model-data.json` | search ceiling (`0` ⇒ 256) | No |
-    | `maxBatchSize` in the evaluator configmap | server-sim sidecar's `/simulate` `maxConcurrency` fallback | No |
+    | `maxBatchSize` in the evaluator configmap | server-sim/evaluator window `maxConcurrency` fallback | No |
     | `inferno.server.allocation.maxbatchsize` deployment label | seed; Actuator overwrites with the searched `M*` each cycle | No |
 
   - Tuner (purple, optional)
@@ -301,7 +301,7 @@ Following are the steps to run the optimization control loop within a cluster.
     ```
 
     Each pod must run two sidecars: **server-sim** (port 8080) and **evaluator** (port 8081).
-    The Collector calls `server-sim /simulate` on each running pod to obtain ITL and TTFT latency estimates.
+    server-sim runs evaluation windows continuously in the background (continuous mode); the Collector reads each running pod's latest completed result via `server-sim GET /latest` (non-blocking) to obtain ITL and TTFT latency estimates.
     Two evaluator backends are supported:
     - **`queue-analysis`** (default) — queueing-model latency estimator; requires a `server-sim-model-data` ConfigMap with `perfParms` for each model/accelerator pair.
     - **`blis`/`trained-physics`** — physics-based latency estimator; requires a ConfigMap with `betaCoeffs` and `alphaCoeffs` per model entry. When using this backend, set `INFERNO_WARM_UP_TIMEOUT=0` so the controller waits for full EKF convergence before invoking the optimizer (model `perfParms` are learned from scratch by the tuner).

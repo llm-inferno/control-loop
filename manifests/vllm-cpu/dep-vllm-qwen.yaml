@@ -29,6 +29,9 @@ spec:
       labels:
         app: vllm-qwen-server
         inferno.server.vllm-deployment: "vllm-qwen-cpu"
+        inferno.server.model: qwen_0_5b
+        inferno.server.allocation.accelerator: cpu
+        inferno.server.allocation.maxbatchsize: "8"
     spec:
       serviceAccountName: vllm-server-evaluator
       containers:
@@ -42,6 +45,13 @@ spec:
               value: "http://localhost:8081"
             - name: NOISE_ENABLED
               value: "false"
+            - name: SERVERSIM_CONTINUOUS
+              value: "true"
+            - name: SERVERSIM_SATURATION_POLICY
+              value: "pass-through"
+          volumeMounts:
+            - name: podinfo
+              mountPath: /etc/podinfo
           resources:
             requests:
               memory: "128Mi"
@@ -93,3 +103,6 @@ spec:
               - path: vllm-deployment
                 fieldRef:
                   fieldPath: "metadata.labels['inferno.server.vllm-deployment']"
+              - path: labels
+                fieldRef:
+                  fieldPath: metadata.labels
