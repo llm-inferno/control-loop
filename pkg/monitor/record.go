@@ -25,9 +25,9 @@ type ServerRecord struct {
 	AvgOutTokens int     `json:"avgOutTok"`
 
 	// Performance: observed attained values vs SLO targets
-	ITL      float32 `json:"itl"`      // attained average ITL (ms)
-	TTFT     float32 `json:"ttft"`     // attained average TTFT (ms)
-	SLO_ITL  float32 `json:"sloItl"`   // SLO target ITL (ms)
+	ITL      float32 `json:"itl"`     // attained average ITL (ms)
+	TTFT     float32 `json:"ttft"`    // attained average TTFT (ms)
+	SLO_ITL  float32 `json:"sloItl"`  // SLO target ITL (ms)
 	SLO_TTFT float32 `json:"sloTtft"` // SLO target TTFT (ms)
 
 	// Occupancy: average in-service concurrency (Little's Law)

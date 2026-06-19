@@ -27,15 +27,15 @@ func BuildRecord(
 
 	for _, s := range servers {
 		sr := ServerRecord{
-			Name:         s.Name,
-			Class:        s.Class,
-			Model:        s.Model,
-			ArrivalRate:  s.CurrentAlloc.Load.ArrivalRate,
-			Throughput:   s.CurrentAlloc.Load.Throughput,
-			AvgInTokens:  s.CurrentAlloc.Load.AvgInTokens,
-			AvgOutTokens: s.CurrentAlloc.Load.AvgOutTokens,
-			ITL:          s.CurrentAlloc.ITLAverage,
-			TTFT:         s.CurrentAlloc.TTFTAverage,
+			Name:          s.Name,
+			Class:         s.Class,
+			Model:         s.Model,
+			ArrivalRate:   s.CurrentAlloc.Load.ArrivalRate,
+			Throughput:    s.CurrentAlloc.Load.Throughput,
+			AvgInTokens:   s.CurrentAlloc.Load.AvgInTokens,
+			AvgOutTokens:  s.CurrentAlloc.Load.AvgOutTokens,
+			ITL:           s.CurrentAlloc.ITLAverage,
+			TTFT:          s.CurrentAlloc.TTFTAverage,
 			OccPerReplica: s.CurrentAlloc.AvgConcurrency,
 			OccTotal:      s.CurrentAlloc.AvgConcurrency * float32(s.CurrentAlloc.NumReplicas),
 		}
