@@ -144,20 +144,37 @@ was measured over), **not** the optimizer's decided `sr.NumReplicas`.
 - **Skipped pods** (cold-start 404, stale result, saturated-and-held) contribute nothing —
   identical to how ITL/TTFT already treat them.
 
+### 6. `dashboard/dashboard.py` — new dedicated Occupancy panel
+`servers_df` is auto-normalized from the `servers[]` array via `pd.json_normalize`, so the
+new `occPerReplica` / `occTotal` JSON fields appear as DataFrame columns **automatically** —
+no `load_data` logic changes.
+
+- Add `fig_occupancy(df)` (mirrors the `fig_controls` pattern), 2 stacked subplots:
+  - **Top — "Batch fill vs M*":** `occPerReplica` per server (lines+markers), with each
+    server's `maxBatch` (M*) drawn as a **dashed ceiling line** in the same colour. This is
+    the primary plot: in-service occupancy against the per-replica concurrency ceiling.
+  - **Bottom — "Total in-flight":** `occTotal` per server.
+- Wire it in: add `dcc.Graph(id="occupancy-panel")` to `app.layout` (placed after the
+  Controls panel), add the `Output("occupancy-panel", "figure")` to the `update` callback,
+  and return `fig_occupancy(servers_df)`.
+- Update the header docstring "five panels" → "six panels" and add `occPerReplica`,
+  `occTotal` to the `load_data` `servers_df` column list.
+
+No new dependencies; no `load_data` parsing changes.
+
 ## Cross-check (validation, not code)
 
 During the cluster test:
 - qa: `AvgNumInServ` (in-*system*) should ≈ `Throughput × AvgRespTime` (in-system Little's Law).
 - blis: `mean(NumRunningBatchRequests)` should ≈ our logged in-service value.
+- Eyeball the new Occupancy panel: `occPerReplica` should track toward `maxBatch` (M*)
+  under load and sit well below it when under-utilised.
 
 Wild disagreement is a real signal. Native values are not logged.
 
 ## Out of scope (YAGNI)
 
 - No new `evaluator.AnalysisData` field; no re-adding qa's dropped `AvgNumInServ`.
-- Dashboard panel for the new metric — deferred to a separate follow-up to keep this a
-  tight Collector/monitor diff. (`dashboard/dashboard.py` reads the JSONL, so the new
-  fields are available whenever the panel is added.)
 
 ## Files touched
 
@@ -166,4 +183,5 @@ Wild disagreement is a real signal. Native values are not logged.
 - `pkg/collector/handlers.go`
 - `pkg/monitor/record.go`
 - `pkg/monitor/builder.go`
+- `dashboard/dashboard.py`
 - docs: `CLAUDE.md` visualization section + this spec
