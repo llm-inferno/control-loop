@@ -85,4 +85,3 @@ func getLatest(kubeClient *kubernetes.Clientset, namespace, podName string, port
 	}
 	return parseLatest(data)
 }
-
