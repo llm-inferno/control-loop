@@ -25,6 +25,9 @@ spec:
     metadata:
       labels:
         app: blis-llama
+        inferno.server.model: llama_13b
+        inferno.server.allocation.accelerator: H100
+        inferno.server.allocation.maxbatchsize: "256"
     spec:
       containers:
       - name: server-sim
@@ -35,6 +38,13 @@ spec:
         env:
         - name: EVALUATOR_URL
           value: "http://localhost:8081"
+        - name: SERVERSIM_CONTINUOUS
+          value: "true"
+        - name: SERVERSIM_SATURATION_POLICY
+          value: "retry-at-lower-load"
+        volumeMounts:
+        - name: podinfo
+          mountPath: /etc/podinfo
         resources:
           requests:
             memory: "128Mi"
@@ -69,3 +79,9 @@ spec:
       - name: blis-config
         configMap:
           name: server-sim-blis-small
+      - name: podinfo
+        downwardAPI:
+          items:
+          - path: labels
+            fieldRef:
+              fieldPath: metadata.labels
