@@ -10,6 +10,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/kubernetes"
 )
 
@@ -21,12 +22,31 @@ import (
 // dropped maxbatchsize patch leaves the pod's label stale, so the Collector's
 // coherence check excludes it every cycle with no diagnostic — so callers must
 // log the returned error.
+//
+// Pods are filtered to those owned by the deployment's current ReplicaSets (same
+// discipline as the Collector), so a draining old-rollout pod or another
+// deployment that happens to share the label selector is not relabelled.
 func patchPodsAllocation(ctx context.Context, kc kubernetes.Interface, ns, depName, accelerator string, maxBatch int) error {
 	dep, err := kc.AppsV1().Deployments(ns).Get(ctx, depName, metav1.GetOptions{})
 	if err != nil {
 		return err
 	}
 	selector := labels.Set(dep.Spec.Selector.MatchLabels).String()
+
+	rsList, err := kc.AppsV1().ReplicaSets(ns).List(ctx, metav1.ListOptions{LabelSelector: selector})
+	if err != nil {
+		return err
+	}
+	rsUIDs := make(map[types.UID]struct{})
+	for _, rs := range rsList.Items {
+		for _, owner := range rs.OwnerReferences {
+			if owner.UID == dep.UID {
+				rsUIDs[rs.UID] = struct{}{}
+				break
+			}
+		}
+	}
+
 	pods, err := kc.CoreV1().Pods(ns).List(ctx, metav1.ListOptions{LabelSelector: selector})
 	if err != nil {
 		return err
@@ -34,6 +54,16 @@ func patchPodsAllocation(ctx context.Context, kc kubernetes.Interface, ns, depNa
 	var patchErrs []error
 	for _, p := range pods.Items {
 		if p.Status.Phase != corev1.PodRunning {
+			continue
+		}
+		owned := false
+		for _, owner := range p.OwnerReferences {
+			if _, ok := rsUIDs[owner.UID]; ok {
+				owned = true
+				break
+			}
+		}
+		if !owned {
 			continue
 		}
 		if e := setPodLabel(ctx, kc, ns, p.Name, ctrl.KeyAccelerator, accelerator); e != nil {
