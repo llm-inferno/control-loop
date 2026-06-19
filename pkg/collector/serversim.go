@@ -62,6 +62,41 @@ type simJobResponse struct {
 	Error  string     `json:"error,omitempty"`
 }
 
+// latestEnvelope is the self-describing result served by server-sim GET /latest.
+type latestEnvelope struct {
+	EffectiveInput simRequest `json:"effectiveInput"`
+	Result         simResult  `json:"result"`
+	CompletedAt    string     `json:"completedAt"`
+}
+
+func parseLatest(data []byte) (*latestEnvelope, error) {
+	var env latestEnvelope
+	if err := json.Unmarshal(data, &env); err != nil {
+		return nil, fmt.Errorf("decode /latest: %w", err)
+	}
+	return &env, nil
+}
+
+// getLatest reads the most-recent completed evaluation result from the server-sim
+// sidecar via the k8s API-server proxy. Non-blocking: a cold-start 404 (no result
+// yet) or any transport error is returned so the caller skips the pod this cycle.
+func getLatest(kubeClient *kubernetes.Clientset, namespace, podName string, port int) (*latestEnvelope, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), simTimeout)
+	defer cancel()
+
+	data, err := kubeClient.CoreV1().RESTClient().Get().
+		Namespace(namespace).
+		Resource("pods").
+		Name(fmt.Sprintf("%s:%d", podName, port)).
+		SubResource("proxy").
+		Suffix("/latest").
+		DoRaw(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("GET /latest: %w", err)
+	}
+	return parseLatest(data)
+}
+
 // simulatePod calls POST /simulate on the server-sim sidecar via the k8s API
 // server proxy (works from inside and outside the cluster), then polls
 // GET /simulate/:id until the job completes or times out.
