@@ -1,7 +1,6 @@
 package collector
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -19,10 +18,7 @@ import (
 // to a value larger than that window for vllm-server runs.
 const SimulateTimeoutEnvName = "INFERNO_SIMULATE_TIMEOUT_SEC"
 
-const (
-	simPollInitial    = 20 * time.Millisecond
-	defaultSimTimeout = 30 * time.Second
-)
+const defaultSimTimeout = 30 * time.Second
 
 var simTimeout = defaultSimTimeout
 
@@ -53,13 +49,6 @@ type simResult struct {
 	AvgITL      float32 `json:"avgITL"`
 	MaxRPS      float32 `json:"maxRPS"`
 	Saturation  string  `json:"saturation,omitempty"`
-}
-
-type simJobResponse struct {
-	JobID  string     `json:"jobID"`
-	Status string     `json:"status"`
-	Result *simResult `json:"result,omitempty"`
-	Error  string     `json:"error,omitempty"`
 }
 
 // latestEnvelope is the self-describing result served by server-sim GET /latest.
@@ -97,70 +86,3 @@ func getLatest(kubeClient *kubernetes.Clientset, namespace, podName string, port
 	return parseLatest(data)
 }
 
-// simulatePod calls POST /simulate on the server-sim sidecar via the k8s API
-// server proxy (works from inside and outside the cluster), then polls
-// GET /simulate/:id until the job completes or times out.
-func simulatePod(kubeClient *kubernetes.Clientset, namespace, podName string, port int, req simRequest) (*simResult, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), simTimeout)
-	defer cancel()
-
-	body, err := json.Marshal(req)
-	if err != nil {
-		return nil, err
-	}
-
-	// POST /simulate via k8s API proxy
-	data, err := kubeClient.CoreV1().RESTClient().Post().
-		Namespace(namespace).
-		Resource("pods").
-		Name(fmt.Sprintf("%s:%d", podName, port)).
-		SubResource("proxy").
-		Suffix("/simulate").
-		Body(bytes.NewReader(body)).
-		DoRaw(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("POST /simulate: %w", err)
-	}
-
-	var jobResp struct {
-		JobID string `json:"jobID"`
-	}
-	if err := json.Unmarshal(data, &jobResp); err != nil {
-		return nil, fmt.Errorf("decode jobID: %w", err)
-	}
-	fmt.Printf("simulation job %s submitted\n", jobResp.JobID)
-
-	// Poll GET /simulate/:id via k8s API proxy with exponential backoff
-	deadline, _ := ctx.Deadline()
-	interval := simPollInitial
-	for ctx.Err() == nil {
-		remaining := time.Until(deadline)
-		if interval > remaining {
-			interval = remaining
-		}
-		time.Sleep(interval)
-		interval *= 2
-		data, err := kubeClient.CoreV1().RESTClient().Get().
-			Namespace(namespace).
-			Resource("pods").
-			Name(fmt.Sprintf("%s:%d", podName, port)).
-			SubResource("proxy").
-			Suffix("/simulate/" + jobResp.JobID).
-			DoRaw(ctx)
-		if err != nil {
-			return nil, fmt.Errorf("GET /simulate/%s: %w", jobResp.JobID, err)
-		}
-		var jr simJobResponse
-		if err := json.Unmarshal(data, &jr); err != nil {
-			return nil, fmt.Errorf("decode job response: %w", err)
-		}
-		switch jr.Status {
-		case "completed":
-			return jr.Result, nil
-		case "failed":
-			return nil, fmt.Errorf("simulation failed: %s", jr.Error)
-		}
-		// pending — keep polling
-	}
-	return nil, fmt.Errorf("simulation timed out after %s", simTimeout)
-}

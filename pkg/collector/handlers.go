@@ -126,14 +126,8 @@ func collect(c *gin.Context) {
 			if err != nil {
 				fmt.Printf("error listing pods for %s: %v\n", serverName, err)
 			} else {
-				// collect running pods owned by this deployment
-				type podEntry struct {
-					pod    corev1.Pod
-					rpm    float64
-					inTok  int
-					outTok int
-				}
-				var runningPods []podEntry
+				// collect running, ready pods owned by this deployment
+				var runningPods []corev1.Pod
 				for _, p := range pods.Items {
 					if p.Status.Phase != corev1.PodRunning {
 						continue
@@ -152,117 +146,45 @@ func collect(c *gin.Context) {
 						fmt.Printf("pod %s: skipping (within startup delay)\n", p.Name)
 						continue
 					}
-					rpm, _ := strconv.ParseFloat(p.Labels[ctrl.KeyArrivalRate], 32)
-					inTok, _ := strconv.Atoi(p.Labels[ctrl.KeyInTokens])
-					outTok, _ := strconv.Atoi(p.Labels[ctrl.KeyOutTokens])
-					runningPods = append(runningPods, podEntry{p, rpm, inTok, outTok})
+					runningPods = append(runningPods, p)
 				}
 				numReplicas = int(*d.Spec.Replicas)
 
-				// fan-out: simulate all pods in parallel
-				simResults := make([]*simResult, len(runningPods))
-				simErrors := make([]error, len(runningPods))
+				// fan-out: read each pod's latest completed result (non-blocking)
+				envs := make([]*latestEnvelope, len(runningPods))
+				errs := make([]error, len(runningPods))
 				var wg sync.WaitGroup
-				for i, pe := range runningPods {
+				for i, p := range runningPods {
 					wg.Add(1)
-					go func(i int, pe podEntry) {
+					go func(i int, p corev1.Pod) {
 						defer wg.Done()
-						req := simRequest{
-							RPS:             float32(pe.rpm / 60.0),
-							MaxConcurrency:  maxBatchSize,
-							AvgInputTokens:  float32(pe.inTok),
-							AvgOutputTokens: float32(pe.outTok),
-							Accelerator:     d.Labels[ctrl.KeyAccelerator],
-							Model:           d.Labels[ctrl.KeyServerModel],
-						}
-						simResults[i], simErrors[i] = simulatePod(KubeClient, pe.pod.Namespace, pe.pod.Name, ctrl.ServerSimPort, req)
-					}(i, pe)
+						envs[i], errs[i] = getLatest(KubeClient, p.Namespace, p.Name, ctrl.ServerSimPort)
+					}(i, p)
 				}
 				wg.Wait()
 
-				// aggregate results
+				// aggregate
 				var weightedITL, weightedTTFT float64
-				for i, pe := range runningPods {
-					if simErrors[i] != nil {
-						fmt.Printf("pod %s simulation error: %v\n", pe.pod.Name, simErrors[i])
+				for i, p := range runningPods {
+					if errs[i] != nil {
+						fmt.Printf("pod %s: no result this cycle (%v); skipping\n", p.Name, errs[i])
 						continue
 					}
-					sim := simResults[i]
-
-					// Backend-aware saturation handling. The re-simulation policy below replays
-					// /simulate at progressively lower load to recover well-conditioned EKF
-					// observations; this only works for purely-analytical evaluators where the
-					// response is a function of the request. The vllm-server evaluator forwards
-					// to a real vLLM pod and cannot manufacture a lower-load measurement on
-					// demand, so for that backend we pass the saturated reading through and let
-					// the optimizer react to the elevated TTFT/ITL.
-					if sim.Saturation != "" {
-						if d.Labels[ctrl.KeyEvaluator] == ctrl.EvaluatorVLLMServer {
-							fmt.Printf("pod %s: saturated (%s); vllm-server backend, passing through\n",
-								pe.pod.Name, sim.Saturation)
-						} else {
-							utilization := overloadTargetUtilization
-							resolved := false
-							for attempt := 1; attempt <= overloadMaxRetries; attempt++ {
-								adjustedRPS := sim.MaxRPS * utilization
-								fmt.Printf("pod %s: saturated (%s), attempt %d/%d; re-simulating at %.2freq/s\n",
-									pe.pod.Name, sim.Saturation, attempt, overloadMaxRetries, adjustedRPS)
-								adjReq := simRequest{
-									RPS:             adjustedRPS,
-									MaxConcurrency:  maxBatchSize,
-									AvgInputTokens:  float32(pe.inTok),
-									AvgOutputTokens: float32(pe.outTok),
-									Accelerator:     d.Labels[ctrl.KeyAccelerator],
-									Model:           d.Labels[ctrl.KeyServerModel],
-								}
-								adjSim, adjErr := simulatePod(KubeClient, pe.pod.Namespace, pe.pod.Name, ctrl.ServerSimPort, adjReq)
-								if adjErr != nil {
-									fmt.Printf("pod %s: re-simulation error: %v; skipping pod\n", pe.pod.Name, adjErr)
-									break
-								}
-								sim = adjSim
-								if sim.Saturation == "" {
-									resolved = true
-									break
-								}
-								utilization -= overloadRetryStep
-							}
-							if !resolved {
-								fmt.Printf("pod %s: still saturated after %d attempts; skipping\n", pe.pod.Name, overloadMaxRetries)
-								continue
-							}
-						}
+					spec, ok := buildReplicaSpec(serverName, p.Name,
+						d.Labels[ctrl.KeyServerClass], d.Labels[ctrl.KeyServerModel],
+						maxQueueSize, maxBatchSize, d.Labels[ctrl.KeyAccelerator], envs[i])
+					if !ok {
+						fmt.Printf("pod %s: stale result (effectiveConcurrency=%d != inForce=%d); holding\n",
+							p.Name, envs[i].EffectiveInput.MaxConcurrency, maxBatchSize)
+						continue
 					}
-
-					podITL := sim.AvgITL
-					podTTFT := sim.AvgTTFT
-					podThroughputRPM := float64(sim.Throughput) * 60.0
-					fmt.Printf("pod %s: TTFT=%.1fms ITL=%.1fms throughput=%.2freq/s maxRPS=%.2f\n",
-						pe.pod.Name, podTTFT, podITL, sim.Throughput, sim.MaxRPS)
-					weightedITL += float64(podITL) * podThroughputRPM
-					weightedTTFT += float64(podTTFT) * podThroughputRPM
-					totalThroughputRPM += podThroughputRPM
-					replicaSpecs = append(replicaSpecs, config.ServerSpec{
-						Name:         serverName + ctrl.ReplicaNameSeparator + pe.pod.Name,
-						Class:        d.Labels[ctrl.KeyServerClass],
-						Model:        d.Labels[ctrl.KeyServerModel],
-						MaxQueueSize: maxQueueSize,
-						CurrentAlloc: config.AllocationData{
-							Accelerator: d.Labels[ctrl.KeyAccelerator],
-							MaxBatch:    maxBatchSize,
-							NumReplicas: 1,
-							ITLAverage:  podITL,
-							TTFTAverage: podTTFT,
-							Load: config.ServerLoadSpec{
-								// TODO: use a separate per-pod arrival-rate metric when available;
-								// for now arrival rate and throughput are both set from the simulation throughput.
-								ArrivalRate:  float32(podThroughputRPM),
-								Throughput:   float32(podThroughputRPM),
-								AvgInTokens:  pe.inTok,
-								AvgOutTokens: pe.outTok,
-							},
-						},
-					})
+					w := float64(spec.CurrentAlloc.Load.Throughput)
+					fmt.Printf("pod %s: TTFT=%.1fms ITL=%.1fms throughputRPM=%.2f\n",
+						p.Name, spec.CurrentAlloc.TTFTAverage, spec.CurrentAlloc.ITLAverage, w)
+					weightedITL += float64(spec.CurrentAlloc.ITLAverage) * w
+					weightedTTFT += float64(spec.CurrentAlloc.TTFTAverage) * w
+					totalThroughputRPM += w
+					replicaSpecs = append(replicaSpecs, spec)
 				}
 				if totalThroughputRPM > 0 {
 					itlAvg = float32(weightedITL / totalThroughputRPM)
