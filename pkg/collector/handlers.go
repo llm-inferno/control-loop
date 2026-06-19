@@ -174,9 +174,13 @@ func collect(c *gin.Context) {
 						d.Labels[ctrl.KeyServerClass], d.Labels[ctrl.KeyServerModel],
 						maxQueueSize, maxBatchSize, d.Labels[ctrl.KeyAccelerator], envs[i])
 					if !ok {
-						if envs[i] == nil {
+						switch {
+						case envs[i] == nil:
 							fmt.Printf("pod %s: no usable result this cycle; holding\n", p.Name)
-						} else {
+						case maxBatchSize <= 0:
+							fmt.Printf("pod %s: no allocation in force yet (maxbatchsize=%d); holding\n",
+								p.Name, maxBatchSize)
+						default:
 							fmt.Printf("pod %s: stale result (effectiveConcurrency=%d != inForce=%d); holding\n",
 								p.Name, envs[i].EffectiveInput.MaxConcurrency, maxBatchSize)
 						}

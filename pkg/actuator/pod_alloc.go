@@ -2,6 +2,8 @@ package actuator
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"strconv"
 
 	ctrl "github.com/llm-inferno/control-loop/pkg/controller"
@@ -14,7 +16,11 @@ import (
 // patchPodsAllocation writes the current allocation (accelerator + maxbatchsize)
 // onto each running pod of the deployment, so the server-sim generator can read
 // the in-force M* from its downward-API labels volume. Best-effort per pod: a
-// transient pod patch error is skipped, not fatal to the cycle.
+// transient patch error does not abort the remaining pods, but every failure is
+// surfaced in the returned (joined) error rather than swallowed. A silently
+// dropped maxbatchsize patch leaves the pod's label stale, so the Collector's
+// coherence check excludes it every cycle with no diagnostic — so callers must
+// log the returned error.
 func patchPodsAllocation(ctx context.Context, kc kubernetes.Interface, ns, depName, accelerator string, maxBatch int) error {
 	dep, err := kc.AppsV1().Deployments(ns).Get(ctx, depName, metav1.GetOptions{})
 	if err != nil {
@@ -25,12 +31,17 @@ func patchPodsAllocation(ctx context.Context, kc kubernetes.Interface, ns, depNa
 	if err != nil {
 		return err
 	}
+	var patchErrs []error
 	for _, p := range pods.Items {
 		if p.Status.Phase != corev1.PodRunning {
 			continue
 		}
-		_ = setPodLabel(ctx, kc, ns, p.Name, ctrl.KeyAccelerator, accelerator)
-		_ = setPodLabel(ctx, kc, ns, p.Name, ctrl.KeyMaxBatchSize, strconv.Itoa(maxBatch))
+		if e := setPodLabel(ctx, kc, ns, p.Name, ctrl.KeyAccelerator, accelerator); e != nil {
+			patchErrs = append(patchErrs, fmt.Errorf("pod %s accelerator: %w", p.Name, e))
+		}
+		if e := setPodLabel(ctx, kc, ns, p.Name, ctrl.KeyMaxBatchSize, strconv.Itoa(maxBatch)); e != nil {
+			patchErrs = append(patchErrs, fmt.Errorf("pod %s maxbatchsize: %w", p.Name, e))
+		}
 	}
-	return nil
+	return errors.Join(patchErrs...)
 }
