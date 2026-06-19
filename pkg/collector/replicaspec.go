@@ -11,7 +11,7 @@ import (
 // a window under the new M*) means the observation is stale — return ok=false so
 // the caller skips the pod, exactly like a cold-start 404.
 func buildReplicaSpec(serverName, podName, class, model string, maxQueueSize, inForceMaxBatch int, accelerator string, env *latestEnvelope) (config.ServerSpec, bool) {
-	if env == nil || env.EffectiveInput.MaxConcurrency != inForceMaxBatch {
+	if env == nil || inForceMaxBatch <= 0 || env.EffectiveInput.MaxConcurrency != inForceMaxBatch {
 		return config.ServerSpec{}, false
 	}
 	return config.ServerSpec{

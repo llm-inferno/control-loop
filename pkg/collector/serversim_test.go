@@ -2,6 +2,12 @@ package collector
 
 import "testing"
 
+func TestParseLatestMalformed(t *testing.T) {
+	if _, err := parseLatest([]byte("{not valid json")); err == nil {
+		t.Fatal("want non-nil error for malformed JSON, got nil")
+	}
+}
+
 func TestParseLatest(t *testing.T) {
 	body := []byte(`{
 		"effectiveInput": {"RPS": 5, "maxConcurrency": 32, "avgInputTokens": 1024, "avgOutputTokens": 512, "accelerator":"H100","model":"m"},

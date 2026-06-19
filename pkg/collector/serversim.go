@@ -11,11 +11,10 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-// SimulateTimeoutEnvName overrides the per-pod /simulate timeout (seconds).
-// Default is 30s, which suffices for queue-analysis and blis (analytical, ms-scale).
-// The vllm-server evaluator drives a real vLLM server with a sampling window of
-// warmupSec + maxWindowSec (production: 30 + 60–300 = 90–330s); set this env var
-// to a value larger than that window for vllm-server runs.
+// SimulateTimeoutEnvName overrides the per-pod GET /latest timeout (seconds).
+// In continuous mode the Collector does a non-blocking read of the most-recent
+// completed window, so this timeout bounds only the k8s API-server proxy
+// round-trip — not an evaluation window. The 30s default is ample.
 const SimulateTimeoutEnvName = "INFERNO_SIMULATE_TIMEOUT_SEC"
 
 const defaultSimTimeout = 30 * time.Second
@@ -41,6 +40,9 @@ type simRequest struct {
 	Model           string  `json:"model"`
 }
 
+// simResult holds the /latest result envelope. The collector consumes only
+// AvgITL, AvgTTFT, and Throughput; the remaining fields (Saturation, MaxRPS,
+// AvgRespTime, AvgWaitTime) are decoded for wire-contract completeness.
 type simResult struct {
 	Throughput  float32 `json:"throughput"`
 	AvgRespTime float32 `json:"avgRespTime"`

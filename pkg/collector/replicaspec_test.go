@@ -37,3 +37,12 @@ func TestBuildReplicaSpecNilEnv(t *testing.T) {
 		t.Fatal("ok=true, want false (nil env)")
 	}
 }
+
+func TestBuildReplicaSpecZeroInForceSkips(t *testing.T) {
+	// inForceMaxBatch=0 means no allocation is in force yet; even if env also
+	// reports MaxConcurrency=0 (a 0==0 coincidence), the pod must be skipped.
+	env := &latestEnvelope{EffectiveInput: simRequest{MaxConcurrency: 0}}
+	if _, ok := buildReplicaSpec("srv", "p", "c", "m", 64, 0 /*inForceMaxBatch*/, "H100", env); ok {
+		t.Fatal("ok=true, want false (zero in-force allocation must not pass coherence)")
+	}
+}
