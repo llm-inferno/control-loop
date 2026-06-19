@@ -46,3 +46,33 @@ func TestBuildReplicaSpecZeroInForceSkips(t *testing.T) {
 		t.Fatal("ok=true, want false (zero in-force allocation must not pass coherence)")
 	}
 }
+
+func TestBuildReplicaSpecOccupancy(t *testing.T) {
+	// Throughput 4 req/s, in-service time = 600-100 = 500 ms = 0.5 s → occ = 4*0.5 = 2.0
+	env := &latestEnvelope{
+		EffectiveInput: simRequest{MaxConcurrency: 32},
+		Result:         simResult{Throughput: 4, AvgRespTime: 600, AvgWaitTime: 100},
+	}
+	spec, ok := buildReplicaSpec("srv", "pod-1", "c", "m", 64, 32, "H100", env)
+	if !ok {
+		t.Fatal("ok=false, want true")
+	}
+	if got := spec.CurrentAlloc.AvgConcurrency; got != 2.0 {
+		t.Fatalf("AvgConcurrency = %v, want 2.0", got)
+	}
+}
+
+func TestBuildReplicaSpecOccupancyNegativeClamps(t *testing.T) {
+	// wait (300) > resp (100) under noise → in-service time clamps to 0 → occ = 0
+	env := &latestEnvelope{
+		EffectiveInput: simRequest{MaxConcurrency: 32},
+		Result:         simResult{Throughput: 4, AvgRespTime: 100, AvgWaitTime: 300},
+	}
+	spec, ok := buildReplicaSpec("srv", "pod-1", "c", "m", 64, 32, "H100", env)
+	if !ok {
+		t.Fatal("ok=false, want true")
+	}
+	if got := spec.CurrentAlloc.AvgConcurrency; got != 0 {
+		t.Fatalf("AvgConcurrency = %v, want 0 (clamped)", got)
+	}
+}

@@ -421,7 +421,7 @@ Each script handles: load images → namespaces → ConfigMaps → inferno pod �
 
 ## (Optional) Run the visualization dashboard
 
-The controller writes one JSON line per completed cycle to a JSONL log file (`inferno-cycles.jsonl` by default, configurable via `INFERNO_CYCLE_LOG`). A standalone Python dashboard reads the log and displays five auto-refreshing panels: workload, performance vs SLO targets, controls, accelerator capacity, and EKF internals.
+The controller writes one JSON line per completed cycle to a JSONL log file (`inferno-cycles.jsonl` by default, configurable via `INFERNO_CYCLE_LOG`). A standalone Python dashboard reads the log and displays six auto-refreshing panels: workload, performance vs SLO targets, controls, occupancy (in-service concurrency vs M*), accelerator capacity, and EKF internals.
 
 **Step 1 — set up a Python virtual environment (first time only):**
 

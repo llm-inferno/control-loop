@@ -6,7 +6,7 @@ require (
 	github.com/gin-gonic/gin v1.11.0
 	github.com/google/uuid v1.6.0
 	github.com/llm-inferno/optimizer v0.8.0
-	github.com/llm-inferno/optimizer-light v0.8.0
+	github.com/llm-inferno/optimizer-light v0.8.1
 	github.com/prometheus/client_golang v1.22.0
 	github.com/prometheus/common v0.64.0
 	gopkg.in/yaml.v3 v3.0.1

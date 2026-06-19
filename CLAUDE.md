@@ -134,14 +134,14 @@ Concurrency control — the optimizer's optimal-concurrency `M*` search, the `ma
 
 The controller emits one JSON line per completed cycle to `INFERNO_CYCLE_LOG` (default: `inferno-cycles.jsonl` relative to the working directory). Warm-up cycles (tuner not yet converged) do not produce a record.
 
-Each record contains: timestamp, cycle counter, per-server workload (RPM, tokens), per-server attained ITL/TTFT with SLO targets, per-server allocation (replicas, cost, accelerator), total cost, EKF model parameters (alpha/beta/gamma), and cycle phase timings.
+Each record contains: timestamp, cycle counter, per-server workload (RPM, tokens), per-server attained ITL/TTFT with SLO targets, per-server in-service occupancy (occPerReplica/occTotal, Little's-Law: throughput × in-service time), per-server allocation (replicas, cost, accelerator), total cost, EKF model parameters (alpha/beta/gamma), and cycle phase timings.
 
 The `pkg/monitor/` package handles all logging:
 - `record.go` — `CycleRecord` and sub-struct definitions (the JSON schema)
 - `builder.go` — `BuildRecord()` assembles a record from controller data; SLO targets are looked up by matching server class → service class → model target
 - `monitor.go` — `CycleRecorder` writes records; nil-receiver pattern makes all methods no-ops when logging is disabled
 
-The `dashboard/` directory contains a standalone Python Dash app (`dashboard.py`) that reads the JSONL file and displays four auto-refreshing panels: Workload, Performance, Controls, and EKF Internals. The internals panel is filtered to only show model/accelerator pairs actively assigned to deployed servers. See `dashboard/requirements.txt` for Python dependencies and README for run instructions.
+The `dashboard/` directory contains a standalone Python Dash app (`dashboard.py`) that reads the JSONL file and displays auto-refreshing panels: Workload, Performance, Controls, Occupancy, Capacity, and EKF Internals. The internals panel is filtered to only show model/accelerator pairs actively assigned to deployed servers. See `dashboard/requirements.txt` for Python dependencies and README for run instructions.
 
 ## Local kind Cluster: Build and Deploy
 
