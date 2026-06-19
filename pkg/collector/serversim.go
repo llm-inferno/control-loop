@@ -40,9 +40,11 @@ type simRequest struct {
 	Model           string  `json:"model"`
 }
 
-// simResult holds the /latest result envelope. The collector consumes only
-// AvgITL, AvgTTFT, and Throughput; the remaining fields (Saturation, MaxRPS,
-// AvgRespTime, AvgWaitTime) are decoded for wire-contract completeness.
+// simResult holds the /latest result envelope. The collector consumes
+// AvgITL, AvgTTFT, Throughput, AvgRespTime, and AvgWaitTime (the latter two
+// drive the Little's-Law in-service occupancy computed in buildReplicaSpec);
+// the remaining fields (Saturation, MaxRPS) are decoded for wire-contract
+// completeness.
 type simResult struct {
 	Throughput  float32 `json:"throughput"`
 	AvgRespTime float32 `json:"avgRespTime"`

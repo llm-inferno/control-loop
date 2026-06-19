@@ -100,7 +100,8 @@ func collect(c *gin.Context) {
 		}
 		fmt.Printf("Average output tokens per request %f \n", outTokens)
 
-		// simulate running pods and compute weighted average ITL/TTFT
+		// simulate running pods and compute throughput-weighted average ITL/TTFT
+		// plus the per-replica mean in-service occupancy (occAvg)
 		var itlAvg, ttftAvg, occAvg float32
 		var totalThroughputRPM float64
 		var numReplicas int
