@@ -1,12 +1,13 @@
 """
 Inferno control loop dashboard.
 
-Reads a JSONL cycle log and displays five panels:
+Reads a JSONL cycle log and displays six panels:
   1. Workload   — arrival rate & throughput (RPM) per server
   2. Performance — attained ITL & TTFT vs SLO targets per server
   3. Controls   — replicas per server (left y) + total cost (right y)
-  4. Capacity   — accelerators allocated vs available per type
-  5. Internals  — EKF alpha / beta / gamma per model/accelerator
+  4. Occupancy  — per-replica in-service concurrency vs M* ceiling; total in-flight
+  5. Capacity   — accelerators allocated vs available per type
+  6. Internals  — EKF alpha / beta / gamma per model/accelerator
 
 Usage:
     pip install -r requirements.txt
@@ -44,6 +45,9 @@ POD_LOG_PATH = os.environ.get("INFERNO_CYCLE_LOG_POD_PATH", "inferno-cycles.json
 
 import subprocess
 import threading
+
+# Color cycle so each server's occupancy line and its M* ceiling share a color.
+_PALETTE = ["#636EFA", "#EF553B", "#00CC96", "#AB63FA", "#FFA15A", "#19D3F3", "#FF6692", "#B6E880"]
 
 
 def _sync_pod_log():
@@ -94,6 +98,7 @@ def load_data():
     servers_df columns:  cycle, ts, name, class, model,
                          rpm, throughput, avgInTok, avgOutTok,
                          itl, ttft, sloItl, sloTtft,
+                         occPerReplica, occTotal,
                          accelerator, replicas, cost
     internals_df columns: cycle, ts, model, acc, alpha, beta, gamma
     capacity_df columns:  cycle, ts, type, allocated, available
@@ -309,6 +314,46 @@ def fig_controls(df):
     return fig
 
 
+def fig_occupancy(df):
+    title = "Occupancy: In-Service Concurrency (batch fill)"
+    if df.empty or "occPerReplica" not in df.columns:
+        return _empty(title)
+
+    fig = make_subplots(
+        rows=2, cols=1, shared_xaxes=True,
+        subplot_titles=("Per-Replica Occupancy vs M* (maxBatch)", "Total In-Flight"),
+        vertical_spacing=0.12,
+    )
+
+    for i, server in enumerate(df["name"].unique()):
+        color = _PALETTE[i % len(_PALETTE)]
+        s = df[df["name"] == server].sort_values("cycle")
+        fig.add_trace(go.Scatter(
+            x=s["cycle"], y=s["occPerReplica"],
+            mode="lines+markers", name=f"{server}", line=dict(color=color),
+        ), row=1, col=1)
+        if "maxBatch" in s.columns:
+            fig.add_trace(go.Scatter(
+                x=s["cycle"], y=s["maxBatch"],
+                mode="lines", name=f"{server} M*",
+                line=dict(color=color, dash="dash"), showlegend=False,
+            ), row=1, col=1)
+        fig.add_trace(go.Scatter(
+            x=s["cycle"], y=s["occTotal"],
+            mode="lines+markers", name=f"{server}", line=dict(color=color),
+            showlegend=False,
+        ), row=2, col=1)
+
+    fig.update_layout(
+        title=title, xaxis2_title="Cycle",
+        template="plotly_dark", paper_bgcolor="#1e1e1e", plot_bgcolor="#1e1e1e",
+        legend=dict(orientation="h", yanchor="bottom", y=1.02),
+    )
+    fig.update_yaxes(title_text="Requests", row=1, col=1)
+    fig.update_yaxes(title_text="Requests", row=2, col=1)
+    return fig
+
+
 def fig_capacity(df):
     title = "Capacity: Accelerators Allocated vs Available"
     if df.empty or "type" not in df.columns:
@@ -418,6 +463,7 @@ app.layout = html.Div(
         dcc.Graph(id="workload-panel", style={"marginBottom": "8px"}),
         dcc.Graph(id="performance-panel", style={"marginBottom": "8px"}),
         dcc.Graph(id="controls-panel", style={"marginBottom": "8px"}),
+        dcc.Graph(id="occupancy-panel", style={"marginBottom": "8px"}),
         dcc.Graph(id="capacity-panel", style={"marginBottom": "8px"}),
         dcc.Graph(id="internals-panel"),
     ],
@@ -429,6 +475,7 @@ app.layout = html.Div(
         Output("workload-panel", "figure"),
         Output("performance-panel", "figure"),
         Output("controls-panel", "figure"),
+        Output("occupancy-panel", "figure"),
         Output("capacity-panel", "figure"),
         Output("internals-panel", "figure"),
     ],
@@ -440,6 +487,7 @@ def update(_n):
         fig_workload(servers_df),
         fig_performance(servers_df),
         fig_controls(servers_df),
+        fig_occupancy(servers_df),
         fig_capacity(capacity_df),
         fig_internals(internals_df, servers_df),
     )
