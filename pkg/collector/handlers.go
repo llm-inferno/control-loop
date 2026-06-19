@@ -174,8 +174,12 @@ func collect(c *gin.Context) {
 						d.Labels[ctrl.KeyServerClass], d.Labels[ctrl.KeyServerModel],
 						maxQueueSize, maxBatchSize, d.Labels[ctrl.KeyAccelerator], envs[i])
 					if !ok {
-						fmt.Printf("pod %s: stale result (effectiveConcurrency=%d != inForce=%d); holding\n",
-							p.Name, envs[i].EffectiveInput.MaxConcurrency, maxBatchSize)
+						if envs[i] == nil {
+							fmt.Printf("pod %s: no usable result this cycle; holding\n", p.Name)
+						} else {
+							fmt.Printf("pod %s: stale result (effectiveConcurrency=%d != inForce=%d); holding\n",
+								p.Name, envs[i].EffectiveInput.MaxConcurrency, maxBatchSize)
+						}
 						continue
 					}
 					w := float64(spec.CurrentAlloc.Load.Throughput)
