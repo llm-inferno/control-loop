@@ -101,7 +101,7 @@ func collect(c *gin.Context) {
 		fmt.Printf("Average output tokens per request %f \n", outTokens)
 
 		// simulate running pods and compute weighted average ITL/TTFT
-		var itlAvg, ttftAvg float32
+		var itlAvg, ttftAvg, occAvg float32
 		var totalThroughputRPM float64
 		var numReplicas int
 		selectorStr := labels.Set(d.Spec.Selector.MatchLabels).String()
@@ -164,7 +164,8 @@ func collect(c *gin.Context) {
 				wg.Wait()
 
 				// aggregate
-				var weightedITL, weightedTTFT float64
+				var weightedITL, weightedTTFT, sumOcc float64
+				var numReporting int
 				for i, p := range runningPods {
 					if errs[i] != nil {
 						fmt.Printf("pod %s: no result this cycle (%v); skipping\n", p.Name, errs[i])
@@ -187,26 +188,33 @@ func collect(c *gin.Context) {
 						continue
 					}
 					w := float64(spec.CurrentAlloc.Load.Throughput)
-					fmt.Printf("pod %s: TTFT=%.1fms ITL=%.1fms throughputRPM=%.2f\n",
-						p.Name, spec.CurrentAlloc.TTFTAverage, spec.CurrentAlloc.ITLAverage, w)
+					fmt.Printf("pod %s: TTFT=%.1fms ITL=%.1fms throughputRPM=%.2f occ=%.2f\n",
+						p.Name, spec.CurrentAlloc.TTFTAverage, spec.CurrentAlloc.ITLAverage, w,
+						spec.CurrentAlloc.AvgConcurrency)
 					weightedITL += float64(spec.CurrentAlloc.ITLAverage) * w
 					weightedTTFT += float64(spec.CurrentAlloc.TTFTAverage) * w
+					sumOcc += float64(spec.CurrentAlloc.AvgConcurrency)
 					totalThroughputRPM += w
+					numReporting++
 					replicaSpecs = append(replicaSpecs, spec)
 				}
 				if totalThroughputRPM > 0 {
 					itlAvg = float32(weightedITL / totalThroughputRPM)
 					ttftAvg = float32(weightedTTFT / totalThroughputRPM)
 				}
+				if numReporting > 0 {
+					occAvg = float32(sumOcc / float64(numReporting))
+				}
 			}
 		}
 
 		curAlloc := config.AllocationData{
-			Accelerator: d.Labels[ctrl.KeyAccelerator],
-			NumReplicas: int(numReplicas),
-			MaxBatch:    maxBatchSize,
-			ITLAverage:  itlAvg,
-			TTFTAverage: ttftAvg,
+			Accelerator:    d.Labels[ctrl.KeyAccelerator],
+			NumReplicas:    int(numReplicas),
+			MaxBatch:       maxBatchSize,
+			ITLAverage:     itlAvg,
+			TTFTAverage:    ttftAvg,
+			AvgConcurrency: occAvg,
 			Load: config.ServerLoadSpec{
 				// TODO: use a separate arrival-rate query when available;
 				// for now arrival rate and throughput are both set from the same Prometheus query.
@@ -217,10 +225,11 @@ func collect(c *gin.Context) {
 			},
 		}
 
-		fmt.Printf("curAlloc[%s]: replicas=%d acc=%s maxBatch=%d ITL=%.1fms TTFT=%.1fms arrivalRateRPM=%.2f throughputRPM=%.2f inTok=%d outTok=%d\n",
+		fmt.Printf("curAlloc[%s]: replicas=%d acc=%s maxBatch=%d ITL=%.1fms TTFT=%.1fms arrivalRateRPM=%.2f throughputRPM=%.2f inTok=%d outTok=%d occPerReplica=%.2f occTotal=%.2f\n",
 			serverName, curAlloc.NumReplicas, curAlloc.Accelerator, curAlloc.MaxBatch,
 			curAlloc.ITLAverage, curAlloc.TTFTAverage,
-			curAlloc.Load.ArrivalRate, curAlloc.Load.Throughput, curAlloc.Load.AvgInTokens, curAlloc.Load.AvgOutTokens)
+			curAlloc.Load.ArrivalRate, curAlloc.Load.Throughput, curAlloc.Load.AvgInTokens, curAlloc.Load.AvgOutTokens,
+			curAlloc.AvgConcurrency, curAlloc.AvgConcurrency*float32(curAlloc.NumReplicas))
 
 		serverSpec := config.ServerSpec{
 			Name:         serverName,
@@ -233,10 +242,11 @@ func collect(c *gin.Context) {
 	}
 
 	for _, r := range replicaSpecs {
-		fmt.Printf("replicaAlloc[%s]: acc=%s maxBatch=%d ITL=%.1fms TTFT=%.1fms arrivalRateRPM=%.2f throughputRPM=%.2f inTok=%d outTok=%d\n",
+		fmt.Printf("replicaAlloc[%s]: acc=%s maxBatch=%d ITL=%.1fms TTFT=%.1fms arrivalRateRPM=%.2f throughputRPM=%.2f inTok=%d outTok=%d occ=%.2f\n",
 			r.Name, r.CurrentAlloc.Accelerator, r.CurrentAlloc.MaxBatch,
 			r.CurrentAlloc.ITLAverage, r.CurrentAlloc.TTFTAverage,
-			r.CurrentAlloc.Load.ArrivalRate, r.CurrentAlloc.Load.Throughput, r.CurrentAlloc.Load.AvgInTokens, r.CurrentAlloc.Load.AvgOutTokens)
+			r.CurrentAlloc.Load.ArrivalRate, r.CurrentAlloc.Load.Throughput, r.CurrentAlloc.Load.AvgInTokens, r.CurrentAlloc.Load.AvgOutTokens,
+			r.CurrentAlloc.AvgConcurrency)
 	}
 
 	serverCollectorInfo := ctrl.ServerCollectorInfo{
