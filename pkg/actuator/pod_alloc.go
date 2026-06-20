@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"sync"
 
 	ctrl "github.com/llm-inferno/control-loop/pkg/controller"
 	corev1 "k8s.io/api/core/v1"
@@ -31,6 +32,12 @@ import (
 // target accelerator+maxbatchsize is skipped — so steady state (allocation
 // unchanged) issues zero PATCHes and does not churn resourceVersion or force a
 // downward-API volume re-projection.
+//
+// The per-pod PATCHes are independent round-trips, so they are issued
+// concurrently (same fan-out discipline as the Collector's per-pod GET /latest):
+// actuate latency tracks the slowest single PATCH rather than the sum over pods.
+// The client's own QPS/burst limiter throttles the fan-out, so it is left
+// unbounded to match the Collector.
 func patchPodsAllocation(ctx context.Context, kc kubernetes.Interface, ns, depName, accelerator string, maxBatch int) error {
 	dep, err := kc.AppsV1().Deployments(ns).Get(ctx, depName, metav1.GetOptions{})
 	if err != nil {
@@ -57,7 +64,12 @@ func patchPodsAllocation(ctx context.Context, kc kubernetes.Interface, ns, depNa
 		return err
 	}
 	maxBatchStr := strconv.Itoa(maxBatch)
-	var patchErrs []error
+
+	// First pass (sequential): select the pods that actually need patching —
+	// running, owned by this deployment's ReplicaSets, and not already carrying
+	// the target allocation. The skip-if-unchanged guard keeps steady state at
+	// zero PATCHes.
+	var toPatch []string
 	for _, p := range pods.Items {
 		if p.Status.Phase != corev1.PodRunning {
 			continue
@@ -75,10 +87,24 @@ func patchPodsAllocation(ctx context.Context, kc kubernetes.Interface, ns, depNa
 		if p.Labels[ctrl.KeyAccelerator] == accelerator && p.Labels[ctrl.KeyMaxBatchSize] == maxBatchStr {
 			continue // allocation already in force on this pod; skip to avoid churn
 		}
-		if e := patchPodAllocationLabels(ctx, kc, ns, p.Name, accelerator, maxBatchStr); e != nil {
-			patchErrs = append(patchErrs, fmt.Errorf("pod %s allocation: %w", p.Name, e))
-		}
+		toPatch = append(toPatch, p.Name)
 	}
+
+	// Second pass (fan-out): patch the selected pods concurrently. Best-effort
+	// per pod — a transient error does not abort the others; each failure is
+	// captured by index and surfaced in the joined error.
+	patchErrs := make([]error, len(toPatch))
+	var wg sync.WaitGroup
+	for i, name := range toPatch {
+		wg.Add(1)
+		go func(i int, name string) {
+			defer wg.Done()
+			if e := patchPodAllocationLabels(ctx, kc, ns, name, accelerator, maxBatchStr); e != nil {
+				patchErrs[i] = fmt.Errorf("pod %s allocation: %w", name, e)
+			}
+		}(i, name)
+	}
+	wg.Wait()
 	return errors.Join(patchErrs...)
 }
 
