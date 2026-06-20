@@ -2,12 +2,14 @@ package actuator
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	ctrl "github.com/llm-inferno/control-loop/pkg/controller"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/kubernetes/fake"
 )
 
@@ -94,6 +96,48 @@ func TestPatchPodsAllocationSkipsUnchanged(t *testing.T) {
 	}
 	if n := countPodPatches(kc); n != 0 {
 		t.Fatalf("expected 0 pod patches when allocation unchanged, got %d", n)
+	}
+}
+
+// TestPatchPodsAllocationMultiplePods verifies the concurrent fan-out patches
+// every owned, changed pod exactly once (one coalesced patch per pod).
+func TestPatchPodsAllocationMultiplePods(t *testing.T) {
+	dep := &appsv1.Deployment{
+		ObjectMeta: metav1.ObjectMeta{Name: "dep", Namespace: "ns", UID: "dep-uid"},
+		Spec:       appsv1.DeploymentSpec{Selector: &metav1.LabelSelector{MatchLabels: map[string]string{"app": "x"}}},
+	}
+	rs := &appsv1.ReplicaSet{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "dep-rs", Namespace: "ns", UID: "rs-uid",
+			Labels:          map[string]string{"app": "x"},
+			OwnerReferences: []metav1.OwnerReference{{UID: "dep-uid"}},
+		},
+	}
+	objs := []runtime.Object{dep, rs}
+	const numPods = 8
+	for i := 0; i < numPods; i++ {
+		objs = append(objs, &corev1.Pod{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: fmt.Sprintf("p%d", i), Namespace: "ns", Labels: map[string]string{"app": "x"},
+				OwnerReferences: []metav1.OwnerReference{{UID: "rs-uid"}},
+			},
+			Status: corev1.PodStatus{Phase: corev1.PodRunning},
+		})
+	}
+	kc := fake.NewSimpleClientset(objs...)
+
+	if err := patchPodsAllocation(context.Background(), kc, "ns", "dep", "H100", 64); err != nil {
+		t.Fatalf("patchPodsAllocation: %v", err)
+	}
+	for i := 0; i < numPods; i++ {
+		name := fmt.Sprintf("p%d", i)
+		got, _ := kc.CoreV1().Pods("ns").Get(context.Background(), name, metav1.GetOptions{})
+		if got.Labels[ctrl.KeyMaxBatchSize] != "64" || got.Labels[ctrl.KeyAccelerator] != "H100" {
+			t.Fatalf("pod %s labels not set: %v", name, got.Labels)
+		}
+	}
+	if n := countPodPatches(kc); n != numPods {
+		t.Fatalf("expected %d pod patches, got %d", numPods, n)
 	}
 }
 
