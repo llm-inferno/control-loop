@@ -5,6 +5,6 @@
     "milpsolver": false,
     "useCplex": false,
     "delayedBestEffort": false,
-    "saturationPolicy": "None"
+    "saturationPolicy": "PriorityExhaustive"
   }
 }
