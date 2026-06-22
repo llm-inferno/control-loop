@@ -26,14 +26,25 @@ EXP="$REPO_ROOT/manifests/vllm-gpu"
 SYS_NS="inferno-system"
 WORK_NS="inferno-workload"
 
-# Models to deploy. Default "qwen llama" preserves the original two-model scenario.
-# Set MODELS="qwen" for the run16 single-model concurrency surge experiment (no GPU
-# split; lets qwen scale freely within the 6-H100 cap during the surge).
-MODELS="${MODELS:-qwen llama}"
+# Models to deploy. Default "qwen" is the run17 single-model concurrency A/B experiment
+# (no GPU split; lets qwen scale freely within the 8-H100 cap under the 5x ramp). Set
+# MODELS="qwen llama" to opt back into the original two-model scenario.
+MODELS="${MODELS:-qwen}"
 
 # Optional A/B arm selector. Unset (default) => search ON (Arm A, optimizer searches M*).
-# Set ARM_MAXBATCH=128 => search OFF (Arm B): pins DEFAULT_MAX_BATCH_SIZE on the controller.
+# Set ARM_MAXBATCH=<N> => search OFF: pins DEFAULT_MAX_BATCH_SIZE=N on the controller.
+# run17 arms: unset = A (search, M*~60); ARM_MAXBATCH=32 = B-low (binds below the ~64
+# knee -> over-provision); ARM_MAXBATCH=128 = B-high (control, ties A on real vLLM).
 ARM_MAXBATCH="${ARM_MAXBATCH:-}"
+
+# Optional: set NO_TUNER=1 to disable the EKF tuner (unsets TUNER_HOST on the controller),
+# so the optimizer runs on the seeded perfParms in model-data.json every cycle. Required for
+# run17: at a single-replica low-load baseline the EKF is unidentifiable and its analytical
+# GuessInitState emits an infeasible gamma (~0.0012, ~21x the feasible seed), making the
+# optimizer 404 every cycle and the controller never scale. The seed is the run16-converged
+# real-qwen value, so the optimizer produces valid allocations. (Track the GuessInitState
+# bug separately — this is a workaround, not a fix.)
+NO_TUNER="${NO_TUNER:-}"
 
 # Rewrite hard-coded `namespace: inferno` lines in shared common YAMLs
 # (deploy-loop.yaml, configmap-tuner.yaml) to target the new system namespace.
@@ -96,18 +107,18 @@ rewrite_ns < "$COMMON/deploy-loop.yaml" \
   | oc apply -f -
 
 # Override env to match the vllm-gpu scenario:
-#   - 120s control period: covers worst-case collect time (each managed deployment adds
-#     a ~30s eval window) AND deliberately lengthens the scale-out reaction lag, which is
-#     what exposes the concurrency-control transient in the single-model surge experiment.
+#   - 120s control period: covers the 60s eval window (control-period invariant:
+#     period > warmupSec + maxWindowSec + slack) AND lengthens the scale-out reaction
+#     lag, which exposes the concurrency-control behaviour in the single-model 5x ramp.
 #   - INFERNO_WARM_UP_TIMEOUT=10 default (perfParms are seeded; warm-up is fast)
-#   - DEFAULT_MAX_BATCH_SIZE intentionally unset for the search-ON arm: the optimizer
+#   - DEFAULT_MAX_BATCH_SIZE intentionally unset for the search-ON arm (A): the optimizer
 #     searches the optimal concurrency M* (optimizer-light v0.8.0). The per-model
 #     maxBatchSize in inferno-data/vllm-gpu/model-data.json (=128) is the search ceiling,
 #     kept equal to the vLLM --max-num-seqs so M* can never exceed what the real server
 #     honors. The vllm-server evaluator's traffic generator caps in-flight requests at M*,
 #     so M* is the real running batch depth as long as M* <= --max-num-seqs.
-#     For the search-OFF arm, set DEFAULT_MAX_BATCH_SIZE=128 on the controller (pins the
-#     optimizer override; the server then runs at a fixed concurrency of 128).
+#     For the search-OFF arms, set DEFAULT_MAX_BATCH_SIZE via ARM_MAXBATCH: 32 (B-low,
+#     binds below the operating concurrency) or 128 (B-high, control). See ARM_MAXBATCH.
 #   - INFERNO_CYCLE_LOG=/tmp/... — OpenShift's restricted SCC makes the workdir
 #     read-only, so the default relative path fails with permission denied.
 oc set env deployment/inferno -n "$SYS_NS" -c controller \
@@ -115,21 +126,29 @@ oc set env deployment/inferno -n "$SYS_NS" -c controller \
   INFERNO_WARM_UP_TIMEOUT=10 \
   INFERNO_CYCLE_LOG=/tmp/inferno-cycles.jsonl
 
-# Arm B (search OFF): pin the optimizer concurrency override when ARM_MAXBATCH is set.
-# Leave unset for Arm A (search ON). Either way the value is explicit per run.
+# Search-OFF arms (B-low=32 / B-high=128): pin the optimizer concurrency override when
+# ARM_MAXBATCH is set. Leave unset for Arm A (search ON). Value is explicit per run.
 if [[ -n "$ARM_MAXBATCH" ]]; then
-  echo "    ARM_MAXBATCH set => Arm B (search OFF), pinning DEFAULT_MAX_BATCH_SIZE=$ARM_MAXBATCH"
+  echo "    ARM_MAXBATCH set => search OFF, pinning DEFAULT_MAX_BATCH_SIZE=$ARM_MAXBATCH"
   oc set env deployment/inferno -n "$SYS_NS" -c controller DEFAULT_MAX_BATCH_SIZE="$ARM_MAXBATCH"
 else
   echo "    ARM_MAXBATCH unset => Arm A (search ON); DEFAULT_MAX_BATCH_SIZE not pinned"
   oc set env deployment/inferno -n "$SYS_NS" -c controller DEFAULT_MAX_BATCH_SIZE-
 fi
 
-# Collector simulate timeout > 2x maxWindowSec=30
+# NO_TUNER: disable the EKF tuner so the optimizer uses the seeded perfParms every cycle.
+if [[ -n "$NO_TUNER" ]]; then
+  echo "    NO_TUNER set => disabling EKF tuner (unset TUNER_HOST); optimizer runs on seeded perfParms"
+  oc set env deployment/inferno -n "$SYS_NS" -c controller TUNER_HOST-
+else
+  echo "    NO_TUNER unset => EKF tuner enabled (TUNER_HOST from deploy-loop.yaml)"
+fi
+
+# Collector simulate timeout > 2x maxWindowSec=60 (eval window is 60s in run17).
 # WATCH_NAMESPACE scopes the managed-deployment watch to inferno-workload so we
 # don't iterate the other team's deployments on the shared cluster (PR #35).
 oc set env deployment/inferno -n "$SYS_NS" -c collector \
-  INFERNO_SIMULATE_TIMEOUT_SEC=60 \
+  INFERNO_SIMULATE_TIMEOUT_SEC=150 \
   WATCH_NAMESPACE=inferno-workload
 
 # Actuator's pairing reconciler also needs WATCH_NAMESPACE for the same reason.
@@ -179,9 +198,10 @@ echo ""
 echo "    Watch the actuator pairing reconciler:"
 echo "      oc logs -f -n $SYS_NS deployment/inferno -c actuator"
 echo ""
-echo "    Verify the evaluator resolved its paired vLLM pod:"
-echo "      oc logs -n $WORK_NS deployment/vllm-qwen-14b-server -c evaluator | grep 'pairing resolved'"
-echo "      oc logs -n $WORK_NS deployment/vllm-llama-server    -c evaluator | grep 'pairing resolved'"
+echo "    Verify the evaluator resolved its paired vLLM pod (per deployed model):"
+for n in $wnames; do
+  echo "      oc logs -n $WORK_NS deployment/$n -c evaluator | grep 'pairing resolved'"
+done
 echo ""
 echo "    NOTE: control period = 120s (2 min); INFERNO_WARM_UP_TIMEOUT=10."
 echo "    perfParms are seeded so the first useful cycle should appear quickly."
