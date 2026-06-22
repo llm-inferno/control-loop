@@ -42,7 +42,7 @@ First Arm A deploy came up clean (M\*≈50, scale-out 1→2 on the first surge),
 
 Mid-ramp, the user flagged "a lot of pods running with unknown state." The optimizer had correctly scaled out (1→3→5), but the **paired vLLM Deployment couldn't place its 5th pod**: node `pokprod-b93r39s1` repeatedly threw `UnexpectedAdmissionError: ... nvlink ... GPU is lost` (allocatable 6 / capacity 8 — a dead GPU), leaving ~200 terminal litter pods.
 
-**Resolution:** scoped `nodeAffinity` exclusion of `pokprod-b93r39s1` on the vLLM Deployment (ample healthy H100 elsewhere). The first Arm A run (peak degraded to 4/5) was torn down; partial data retained as `armA-search-PARTIAL`. Agreed to re-run A clean after B.
+**Resolution:** scoped `nodeAffinity` exclusion of `pokprod-b93r39s1` on the vLLM Deployment (ample healthy H100 elsewhere). The first Arm A run (peak degraded to 4/5) was torn down and discarded; Arm A was re-run clean after B.
 
 ---
 

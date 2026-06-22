@@ -80,7 +80,6 @@ On real, throughput-bound vLLM, **the value of the optimizer's M\* search is rob
 ## Artifacts
 
 - `armA-search-cycles.jsonl`, `armB-low32-cycles.jsonl`, `armB-high128-cycles.jsonl` — per-arm cycle logs (+ `*-controller.log`)
-- `armA-search-PARTIAL-cycles.jsonl` — the first (node-degraded, 4/5) Arm A attempt, retained for the record
 - `analyze.py` — regime summary table · `plot_run17.py` → `run17-three-arm.png`
 
 **Reproduce** (all three arms; configs in `manifests/vllm-gpu/` + `inferno-data/vllm-gpu/`):

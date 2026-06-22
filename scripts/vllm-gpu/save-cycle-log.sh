@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Archive one experiment arm's cycle log + controller log from the inferno pod to
-# experiments/run17/. Run this AFTER an arm's 30-min sequence completes and BEFORE
-# redeploying the next arm — redeploy rolls a fresh controller pod and the in-pod
-# /tmp/inferno-cycles.jsonl starts empty, so the data is lost otherwise.
+# Archive one experiment arm's cycle log + all control-pod container logs from the
+# inferno pod to experiments/run17/. Run this AFTER an arm's 30-min sequence completes
+# and BEFORE redeploying the next arm — redeploy rolls a fresh controller pod and the
+# in-pod /tmp/inferno-cycles.jsonl starts empty, so the data is lost otherwise.
 #
 # Usage:
 #   scripts/vllm-gpu/save-cycle-log.sh <arm-label>
@@ -23,7 +23,12 @@ OUT="$(cd "$(dirname "$0")/../.." && pwd)/experiments/run17"
 mkdir -p "$OUT"
 
 oc exec -n "$SYS_NS" deployment/inferno -c controller -- cat "$POD_LOG" > "$OUT/${ARM}-cycles.jsonl"
-oc logs -n "$SYS_NS" deployment/inferno -c controller > "$OUT/${ARM}-controller.log" 2>&1 || true
-
 echo "saved $(wc -l < "$OUT/${ARM}-cycles.jsonl" | tr -d ' ') cycle records -> $OUT/${ARM}-cycles.jsonl"
-echo "saved controller log                 -> $OUT/${ARM}-controller.log"
+
+# Logs of all containers in the inferno control pod. The tuner container is always
+# present even under NO_TUNER (only TUNER_HOST is unset), so its log is captured too;
+# `|| true` keeps a missing/crashed container from aborting the archive.
+for c in controller collector optimizer actuator tuner; do
+  oc logs -n "$SYS_NS" deployment/inferno -c "$c" > "$OUT/${ARM}-${c}.log" 2>&1 || true
+  echo "saved ${c} log -> $OUT/${ARM}-${c}.log"
+done
