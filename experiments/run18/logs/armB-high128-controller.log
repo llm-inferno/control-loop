@@ -1,0 +1,32 @@
+Running with control period = 120 sec
+Running in dynamic mode = false
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] GET    /invoke                   --> github.com/llm-inferno/control-loop/pkg/controller.invoke (3 handlers)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://github.com/gin-gonic/gin/blob/master/docs/doc.md#dont-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :3300
+16:54:46.101:	 collect: 24	 tune: 0	 optimize: 3	 actuate: 33	 total: 61 msec
+16:56:46.093:	 collect: 21	 tune: 0	 optimize: 2	 actuate: 20	 total: 43 msec
+16:58:46.162:	 collect: 22	 tune: 0	 optimize: 2	 actuate: 78	 total: 102 msec
+17:00:46.110:	 collect: 23	 tune: 0	 optimize: 2	 actuate: 18	 total: 44 msec
+17:02:46.091:	 collect: 19	 tune: 0	 optimize: 1	 actuate: 19	 total: 39 msec
+17:04:46.106:	 collect: 18	 tune: 0	 optimize: 1	 actuate: 19	 total: 39 msec
+17:06:46.099:	 collect: 19	 tune: 0	 optimize: 1	 actuate: 26	 total: 47 msec
+17:08:46.106:	 collect: 19	 tune: 0	 optimize: 1	 actuate: 18	 total: 39 msec
+17:10:46.211:	 collect: 108	 tune: 0	 optimize: 1	 actuate: 34	 total: 144 msec
+17:12:46.138:	 collect: 21	 tune: 0	 optimize: 1	 actuate: 48	 total: 71 msec
+17:14:46.078:	 collect: 21	 tune: 0	 optimize: 2	 actuate: 16	 total: 40 msec
+17:16:46.091:	 collect: 18	 tune: 0	 optimize: 1	 actuate: 32	 total: 52 msec
+17:18:46.093:	 collect: 23	 tune: 0	 optimize: 1	 actuate: 20	 total: 44 msec
+17:20:46.103:	 collect: 24	 tune: 0	 optimize: 1	 actuate: 18	 total: 43 msec
+17:22:46.106:	 collect: 22	 tune: 0	 optimize: 0	 actuate: 17	 total: 41 msec
+17:24:46.104:	 collect: 17	 tune: 0	 optimize: 0	 actuate: 19	 total: 38 msec
+17:26:46.136:	 collect: 21	 tune: 0	 optimize: 1	 actuate: 46	 total: 69 msec
+17:28:46.095:	 collect: 20	 tune: 0	 optimize: 2	 actuate: 16	 total: 38 msec
+17:30:46.106:	 collect: 20	 tune: 0	 optimize: 2	 actuate: 16	 total: 39 msec
+17:32:46.118:	 collect: 26	 tune: 0	 optimize: 2	 actuate: 22	 total: 51 msec

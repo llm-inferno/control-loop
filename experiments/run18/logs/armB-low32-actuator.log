@@ -1,0 +1,69 @@
+Running internal in the cluster
+Kube client created
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /update                   --> github.com/llm-inferno/control-loop/pkg/actuator.update (3 handlers)
+actuator: starting pairing reconciler (tick=5s)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://github.com/gin-gonic/gin/blob/master/docs/doc.md#dont-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :3303
+srv=[vllm-qwen-14b/inferno-workload]: arrivalRateRPM=228.27; inTok=1100; outTok=483; acc=H100; num=2; batch=32 
+[GIN] 2026/06/23 - 16:15:31 | 200 |   36.529503ms |             ::1 | POST     "/update"
+pairing: scaling vllm inferno-workload/vllm-qwen-14b-gpu replicas 1 -> 2
+pairing: bound inferno-workload/vllm-qwen-14b-server-745dfcf7f8-v9drr <-> inferno-workload/vllm-qwen-14b-gpu-5f75c798c5-mqjf8 with id c69654ef-d9c9-490f-b2a5-56dd4ce6dc5e
+srv=[vllm-qwen-14b/inferno-workload]: arrivalRateRPM=217.45; inTok=1081; outTok=535; acc=H100; num=2; batch=32 
+[GIN] 2026/06/23 - 16:17:31 | 200 |   31.467713ms |             ::1 | POST     "/update"
+srv=[vllm-qwen-14b/inferno-workload]: arrivalRateRPM=275.13; inTok=919; outTok=563; acc=H100; num=2; batch=32 
+[GIN] 2026/06/23 - 16:19:31 | 200 |   16.355178ms |             ::1 | POST     "/update"
+srv=[vllm-qwen-14b/inferno-workload]: arrivalRateRPM=207.37; inTok=873; outTok=523; acc=H100; num=2; batch=32 
+[GIN] 2026/06/23 - 16:21:31 | 200 |   25.764006ms |             ::1 | POST     "/update"
+srv=[vllm-qwen-14b/inferno-workload]: arrivalRateRPM=249.34; inTok=921; outTok=467; acc=H100; num=2; batch=32 
+[GIN] 2026/06/23 - 16:23:31 | 200 |   17.510633ms |             ::1 | POST     "/update"
+srv=[vllm-qwen-14b/inferno-workload]: arrivalRateRPM=536.51; inTok=1096; outTok=518; acc=H100; num=3; batch=32 
+[GIN] 2026/06/23 - 16:25:31 | 200 |   25.987147ms |             ::1 | POST     "/update"
+pairing: scaling vllm inferno-workload/vllm-qwen-14b-gpu replicas 2 -> 3
+pairing: bound inferno-workload/vllm-qwen-14b-server-745dfcf7f8-7mpqr <-> inferno-workload/vllm-qwen-14b-gpu-5f75c798c5-bnnwl with id 82543d4e-77b1-4c3b-9d8f-0f873ef5426d
+srv=[vllm-qwen-14b/inferno-workload]: arrivalRateRPM=682.71; inTok=926; outTok=474; acc=H100; num=4; batch=32 
+[GIN] 2026/06/23 - 16:27:31 | 200 |   72.129455ms |             ::1 | POST     "/update"
+pairing: scaling vllm inferno-workload/vllm-qwen-14b-gpu replicas 3 -> 4
+pairing: bound inferno-workload/vllm-qwen-14b-server-745dfcf7f8-ngqm5 <-> inferno-workload/vllm-qwen-14b-gpu-5f75c798c5-c75kc with id 588a919e-0def-4742-bdf2-9abc47214380
+srv=[vllm-qwen-14b/inferno-workload]: arrivalRateRPM=1276.04; inTok=1101; outTok=468; acc=H100; num=6; batch=32 
+[GIN] 2026/06/23 - 16:29:31 | 200 |   37.348532ms |             ::1 | POST     "/update"
+pairing: scaling vllm inferno-workload/vllm-qwen-14b-gpu replicas 4 -> 6
+pairing: bound inferno-workload/vllm-qwen-14b-server-745dfcf7f8-gsgwj <-> inferno-workload/vllm-qwen-14b-gpu-5f75c798c5-d6fck with id 11e44bba-c0e2-4f5a-943c-2bfa549664e6
+pairing: bound inferno-workload/vllm-qwen-14b-server-745dfcf7f8-hxkcv <-> inferno-workload/vllm-qwen-14b-gpu-5f75c798c5-l5rll with id a398866d-4c9c-4af7-9f4d-f63880adfbd0
+srv=[vllm-qwen-14b/inferno-workload]: arrivalRateRPM=1279.17; inTok=1134; outTok=485; acc=H100; num=7; batch=32 
+[GIN] 2026/06/23 - 16:31:31 | 200 |   71.341176ms |             ::1 | POST     "/update"
+pairing: scaling vllm inferno-workload/vllm-qwen-14b-gpu replicas 6 -> 7
+pairing: bound inferno-workload/vllm-qwen-14b-server-745dfcf7f8-8579j <-> inferno-workload/vllm-qwen-14b-gpu-5f75c798c5-tx7q5 with id fc2f5f28-1f5f-48bf-aa46-67022cb03c8e
+srv=[vllm-qwen-14b/inferno-workload]: arrivalRateRPM=1071.67; inTok=1058; outTok=518; acc=H100; num=6; batch=32 
+[GIN] 2026/06/23 - 16:33:31 | 200 |    64.72939ms |             ::1 | POST     "/update"
+pairing: scaling vllm inferno-workload/vllm-qwen-14b-gpu replicas 7 -> 6
+srv=[vllm-qwen-14b/inferno-workload]: arrivalRateRPM=1312.26; inTok=1110; outTok=530; acc=H100; num=7; batch=32 
+[GIN] 2026/06/23 - 16:35:31 | 200 |   19.707333ms |             ::1 | POST     "/update"
+pairing: scaling vllm inferno-workload/vllm-qwen-14b-gpu replicas 6 -> 7
+pairing: bound inferno-workload/vllm-qwen-14b-server-745dfcf7f8-22h7j <-> inferno-workload/vllm-qwen-14b-gpu-5f75c798c5-7xfc6 with id 4a21c20b-b2bc-4221-b091-0b4e27d90c39
+srv=[vllm-qwen-14b/inferno-workload]: arrivalRateRPM=756.58; inTok=1011; outTok=504; acc=H100; num=4; batch=32 
+[GIN] 2026/06/23 - 16:37:31 | 200 |   83.876155ms |             ::1 | POST     "/update"
+pairing: scaling vllm inferno-workload/vllm-qwen-14b-gpu replicas 7 -> 4
+srv=[vllm-qwen-14b/inferno-workload]: arrivalRateRPM=306.00; inTok=983; outTok=545; acc=H100; num=2; batch=32 
+[GIN] 2026/06/23 - 16:39:31 | 200 |   29.549089ms |             ::1 | POST     "/update"
+pairing: scaling vllm inferno-workload/vllm-qwen-14b-gpu replicas 4 -> 2
+pairing: bound inferno-workload/vllm-qwen-14b-server-745dfcf7f8-wvdl6 <-> inferno-workload/vllm-qwen-14b-gpu-5f75c798c5-l5rll with id c47f8499-1302-4daf-a307-17664837f15f
+srv=[vllm-qwen-14b/inferno-workload]: arrivalRateRPM=234.45; inTok=960; outTok=520; acc=H100; num=2; batch=32 
+[GIN] 2026/06/23 - 16:41:31 | 200 |    92.17673ms |             ::1 | POST     "/update"
+pairing: bound inferno-workload/vllm-qwen-14b-server-745dfcf7f8-wvdl6 <-> inferno-workload/vllm-qwen-14b-gpu-5f75c798c5-bnnwl with id 25b31185-3f98-4d31-bd21-54c9a22593e0
+srv=[vllm-qwen-14b/inferno-workload]: arrivalRateRPM=244.50; inTok=999; outTok=460; acc=H100; num=2; batch=32 
+[GIN] 2026/06/23 - 16:43:31 | 200 |    15.10312ms |             ::1 | POST     "/update"
+srv=[vllm-qwen-14b/inferno-workload]: arrivalRateRPM=230.66; inTok=858; outTok=477; acc=H100; num=2; batch=32 
+[GIN] 2026/06/23 - 16:45:31 | 200 |   93.135837ms |             ::1 | POST     "/update"
+srv=[vllm-qwen-14b/inferno-workload]: arrivalRateRPM=236.96; inTok=1105; outTok=510; acc=H100; num=2; batch=32 
+[GIN] 2026/06/23 - 16:47:31 | 200 |   23.430896ms |             ::1 | POST     "/update"
+srv=[vllm-qwen-14b/inferno-workload]: arrivalRateRPM=276.26; inTok=1150; outTok=588; acc=H100; num=2; batch=32 
+[GIN] 2026/06/23 - 16:49:31 | 200 |   15.780456ms |             ::1 | POST     "/update"
+srv=[vllm-qwen-14b/inferno-workload]: arrivalRateRPM=331.82; inTok=1099; outTok=416; acc=H100; num=2; batch=32 
+[GIN] 2026/06/23 - 16:51:31 | 200 |   93.462202ms |             ::1 | POST     "/update"

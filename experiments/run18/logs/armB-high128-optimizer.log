@@ -1,0 +1,162 @@
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /optimizeOne              --> github.com/llm-inferno/optimizer-light/rest-server.optimizeOne (3 handlers)
+[GIN-debug] GET    /getAccelerators          --> github.com/llm-inferno/optimizer-light/rest-server.getAccelerators (3 handlers)
+[GIN-debug] GET    /getAccelerator/:name     --> github.com/llm-inferno/optimizer-light/rest-server.getAccelerator (3 handlers)
+[GIN-debug] GET    /getCapacities            --> github.com/llm-inferno/optimizer-light/rest-server.getCapacities (3 handlers)
+[GIN-debug] GET    /getCapacity/:type        --> github.com/llm-inferno/optimizer-light/rest-server.getCapacity (3 handlers)
+[GIN-debug] GET    /getModels                --> github.com/llm-inferno/optimizer-light/rest-server.getModels (3 handlers)
+[GIN-debug] GET    /getModel/:name           --> github.com/llm-inferno/optimizer-light/rest-server.getModel (3 handlers)
+[GIN-debug] GET    /getServiceClasses        --> github.com/llm-inferno/optimizer-light/rest-server.getServiceClasses (3 handlers)
+[GIN-debug] GET    /getServiceClass/:name    --> github.com/llm-inferno/optimizer-light/rest-server.getServiceClass (3 handlers)
+[GIN-debug] GET    /getServiceClassModelTarget/:name/:model --> github.com/llm-inferno/optimizer-light/rest-server.getServiceClassModelTarget (3 handlers)
+[GIN-debug] GET    /getServers               --> github.com/llm-inferno/optimizer-light/rest-server.getServers (3 handlers)
+[GIN-debug] GET    /getServer/:name          --> github.com/llm-inferno/optimizer-light/rest-server.getServer (3 handlers)
+[GIN-debug] GET    /getModelAcceleratorPerf/:name/:acc --> github.com/llm-inferno/optimizer-light/rest-server.getModelAcceleratorPerf (3 handlers)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://github.com/gin-gonic/gin/blob/master/docs/doc.md#dont-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :3302
+Solution: 
+s=vllm-qwen-14b; c=Bronze; m=qwen_2_5_14b; rate=237.2717; inTk=1064; outTk=549; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=128; cost=1, val=0, itl=19.093021, ttft=82.36119, rho=0.3257956, maxRPM=251.22737}; slo-itl=20, slo-ttft=1500, slo-tps=0 
+AllocationByType: 
+name=H100, count=1, limit=8, cost=1 
+totalCost=1 
+
+[GIN] 2026/06/23 - 16:54:46 | 200 |    1.937052ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=vllm-qwen-14b; c=Bronze; m=qwen_2_5_14b; rate=267.7881; inTk=1178; outTk=439; sol=1, sat=false, alloc={acc=H100; numRep=2; maxBatch=128; cost=2, val=2, itl=14.015707, ttft=76.93582, rho=0.10836727, maxRPM=267.37384}; slo-itl=20, slo-ttft=1500, slo-tps=0 
+AllocationByType: 
+name=H100, count=2, limit=8, cost=2 
+totalCost=2 
+
+[GIN] 2026/06/23 - 16:56:46 | 200 |     456.208µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=vllm-qwen-14b; c=Bronze; m=qwen_2_5_14b; rate=299.0165; inTk=783; outTk=434; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=128; cost=1, val=1, itl=17.33121, ttft=67.1314, rho=0.29479387, maxRPM=364.3247}; slo-itl=20, slo-ttft=1500, slo-tps=0 
+AllocationByType: 
+name=H100, count=1, limit=8, cost=1 
+totalCost=1 
+
+[GIN] 2026/06/23 - 16:58:46 | 200 |     432.067µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=vllm-qwen-14b; c=Bronze; m=qwen_2_5_14b; rate=219.7635; inTk=942; outTk=469; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=128; cost=1, val=0, itl=16.159174, ttft=71.407455, rho=0.21844436, maxRPM=304.06415}; slo-itl=20, slo-ttft=1500, slo-tps=0 
+AllocationByType: 
+name=H100, count=1, limit=8, cost=1 
+totalCost=1 
+
+[GIN] 2026/06/23 - 17:00:46 | 200 |     585.326µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=vllm-qwen-14b; c=Bronze; m=qwen_2_5_14b; rate=263.5531; inTk=966; outTk=539; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=128; cost=1, val=0, itl=19.45101, ttft=78.996994, rho=0.3618241, maxRPM=272.5359}; slo-itl=20, slo-ttft=1500, slo-tps=0 
+AllocationByType: 
+name=H100, count=1, limit=8, cost=1 
+totalCost=1 
+
+[GIN] 2026/06/23 - 17:02:46 | 200 |     394.343µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=vllm-qwen-14b; c=Bronze; m=qwen_2_5_14b; rate=500.2225; inTk=851; outTk=570; sol=1, sat=false, alloc={acc=H100; numRep=2; maxBatch=128; cost=2, val=2, itl=18.065523, ttft=71.44096, rho=0.33708757, maxRPM=285.77972}; slo-itl=20, slo-ttft=1500, slo-tps=0 
+AllocationByType: 
+name=H100, count=2, limit=8, cost=2 
+totalCost=2 
+
+[GIN] 2026/06/23 - 17:04:46 | 200 |     612.911µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=vllm-qwen-14b; c=Bronze; m=qwen_2_5_14b; rate=830.7425; inTk=870; outTk=510; sol=1, sat=false, alloc={acc=H100; numRep=3; maxBatch=128; cost=3, val=3, itl=18.560081, ttft=73.21699, rho=0.34326893, maxRPM=304.45364}; slo-itl=20, slo-ttft=1500, slo-tps=0 
+AllocationByType: 
+name=H100, count=3, limit=8, cost=3 
+totalCost=3 
+
+[GIN] 2026/06/23 - 17:06:46 | 200 |     619.589µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=vllm-qwen-14b; c=Bronze; m=qwen_2_5_14b; rate=1319.1731; inTk=1018; outTk=496; sol=1, sat=false, alloc={acc=H100; numRep=5; maxBatch=128; cost=5, val=5, itl=19.202002, ttft=80.65911, rho=0.32930028, maxRPM=277.3026}; slo-itl=20, slo-ttft=1500, slo-tps=0 
+AllocationByType: 
+name=H100, count=5, limit=8, cost=5 
+totalCost=5 
+
+[GIN] 2026/06/23 - 17:08:46 | 200 |     397.365µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=vllm-qwen-14b; c=Bronze; m=qwen_2_5_14b; rate=1100.2819; inTk=942; outTk=492; sol=1, sat=false, alloc={acc=H100; numRep=4; maxBatch=128; cost=4, val=4, itl=18.912905, ttft=76.91752, rho=0.33535513, maxRPM=294.85358}; slo-itl=20, slo-ttft=1500, slo-tps=0 
+AllocationByType: 
+name=H100, count=4, limit=8, cost=4 
+totalCost=4 
+
+[GIN] 2026/06/23 - 17:10:46 | 200 |     408.442µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=vllm-qwen-14b; c=Bronze; m=qwen_2_5_14b; rate=1141.1024; inTk=998; outTk=508; sol=1, sat=false, alloc={acc=H100; numRep=5; maxBatch=128; cost=5, val=5, itl=17.3788, ttft=76.18164, rho=0.26409486, maxRPM=277.01242}; slo-itl=20, slo-ttft=1500, slo-tps=0 
+AllocationByType: 
+name=H100, count=5, limit=8, cost=5 
+totalCost=5 
+
+[GIN] 2026/06/23 - 17:12:46 | 200 |     428.077µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=vllm-qwen-14b; c=Bronze; m=qwen_2_5_14b; rate=1136.6865; inTk=1040; outTk=486; sol=1, sat=false, alloc={acc=H100; numRep=5; maxBatch=128; cost=5, val=0, itl=17.357399, ttft=77.88428, rho=0.25149852, maxRPM=276.53253}; slo-itl=20, slo-ttft=1500, slo-tps=0 
+AllocationByType: 
+name=H100, count=5, limit=8, cost=5 
+totalCost=5 
+
+[GIN] 2026/06/23 - 17:14:46 | 200 |    1.497663ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=vllm-qwen-14b; c=Bronze; m=qwen_2_5_14b; rate=801.4696; inTk=1056; outTk=487; sol=1, sat=false, alloc={acc=H100; numRep=3; maxBatch=128; cost=3, val=3, itl=19.636337, ttft=83.10815, rho=0.33486292, maxRPM=273.07068}; slo-itl=20, slo-ttft=1500, slo-tps=0 
+AllocationByType: 
+name=H100, count=3, limit=8, cost=3 
+totalCost=3 
+
+[GIN] 2026/06/23 - 17:16:46 | 200 |     427.603µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=vllm-qwen-14b; c=Bronze; m=qwen_2_5_14b; rate=274.7943; inTk=945; outTk=539; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=128; cost=1, val=1, itl=19.878105, ttft=78.977066, rho=0.38547763, maxRPM=276.77582}; slo-itl=20, slo-ttft=1500, slo-tps=0 
+AllocationByType: 
+name=H100, count=1, limit=8, cost=1 
+totalCost=1 
+
+[GIN] 2026/06/23 - 17:18:46 | 200 |     384.056µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=vllm-qwen-14b; c=Bronze; m=qwen_2_5_14b; rate=283.2538; inTk=1143; outTk=491; sol=1, sat=false, alloc={acc=H100; numRep=2; maxBatch=128; cost=2, val=2, itl=14.46912, ttft=76.39493, rho=0.1321531, maxRPM=256.03452}; slo-itl=20, slo-ttft=1500, slo-tps=0 
+AllocationByType: 
+name=H100, count=2, limit=8, cost=2 
+totalCost=2 
+
+[GIN] 2026/06/23 - 17:20:46 | 200 |      414.97µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=vllm-qwen-14b; c=Bronze; m=qwen_2_5_14b; rate=214.7749; inTk=948; outTk=462; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=128; cost=1, val=1, itl=15.940238, ttft=71.21839, rho=0.2074946, maxRPM=305.54657}; slo-itl=20, slo-ttft=1500, slo-tps=0 
+AllocationByType: 
+name=H100, count=1, limit=8, cost=1 
+totalCost=1 
+
+[GIN] 2026/06/23 - 17:22:46 | 200 |     319.987µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=vllm-qwen-14b; c=Bronze; m=qwen_2_5_14b; rate=291.3564; inTk=923; outTk=541; sol=1, sat=false, alloc={acc=H100; numRep=2; maxBatch=128; cost=2, val=2, itl=14.1580305, ttft=66.621315, rho=0.1462844, maxRPM=280.64026}; slo-itl=20, slo-ttft=1500, slo-tps=0 
+AllocationByType: 
+name=H100, count=2, limit=8, cost=2 
+totalCost=2 
+
+[GIN] 2026/06/23 - 17:24:46 | 200 |     315.166µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=vllm-qwen-14b; c=Bronze; m=qwen_2_5_14b; rate=251.7869; inTk=1036; outTk=551; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=128; cost=1, val=1, itl=19.756601, ttft=82.52298, rho=0.35894892, maxRPM=255.46658}; slo-itl=20, slo-ttft=1500, slo-tps=0 
+AllocationByType: 
+name=H100, count=1, limit=8, cost=1 
+totalCost=1 
+
+[GIN] 2026/06/23 - 17:26:46 | 200 |     423.915µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=vllm-qwen-14b; c=Bronze; m=qwen_2_5_14b; rate=249.8178; inTk=1271; outTk=427; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=128; cost=1, val=0, itl=19.613293, ttft=91.99776, rho=0.27477553, maxRPM=255.7356}; slo-itl=20, slo-ttft=1500, slo-tps=0 
+AllocationByType: 
+name=H100, count=1, limit=8, cost=1 
+totalCost=1 
+
+[GIN] 2026/06/23 - 17:28:46 | 200 |    1.629857ms |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=vllm-qwen-14b; c=Bronze; m=qwen_2_5_14b; rate=254.9012; inTk=1107; outTk=445; sol=1, sat=false, alloc={acc=H100; numRep=1; maxBatch=128; cost=1, val=0, itl=18.656788, ttft=83.26495, rho=0.2776989, maxRPM=278.35306}; slo-itl=20, slo-ttft=1500, slo-tps=0 
+AllocationByType: 
+name=H100, count=1, limit=8, cost=1 
+totalCost=1 
+
+[GIN] 2026/06/23 - 17:30:46 | 200 |     707.044µs |             ::1 | POST     "/optimizeOne"
+Solution: 
+s=vllm-qwen-14b; c=Bronze; m=qwen_2_5_14b; rate=263.105; inTk=1083; outTk=517; sol=1, sat=false, alloc={acc=H100; numRep=2; maxBatch=128; cost=2, val=2, itl=14.087719, ttft=73.13822, rho=0.12576969, maxRPM=258.01096}; slo-itl=20, slo-ttft=1500, slo-tps=0 
+AllocationByType: 
+name=H100, count=2, limit=8, cost=2 
+totalCost=2 
+
+[GIN] 2026/06/23 - 17:32:46 | 200 |    1.549542ms |             ::1 | POST     "/optimizeOne"

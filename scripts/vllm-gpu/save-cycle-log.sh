@@ -17,13 +17,21 @@ set -euo pipefail
 
 ARM="${1:?usage: save-cycle-log.sh <arm-label>}"
 SYS_NS="${SYS_NS:-inferno-system}"
+WORK_NS="${WORK_NS:-inferno-workload}"
 POD_LOG="${POD_LOG:-/tmp/inferno-cycles.jsonl}"
-OUT="$(cd "$(dirname "$0")/../.." && pwd)/experiments/run17"
+# RUN selects the experiment dir (e.g. RUN=run18). Defaults to run17 for backward compat.
+RUN="${RUN:-run17}"
+# WORKLOAD names the managed wrapper deployment whose server-sim + evaluator container
+# logs we archive (space-separated for multi-model runs). Defaults to the run17/run18
+# single-model qwen arm.
+WORKLOAD="${WORKLOAD:-vllm-qwen-14b-server}"
+OUT="$(cd "$(dirname "$0")/../.." && pwd)/experiments/${RUN}"
 LOGS="$OUT/logs"   # raw per-container dumps live here, separate from the analyzed cycle data
 
 mkdir -p "$LOGS"
 
-# Cycle log stays at the run-dir top level — analyze.py / plot_run17.py read it there.
+# Cycle log (the "dashboard log" the Dash app reads) stays at the run-dir top level —
+# analyze.py / plot read it there.
 oc exec -n "$SYS_NS" deployment/inferno -c controller -- cat "$POD_LOG" > "$OUT/${ARM}-cycles.jsonl"
 echo "saved $(wc -l < "$OUT/${ARM}-cycles.jsonl" | tr -d ' ') cycle records -> $OUT/${ARM}-cycles.jsonl"
 
@@ -33,4 +41,14 @@ echo "saved $(wc -l < "$OUT/${ARM}-cycles.jsonl" | tr -d ' ') cycle records -> $
 for c in controller collector optimizer actuator tuner; do
   oc logs -n "$SYS_NS" deployment/inferno -c "$c" > "$LOGS/${ARM}-${c}.log" 2>&1 || true
   echo "saved ${c} log -> $LOGS/${ARM}-${c}.log"
+done
+
+# Logs of the managed workload pod's two sidecars: server-sim (traffic generator) and
+# evaluator (continuous-vllm-server backend). These carry the per-pod /latest envelope,
+# pairing-resolution, and offered-load behaviour — essential for diagnosing the run.
+for w in $WORKLOAD; do
+  for c in server-sim evaluator; do
+    oc logs -n "$WORK_NS" deployment/"$w" -c "$c" > "$LOGS/${ARM}-${w}-${c}.log" 2>&1 || true
+    echo "saved ${w}/${c} log -> $LOGS/${ARM}-${w}-${c}.log"
+  done
 done

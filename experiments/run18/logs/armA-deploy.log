@@ -1,0 +1,71 @@
+==> Pre-flight: oc whoami
+tantawi@us.ibm.com
+    server: https://api.pokprod001.ete14.res.ibm.com:6443
+==> Creating namespaces
+namespace/inferno-system unchanged
+namespace/inferno-workload unchanged
+==> Creating HF token secret in inferno-workload
+secret/hf-token-secret unchanged
+==> Creating PVC + RBAC in inferno-workload
+persistentvolumeclaim/vllm-models-cache unchanged
+serviceaccount/vllm-server-evaluator unchanged
+role.rbac.authorization.k8s.io/vllm-server-evaluator unchanged
+rolebinding.rbac.authorization.k8s.io/vllm-server-evaluator unchanged
+==> Creating eval ConfigMap in inferno-workload
+configmap/vllm-server-eval-config configured
+==> Creating inferno static + dynamic data ConfigMaps in inferno-system
+configmap/inferno-static-data unchanged
+configmap/inferno-dynamic-data unchanged
+==> Creating tuner ConfigMap in inferno-system (namespace rewritten)
+configmap/model-tuner-config unchanged
+==> Deploying inferno pod (controller, collector, optimizer, actuator, tuner) into inferno-system
+serviceaccount/inferno unchanged
+clusterrole.rbac.authorization.k8s.io/inferno unchanged
+clusterrolebinding.rbac.authorization.k8s.io/inferno unchanged
+deployment.apps/inferno created
+service/inferno unchanged
+deployment.apps/inferno updated
+    ARM_MAXBATCH unset => Arm A (search ON); DEFAULT_MAX_BATCH_SIZE not pinned
+deployment.apps/inferno updated
+    NO_TUNER set => disabling EKF tuner (unset TUNER_HOST); optimizer runs on seeded perfParms
+deployment.apps/inferno updated
+deployment.apps/inferno updated
+deployment.apps/inferno updated
+Waiting for deployment spec update to be observed...
+Waiting for deployment "inferno" rollout to finish: 0 out of 1 new replicas have been updated...
+Waiting for deployment "inferno" rollout to finish: 0 out of 1 new replicas have been updated...
+Waiting for deployment "inferno" rollout to finish: 0 out of 1 new replicas have been updated...
+Waiting for deployment "inferno" rollout to finish: 0 out of 1 new replicas have been updated...
+Waiting for deployment "inferno" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "inferno" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "inferno" rollout to finish: 1 old replicas are pending termination...
+deployment "inferno" successfully rolled out
+==> Deploying vLLM servers (qwen) on H100
+deployment.apps/vllm-qwen-14b-gpu created
+    First-run weight download to PVC may take ~15-30 min.
+    Waiting for vLLM Deployment(s) to become Available...
+deployment.apps/vllm-qwen-14b-gpu condition met
+==> Deploying managed wrappers (server-sim + vllm-server evaluator)
+deployment.apps/vllm-qwen-14b-server created
+Waiting for deployment "vllm-qwen-14b-server" rollout to finish: 0 of 1 updated replicas are available...
+deployment "vllm-qwen-14b-server" successfully rolled out
+==> Deploying load emulator (profile from configmap-load-phases.yaml)
+configmap/load-phases-config unchanged
+pod/load-emulator created
+
+==> Done.
+
+    Watch controller logs:
+      oc logs -f -n inferno-system deployment/inferno -c controller
+
+    Watch tuner EKF output:
+      oc logs -f -n inferno-system deployment/inferno -c tuner
+
+    Watch the actuator pairing reconciler:
+      oc logs -f -n inferno-system deployment/inferno -c actuator
+
+    Verify the evaluator resolved its paired vLLM pod (per deployed model):
+      oc logs -n inferno-workload deployment/vllm-qwen-14b-server -c evaluator | grep 'pairing resolved'
+
+    NOTE: control period = 120s (2 min); INFERNO_WARM_UP_TIMEOUT=10.
+    perfParms are seeded so the first useful cycle should appear quickly.

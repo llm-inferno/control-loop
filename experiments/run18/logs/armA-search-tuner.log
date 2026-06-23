@@ -1,0 +1,2 @@
+2026/06/23 15:28:47 INFO Starting TunerService host=0.0.0.0 port=3304 warmUpCycles=3 initObs=3 holdBack=true estimatorMode=sliding-window windowSize=10 residualThreshold=0.5 initFitThreshold=10 maxConditionNumber=1000
+2026/06/23 15:28:47 INFO starting TunerServer addr=0.0.0.0:3304
