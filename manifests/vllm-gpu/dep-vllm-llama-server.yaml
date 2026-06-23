@@ -63,7 +63,8 @@ spec:
         - name: evaluator
           image: quay.io/atantawi/inferno-evaluator:latest
           imagePullPolicy: Always
-          args: ["vllm-server"]
+          # continuous-vllm-server backend (see dep-vllm-qwen-server.yaml note).
+          args: ["continuous-vllm-server"]
           ports:
             - containerPort: 8081
           env:

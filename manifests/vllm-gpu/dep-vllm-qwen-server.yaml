@@ -63,7 +63,12 @@ spec:
         - name: evaluator
           image: quay.io/atantawi/inferno-evaluator:latest
           imagePullPolicy: Always
-          args: ["vllm-server"]
+          # continuous-vllm-server: persistent arrival loop + trailing-window
+          # aggregation (server-sim PR #24). The inferno.server.evaluator label
+          # stays "vllm-server" so the Actuator pairing reconciler still fires;
+          # only the binary (this arg) changes. Reads trailingWindowSec from the
+          # eval ConfigMap; ignores minWindowSec/maxWindowSec/targetSamples.
+          args: ["continuous-vllm-server"]
           ports:
             - containerPort: 8081
           env:
