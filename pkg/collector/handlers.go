@@ -103,8 +103,8 @@ func collect(c *gin.Context) {
 		// simulate running pods and compute throughput-weighted average ITL/TTFT
 		// plus the per-replica mean in-service occupancy (occAvg)
 		var itlAvg, ttftAvg, occAvg float32
-		var totalThroughputRPM float64
-		var numReplicas int
+		var totalThroughputRPM, totalOfferedRPM float64
+		var numReporting, numReplicas int
 		selectorStr := labels.Set(d.Spec.Selector.MatchLabels).String()
 
 		rsList, err := KubeClient.AppsV1().ReplicaSets(d.Namespace).List(context.TODO(), metav1.ListOptions{
@@ -166,7 +166,6 @@ func collect(c *gin.Context) {
 
 				// aggregate
 				var weightedITL, weightedTTFT, sumOcc float64
-				var numReporting int
 				for i, p := range runningPods {
 					if errs[i] != nil {
 						fmt.Printf("pod %s: no result this cycle (%v); skipping\n", p.Name, errs[i])
@@ -196,6 +195,7 @@ func collect(c *gin.Context) {
 					weightedTTFT += float64(spec.CurrentAlloc.TTFTAverage) * w
 					sumOcc += float64(spec.CurrentAlloc.AvgConcurrency)
 					totalThroughputRPM += w
+					totalOfferedRPM += float64(spec.CurrentAlloc.Load.ArrivalRate)
 					numReporting++
 					replicaSpecs = append(replicaSpecs, spec)
 				}
@@ -209,6 +209,37 @@ func collect(c *gin.Context) {
 			}
 		}
 
+		// Deployment-level offered load: sum the per-pod offered (ArrivalRate =
+		// effectiveInput.RPS*60, replicaspec.go) over the reporting pods, mirroring
+		// how Throughput sums each pod's completion. Pairing both quantities over the
+		// same reporting set makes the deployment (offered, throughput) pair sourced
+		// the same way the per-pod pair is, carrying the server-sim #26/#27 per-pod
+		// consistency up to the level the optimizer consumes. (For continuous-vllm-server
+		// the per-pod offered is the trailing-window average, so this sum is too; for
+		// windowed vllm-server it is the per-window setpoint, and for queue-analysis/blis
+		// the retry-reduced load — the window-averaging is specific to the continuous
+		// backend, the same-source pairing holds for all of them.)
+		//
+		// The sum spans only the reporting (coherence-passing) pods, so during a
+		// scale-out or M* transient where some pods are gated it under-represents the
+		// deployment by the gated pods' share for that cycle — the same partial-set
+		// property Throughput already has, and self-clearing once propagation completes.
+		// This is the deliberate #55 trade-off: a measured offered consistent with the
+		// measured throughput, over the deployment-wide setpoint.
+		//
+		// When NO pod reports a usable /latest this cycle (cold start, or every pod
+		// coherence-gated right after an M* change), prefer the Load Emulator's offered
+		// setpoint label (load.rpm) — an offered-meaning quantity — over the Prometheus
+		// completion-rate proxy (arrvRate), which depresses under saturation and would
+		// reintroduce the offered/throughput conflation #55 removes. The completion-rate
+		// proxy stays as a last-resort backup when the setpoint label is absent.
+		arrivalRateRPM := arrvRate
+		if numReporting > 0 {
+			arrivalRateRPM = totalOfferedRPM
+		} else if setpoint, perr := strconv.ParseFloat(d.Labels[ctrl.KeyArrivalRate], 64); perr == nil && setpoint > 0 {
+			arrivalRateRPM = setpoint
+		}
+
 		curAlloc := config.AllocationData{
 			Accelerator:    d.Labels[ctrl.KeyAccelerator],
 			NumReplicas:    int(numReplicas),
@@ -217,9 +248,7 @@ func collect(c *gin.Context) {
 			TTFTAverage:    ttftAvg,
 			AvgConcurrency: occAvg,
 			Load: config.ServerLoadSpec{
-				// TODO: use a separate arrival-rate query when available;
-				// for now arrival rate and throughput are both set from the same Prometheus query.
-				ArrivalRate:  float32(arrvRate),
+				ArrivalRate:  float32(arrivalRateRPM),
 				Throughput:   float32(totalThroughputRPM),
 				AvgInTokens:  int(inTokens),
 				AvgOutTokens: int(outTokens),
