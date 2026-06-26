@@ -105,8 +105,12 @@ func (lg *LoadEmulator) Run() {
 					depKey, phaseIdx, multiplier, adjustedNomRPM)
 			}
 
-			// update nominal.rpm label to reflect current phase-adjusted value
-			d.Labels[ctrl.KeyNominalArrivalRate] = fmt.Sprintf("%.4f", adjustedNomRPM)
+			// nominal.rpm is the static mean-reversion target (read once into
+			// originalNominalRPM above); the emulator must not write it back, or a
+			// mid-run restart would re-read the phase-adjusted value as its baseline
+			// and operators' nominal patches would be clobbered (see issue #29). The
+			// live phase-adjusted load is reflected on the deployment/pod `rpm` labels
+			// (KeyArrivalRate) below, not here.
 
 			// perturb arrival rates and number of tokens randomly
 			lg.perturbLoad(&curRPM, &curInTokens, &curOutTokens, adjustedNomRPM, nomInTokens, nomOutTokens)
