@@ -209,36 +209,27 @@ func collect(c *gin.Context) {
 			}
 		}
 
-		// Deployment-level offered load: sum the per-pod offered (ArrivalRate =
+		// Deployment-level offered load: when every replica reports a coherent /latest
+		// (numReporting == numReplicas), sum the per-pod offered (ArrivalRate =
 		// effectiveInput.RPS*60, replicaspec.go) over the reporting pods, mirroring
-		// how Throughput sums each pod's completion. Pairing both quantities over the
-		// same reporting set makes the deployment (offered, throughput) pair sourced
-		// the same way the per-pod pair is, carrying the server-sim #26/#27 per-pod
-		// consistency up to the level the optimizer consumes. (For continuous-vllm-server
-		// the per-pod offered is the trailing-window average, so this sum is too; for
-		// windowed vllm-server it is the per-window setpoint, and for queue-analysis/blis
-		// the retry-reduced load — the window-averaging is specific to the continuous
-		// backend, the same-source pairing holds for all of them.)
+		// how Throughput sums each pod's completion. This is the deliberate #55
+		// same-source pairing: both quantities drawn from the same reporting set, so
+		// the deployment (offered, throughput) pair is consistent the same way the
+		// per-pod pair is. (For continuous-vllm-server the per-pod offered is the
+		// trailing-window average, so the sum is too; for windowed vllm-server it is
+		// the per-window setpoint, and for queue-analysis/blis the retry-reduced load.)
 		//
-		// The sum spans only the reporting (coherence-passing) pods, so during a
-		// scale-out or M* transient where some pods are gated it under-represents the
-		// deployment by the gated pods' share for that cycle — the same partial-set
-		// property Throughput already has, and self-clearing once propagation completes.
-		// This is the deliberate #55 trade-off: a measured offered consistent with the
-		// measured throughput, over the deployment-wide setpoint.
-		//
-		// When NO pod reports a usable /latest this cycle (cold start, or every pod
-		// coherence-gated right after an M* change), prefer the Load Emulator's offered
-		// setpoint label (load.rpm) — an offered-meaning quantity — over the Prometheus
-		// completion-rate proxy (arrvRate), which depresses under saturation and would
-		// reintroduce the offered/throughput conflation #55 removes. The completion-rate
-		// proxy stays as a last-resort backup when the setpoint label is absent.
-		arrivalRateRPM := arrvRate
-		if numReporting > 0 {
-			arrivalRateRPM = totalOfferedRPM
-		} else if setpoint, perr := strconv.ParseFloat(d.Labels[ctrl.KeyArrivalRate], 64); perr == nil && setpoint > 0 {
-			arrivalRateRPM = setpoint
-		}
+		// When reporting is partial or empty (numReporting < numReplicas) — some pods
+		// coherence-gated (fresh-pod maxbatchsize label skew) or none yet ready (cold
+		// start) — the measured Σ under-counts by the missing pods' offered share and
+		// would drive a spurious scale-down. Prefer the Load Emulator's offered setpoint
+		// label (load.rpm), an offered-meaning quantity, instead. The Prometheus
+		// completion-rate proxy (arrvRate) depresses under saturation and is kept only
+		// as a last-resort backup when the setpoint label is absent. See
+		// selectArrivalRate and docs/superpowers/specs/2026-06-28-partial-reporting-arrival-undercount-design.md.
+		setpoint, perr := strconv.ParseFloat(d.Labels[ctrl.KeyArrivalRate], 64)
+		hasSetpoint := perr == nil && setpoint > 0
+		arrivalRateRPM := selectArrivalRate(numReporting, numReplicas, totalOfferedRPM, setpoint, arrvRate, hasSetpoint)
 
 		curAlloc := config.AllocationData{
 			Accelerator:    d.Labels[ctrl.KeyAccelerator],
@@ -286,4 +277,29 @@ func collect(c *gin.Context) {
 	}
 
 	c.IndentedJSON(http.StatusOK, serverCollectorInfo)
+}
+
+// selectArrivalRate chooses the deployment-level offered arrival rate (RPM).
+//
+// When every replica reports a coherent /latest (numReporting == numReplicas),
+// the measured Σ-over-pods offered (totalOfferedRPM) is the consistent #55
+// same-source pairing with Throughput. When reporting is partial — some pods
+// coherence-gated (fresh-pod maxbatchsize label skew) or not yet ready — that
+// sum under-counts by the missing pods' offered share and would make the
+// optimizer scale down spuriously, so prefer the gating-independent deployment
+// offered setpoint label (load.rpm). The setpoint label is also used on zero
+// reporting (unchanged). Only when no setpoint label is available do we fall
+// back to the partial measured sum (if any pod reported) or the Prometheus /
+// static backup arvRate.
+func selectArrivalRate(numReporting, numReplicas int, totalOfferedRPM, setpoint, arvRate float64, hasSetpoint bool) float64 {
+	switch {
+	case numReporting > 0 && numReporting == numReplicas:
+		return totalOfferedRPM
+	case hasSetpoint:
+		return setpoint
+	case numReporting > 0:
+		return totalOfferedRPM
+	default:
+		return arvRate
+	}
 }
