@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: load-phases-config
+  namespace: inferno
+data:
+  phases.yaml: |
+    # run19 — run18's single-model 5x RAMP profile, reused unchanged so cycle
+    # counts line up with run18 arm A for the sim-vs-real overlay.
+    # nominal.rpm=250 sets 1x; 5x=1250 RPM. Ratios are chained-multiplicative;
+    # hold phases use ratio: 1.0 and ramp phases carry the multiplier change.
+    # Sequence (30 min): baseline 250 (10m) -> ramp ->5x=1250 (6m) -> hold 1250
+    # (6m) -> ramp back ->250 (4m) -> hold 250 forever (until teardown).
+    phases:
+      - duration: 10m
+        ratio: 1.0       # baseline hold at 1x (250 RPM)
+      - duration: 6m
+        ratio: 5.0       # ramp 1x -> 5x (250 -> 1250 RPM)
+      - duration: 6m
+        ratio: 1.0       # hold at 5x (1250 RPM)
+      - duration: 4m
+        ratio: 0.2       # ramp 5x -> 1x (1250 -> 250 RPM)
+      - duration: 0s     # hold at 1x forever

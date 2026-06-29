@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: server-sim-blis-qwen
+  namespace: infer
+data:
+  # Single (model, accelerator) entry for run19: qwen_2_5_14b / H100.
+  # "model" must match the inferno.server.model deployment label (qwen_2_5_14b).
+  # totalKVBlocks=14140 calibrated from the real server (226,240 tokens / 16).
+  # maxRunningReqs=128 mirrors run18's real vLLM --max-num-seqs 128.
+  # betaCoeffs/alphaCoeffs are the generic trained-physics defaults (same as the
+  # granite/llama entries) — known to under-model TTFT (see run19 report Part B).
+  blis-config.json: |
+    {
+      "models": [
+        {
+          "accelerator": "H100",
+          "model": "qwen_2_5_14b",
+          "hfConfigPath": "/app/config/Qwen2.5-14B-Instruct.json",
+          "gpu": "H100",
+          "tp": 1,
+          "totalKVBlocks": 14140,
+          "blockSizeTokens": 16,
+          "maxRunningReqs": 128,
+          "maxScheduledTokens": 8192,
+          "maxModelLen": 4096,
+          "scheduler": "fcfs",
+          "betaCoeffs": [0.15, 0.0, 1.4, 0.75, 32.0, 4.0, 126.0, 482.0, 0.0, 1.9],
+          "alphaCoeffs": [15563.0, 777.0, 46.0],
+          "simulationHorizon": 300000000,
+          "numRequests": 0,
+          "seed": 42
+        }
+      ]
+    }
+
+  hardware_config.json: |
+    {
+      "H100": {
+        "TFlopsPeak":  989.5,
+        "TFlopsFP8":   1979.0,
+        "BwPeakTBs":   3.35,
+        "mfuPrefill":  0.45,
+        "mfuDecode":   0.30,
+        "MemoryGiB":   80.0
+      }
+    }
+
+  # Qwen2.5-14B-Instruct HF config (values from the model card config.json).
+  Qwen2.5-14B-Instruct.json: |
+    {
+      "architectures": ["Qwen2ForCausalLM"],
+      "hidden_act": "silu",
+      "hidden_size": 5120,
+      "initializer_range": 0.02,
+      "intermediate_size": 13824,
+      "max_position_embeddings": 32768,
+      "model_type": "qwen2",
+      "num_attention_heads": 40,
+      "num_hidden_layers": 48,
+      "num_key_value_heads": 8,
+      "rms_norm_eps": 1e-06,
+      "rope_theta": 1000000.0,
+      "tie_word_embeddings": false,
+      "torch_dtype": "bfloat16",
+      "use_cache": true,
+      "vocab_size": 152064
+    }

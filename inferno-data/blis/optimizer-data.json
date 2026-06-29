@@ -1,6 +1,6 @@
 {
   "optimizer": {
-    "unlimited": true,
+    "unlimited": false,
     "heterogeneous": false,
     "milpsolver": false,
     "useCplex": false,

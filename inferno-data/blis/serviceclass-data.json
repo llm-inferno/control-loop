@@ -29,6 +29,11 @@
           "model": "llama_13b",
           "slo-itl": 14,
           "slo-ttft": 40
+        },
+        {
+          "model": "qwen_2_5_14b",
+          "slo-itl": 20,
+          "slo-ttft": 1500
         }
       ]
     }

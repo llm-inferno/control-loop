@@ -443,17 +443,18 @@ cd $REPO_BASE/dashboard
 source .venv/bin/activate
 INFERNO_POD_SYNC=1 \
 INFERNO_NAMESPACE=inferno \
+INFERNO_CYCLE_LOG_POD_PATH=/tmp/inferno-cycles.jsonl \
 INFERNO_CYCLE_LOG=/tmp/inferno-cycles.jsonl \
 python dashboard.py
 ```
 
-The dashboard fetches the log from the controller container every 10 seconds via `kubectl exec`. No manual copy needed.
+The dashboard fetches the log from the controller container every 10 seconds via `kubectl exec`. No manual copy needed. `INFERNO_CYCLE_LOG_POD_PATH` is the path **inside** the controller and must match its `INFERNO_CYCLE_LOG`: the kind blis deploy (`scripts/blis/kind-deploy-qwen.sh`) and the OpenShift deploy (`scripts/vllm-gpu/oc-deploy.sh`) log to `/tmp/inferno-cycles.jsonl` because the workdir is read-only, so set it as shown; for a deploy that logs to the default working-dir path, omit it (it defaults to `inferno-cycles.jsonl`). `INFERNO_CYCLE_LOG` here is the **local** path the dashboard reads/writes.
 
 *Option B — copy the log file manually:*
 
 ```bash
 kubectl exec -n inferno deployment/inferno -c controller -- \
-  cat inferno-cycles.jsonl > $REPO_BASE/inferno-cycles.jsonl
+  cat /tmp/inferno-cycles.jsonl > $REPO_BASE/inferno-cycles.jsonl   # in-pod path = controller's INFERNO_CYCLE_LOG (default: inferno-cycles.jsonl)
 ```
 
 Then run:
