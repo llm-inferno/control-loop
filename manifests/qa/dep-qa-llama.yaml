@@ -44,7 +44,7 @@ spec:
         - name: NOISE_STD_FRACTION
           value: "0.02"
         - name: SERVERSIM_CONTINUOUS
-          value: "true"
+          value: "false"
         - name: SERVERSIM_SATURATION_POLICY
           value: "retry-at-lower-load"
         volumeMounts:
