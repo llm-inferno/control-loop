@@ -1,0 +1,45 @@
+Running internal in the cluster
+Kube client created
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /update                   --> github.com/llm-inferno/control-loop/pkg/actuator.update (3 handlers)
+actuator: starting pairing reconciler (tick=5s)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://github.com/gin-gonic/gin/blob/master/docs/doc.md#dont-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :3303
+srv=[blis-qwen/infer]: arrivalRateRPM=266.94; inTok=929; outTok=399; acc=H100; num=1; batch=53 
+[GIN] 2026/06/27 - 15:18:51 | 200 |   12.114303ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=272.75; inTok=961; outTok=474; acc=H100; num=1; batch=55 
+[GIN] 2026/06/27 - 15:20:51 | 200 |    11.50351ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=255.34; inTok=1100; outTok=428; acc=H100; num=1; batch=47 
+[GIN] 2026/06/27 - 15:22:51 | 200 |   12.619512ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=268.97; inTok=1029; outTok=489; acc=H100; num=1; batch=53 
+[GIN] 2026/06/27 - 15:24:51 | 200 |   11.817345ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=273.56; inTok=1198; outTok=551; acc=H100; num=2; batch=50 
+[GIN] 2026/06/27 - 15:26:51 | 200 |   13.014845ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=266.29; inTok=1208; outTok=539; acc=H100; num=2; batch=49 
+[GIN] 2026/06/27 - 15:28:51 | 200 |   14.484852ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=855.97; inTok=1116; outTok=560; acc=H100; num=4; batch=52 
+[GIN] 2026/06/27 - 15:30:51 | 200 |   20.014057ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=603.74; inTok=1105; outTok=475; acc=H100; num=3; batch=50 
+[GIN] 2026/06/27 - 15:32:51 | 200 |   27.278025ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=1409.85; inTok=853; outTok=503; acc=H100; num=5; batch=59 
+[GIN] 2026/06/27 - 15:34:51 | 200 |   15.625818ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=672.91; inTok=982; outTok=529; acc=H100; num=3; batch=55 
+[GIN] 2026/06/27 - 15:36:51 | 200 |    29.47029ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=1352.48; inTok=932; outTok=544; acc=H100; num=5; batch=57 
+[GIN] 2026/06/27 - 15:38:51 | 200 |   19.169636ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=551.96; inTok=916; outTok=536; acc=H100; num=2; batch=58 
+[GIN] 2026/06/27 - 15:40:51 | 200 |   45.182277ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=353.10; inTok=945; outTok=475; acc=H100; num=2; batch=55 
+[GIN] 2026/06/27 - 15:42:51 | 200 |   13.724508ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=249.85; inTok=913; outTok=426; acc=H100; num=1; batch=55 
+[GIN] 2026/06/27 - 15:44:51 | 200 |    7.894215ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=226.49; inTok=1173; outTok=553; acc=H100; num=1; batch=49 
+[GIN] 2026/06/27 - 15:46:51 | 200 |   11.934093ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=235.33; inTok=1081; outTok=563; acc=H100; num=1; batch=52 
+[GIN] 2026/06/27 - 15:48:51 | 200 |    15.32947ms |             ::1 | POST     "/update"

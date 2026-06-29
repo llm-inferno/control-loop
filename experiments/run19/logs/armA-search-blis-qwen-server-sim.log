@@ -1,0 +1,31 @@
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /simulate                 --> github.com/llm-inferno/server-sim/pkg/server.(*Server).handleSimulate-fm (3 handlers)
+[GIN-debug] GET    /simulate/:id             --> github.com/llm-inferno/server-sim/pkg/server.(*Server).handleGetJob-fm (3 handlers)
+[GIN-debug] GET    /health                   --> github.com/llm-inferno/server-sim/pkg/server.(*Server).handleHealth-fm (3 handlers)
+[GIN-debug] GET    /latest                   --> github.com/llm-inferno/server-sim/pkg/server.(*Server).handleLatest-fm (3 handlers)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://github.com/gin-gonic/gin/blob/master/docs/doc.md#dont-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :8080
+[GIN] 2026/06/29 - 10:57:13 | 200 | 321.13ms |     10.244.0.10 | GET      "/latest"
+[GIN] 2026/06/29 - 10:59:13 | 200 |  380.4ms |     10.244.0.10 | GET      "/latest"
+[GIN] 2026/06/29 - 11:01:13 | 200 | 407.56ms |     10.244.0.10 | GET      "/latest"
+[GIN] 2026/06/29 - 11:03:13 | 200 | 464.71ms |     10.244.0.10 | GET      "/latest"
+[GIN] 2026/06/29 - 11:05:13 | 200 | 477.75ms |     10.244.0.10 | GET      "/latest"
+[GIN] 2026/06/29 - 11:07:13 | 200 | 372.27ms |     10.244.0.10 | GET      "/latest"
+[GIN] 2026/06/29 - 11:09:13 | 200 |  608.1ms |     10.244.0.10 | GET      "/latest"
+[GIN] 2026/06/29 - 11:11:13 | 200 | 552.76ms |     10.244.0.10 | GET      "/latest"
+[GIN] 2026/06/29 - 11:13:13 | 200 |  414.8ms |     10.244.0.10 | GET      "/latest"
+[GIN] 2026/06/29 - 11:15:13 | 200 | 505.08ms |     10.244.0.10 | GET      "/latest"
+[GIN] 2026/06/29 - 11:17:13 | 200 | 490.29ms |     10.244.0.10 | GET      "/latest"
+[GIN] 2026/06/29 - 11:34:30 | 200 | 312.62ms |     10.244.0.10 | GET      "/latest"
+[GIN] 2026/06/29 - 11:36:30 | 200 | 115.83ms |     10.244.0.10 | GET      "/latest"
+[GIN] 2026/06/29 - 11:38:30 | 200 | 268.62ms |     10.244.0.10 | GET      "/latest"
+[GIN] 2026/06/29 - 11:40:30 | 200 | 217.24ms |     10.244.0.10 | GET      "/latest"
+[GIN] 2026/06/29 - 11:42:30 | 200 | 173.72ms |     10.244.0.10 | GET      "/latest"
+[GIN] 2026/06/29 - 11:44:30 | 200 | 509.04ms |     10.244.0.10 | GET      "/latest"
+[GIN] 2026/06/29 - 11:46:30 | 200 | 187.32ms |     10.244.0.10 | GET      "/latest"

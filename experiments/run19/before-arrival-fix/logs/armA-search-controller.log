@@ -1,0 +1,28 @@
+Running with control period = 120 sec
+Running in dynamic mode = false
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] GET    /invoke                   --> github.com/llm-inferno/control-loop/pkg/controller.invoke (3 handlers)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://github.com/gin-gonic/gin/blob/master/docs/doc.md#dont-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :3300
+15:18:51.687:	 collect: 400	 tune: 0	 optimize: 1	 actuate: 13	 total: 415 msec
+15:20:51.771:	 collect: 475	 tune: 0	 optimize: 1	 actuate: 12	 total: 489 msec
+15:22:51.783:	 collect: 474	 tune: 0	 optimize: 1	 actuate: 13	 total: 489 msec
+15:24:51.782:	 collect: 490	 tune: 0	 optimize: 1	 actuate: 12	 total: 504 msec
+15:26:51.793:	 collect: 505	 tune: 0	 optimize: 1	 actuate: 13	 total: 519 msec
+15:28:51.802:	 collect: 486	 tune: 0	 optimize: 1	 actuate: 15	 total: 502 msec
+15:30:51.344:	 collect: 26	 tune: 0	 optimize: 1	 actuate: 21	 total: 49 msec
+15:32:51.906:	 collect: 600	 tune: 0	 optimize: 1	 actuate: 28	 total: 629 msec
+15:34:51.838:	 collect: 522	 tune: 0	 optimize: 1	 actuate: 16	 total: 539 msec
+15:36:51.804:	 collect: 502	 tune: 0	 optimize: 1	 actuate: 30	 total: 534 msec
+15:38:51.906:	 collect: 612	 tune: 0	 optimize: 0	 actuate: 19	 total: 633 msec
+15:40:51.709:	 collect: 390	 tune: 0	 optimize: 1	 actuate: 46	 total: 438 msec
+15:42:51.582:	 collect: 291	 tune: 0	 optimize: 1	 actuate: 14	 total: 306 msec
+15:44:51.485:	 collect: 193	 tune: 0	 optimize: 1	 actuate: 8	 total: 203 msec
+15:46:51.770:	 collect: 472	 tune: 0	 optimize: 1	 actuate: 12	 total: 486 msec
+15:48:51.788:	 collect: 477	 tune: 0	 optimize: 0	 actuate: 16	 total: 494 msec

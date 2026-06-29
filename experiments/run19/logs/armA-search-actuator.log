@@ -1,0 +1,49 @@
+Running internal in the cluster
+Kube client created
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /update                   --> github.com/llm-inferno/control-loop/pkg/actuator.update (3 handlers)
+actuator: starting pairing reconciler (tick=5s)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://github.com/gin-gonic/gin/blob/master/docs/doc.md#dont-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :3303
+srv=[blis-qwen/infer]: arrivalRateRPM=219.29; inTok=910; outTok=434; acc=H100; num=1; batch=55 
+[GIN] 2026/06/29 - 10:57:13 | 200 |   13.333004ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=217.00; inTok=974; outTok=469; acc=H100; num=1; batch=54 
+[GIN] 2026/06/29 - 10:59:13 | 200 |   12.992921ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=259.05; inTok=1074; outTok=455; acc=H100; num=1; batch=50 
+[GIN] 2026/06/29 - 11:01:13 | 200 |   12.933963ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=257.09; inTok=935; outTok=566; acc=H100; num=1; batch=58 
+[GIN] 2026/06/29 - 11:03:13 | 200 |   13.185337ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=271.80; inTok=1180; outTok=468; acc=H100; num=2; batch=46 
+[GIN] 2026/06/29 - 11:05:13 | 200 |   21.170299ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=441.15; inTok=874; outTok=506; acc=H100; num=2; batch=58 
+[GIN] 2026/06/29 - 11:07:13 | 200 |   13.663504ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=934.73; inTok=1094; outTok=484; acc=H100; num=4; batch=51 
+[GIN] 2026/06/29 - 11:09:13 | 200 |   18.666089ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=1292.49; inTok=896; outTok=548; acc=H100; num=5; batch=59 
+[GIN] 2026/06/29 - 11:11:13 | 200 |   16.273672ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=1175.93; inTok=1129; outTok=547; acc=H100; num=5; batch=50 
+[GIN] 2026/06/29 - 11:13:13 | 200 |   16.099338ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=1341.53; inTok=962; outTok=509; acc=H100; num=5; batch=55 
+[GIN] 2026/06/29 - 11:15:13 | 200 |   14.071754ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=1296.53; inTok=951; outTok=587; acc=H100; num=6; batch=58 
+[GIN] 2026/06/29 - 11:17:13 | 200 |   21.435798ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=956.05; inTok=837; outTok=503; acc=H100; num=4; batch=60 
+[GIN] 2026/06/29 - 11:34:30 | 200 |   27.735136ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=339.21; inTok=965; outTok=440; acc=H100; num=2; batch=53 
+[GIN] 2026/06/29 - 11:36:30 | 200 |   62.737262ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=245.68; inTok=1076; outTok=602; acc=H100; num=2; batch=55 
+[GIN] 2026/06/29 - 11:38:30 | 200 |   15.723046ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=240.88; inTok=1176; outTok=521; acc=H100; num=2; batch=48 
+[GIN] 2026/06/29 - 11:40:30 | 200 |   13.358477ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=230.81; inTok=880; outTok=494; acc=H100; num=1; batch=58 
+[GIN] 2026/06/29 - 11:42:30 | 200 |   22.872356ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=268.28; inTok=1022; outTok=551; acc=H100; num=2; batch=55 
+[GIN] 2026/06/29 - 11:44:30 | 200 |   13.751888ms |             ::1 | POST     "/update"
+srv=[blis-qwen/infer]: arrivalRateRPM=230.03; inTok=1004; outTok=534; acc=H100; num=1; batch=55 
+[GIN] 2026/06/29 - 11:46:30 | 200 |   25.618136ms |             ::1 | POST     "/update"

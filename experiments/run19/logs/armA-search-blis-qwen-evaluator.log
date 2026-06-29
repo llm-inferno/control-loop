@@ -1,0 +1,50 @@
+2026/06/29 10:55:14 loaded 1 accelerator/model configurations
+2026/06/29 10:55:14 using latency backend: trained-physics
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /solve                    --> main.solveHandler.func1 (3 handlers)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://github.com/gin-gonic/gin/blob/master/docs/doc.md#dont-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :8081
+time="2026-06-29T10:57:13Z" level=info msg="[tick 299993788] Simulation ended"
+[GIN] 2026/06/29 - 10:57:13 | 200 | 320.04ms |             ::1 | POST     "/solve"
+time="2026-06-29T10:59:13Z" level=info msg="[tick 299999719] Simulation ended"
+time="2026-06-29T10:59:13Z" level=warning msg="post-simulation: inFlightRequests[instance_0] = 19, expected 18 (StillQueued=0 + StillRunning=18) — may indicate bookkeeping bug or requests in event pipeline at horizon"
+[GIN] 2026/06/29 - 10:59:13 | 200 | 379.52ms |             ::1 | POST     "/solve"
+time="2026-06-29T11:01:13Z" level=info msg="[tick 299983104] Simulation ended"
+[GIN] 2026/06/29 - 11:01:13 | 200 | 406.26ms |             ::1 | POST     "/solve"
+time="2026-06-29T11:03:13Z" level=info msg="[tick 299995118] Simulation ended"
+time="2026-06-29T11:03:13Z" level=warning msg="post-simulation: inFlightRequests[instance_0] = 47, expected 46 (StillQueued=0 + StillRunning=46) — may indicate bookkeeping bug or requests in event pipeline at horizon"
+[GIN] 2026/06/29 - 11:03:13 | 200 | 463.58ms |             ::1 | POST     "/solve"
+time="2026-06-29T11:05:13Z" level=info msg="[tick 299992983] Simulation ended"
+[GIN] 2026/06/29 - 11:05:13 | 200 | 476.94ms |             ::1 | POST     "/solve"
+time="2026-06-29T11:07:13Z" level=info msg="[tick 299984391] Simulation ended"
+[GIN] 2026/06/29 - 11:07:13 | 200 | 371.39ms |             ::1 | POST     "/solve"
+time="2026-06-29T11:09:13Z" level=info msg="[tick 299994056] Simulation ended"
+[GIN] 2026/06/29 - 11:09:13 | 200 | 607.19ms |             ::1 | POST     "/solve"
+time="2026-06-29T11:11:13Z" level=info msg="[tick 299990482] Simulation ended"
+[GIN] 2026/06/29 - 11:11:13 | 200 | 551.52ms |             ::1 | POST     "/solve"
+time="2026-06-29T11:13:13Z" level=info msg="[tick 299988172] Simulation ended"
+[GIN] 2026/06/29 - 11:13:13 | 200 | 413.87ms |             ::1 | POST     "/solve"
+time="2026-06-29T11:15:13Z" level=info msg="[tick 299999909] Simulation ended"
+[GIN] 2026/06/29 - 11:15:13 | 200 | 503.83ms |             ::1 | POST     "/solve"
+time="2026-06-29T11:17:13Z" level=info msg="[tick 299991796] Simulation ended"
+[GIN] 2026/06/29 - 11:17:13 | 200 | 489.35ms |             ::1 | POST     "/solve"
+time="2026-06-29T11:34:30Z" level=info msg="[tick 299983211] Simulation ended"
+[GIN] 2026/06/29 - 11:34:30 | 200 | 311.92ms |             ::1 | POST     "/solve"
+time="2026-06-29T11:36:30Z" level=info msg="[tick 299989684] Simulation ended"
+[GIN] 2026/06/29 - 11:36:30 | 200 | 114.55ms |             ::1 | POST     "/solve"
+time="2026-06-29T11:38:30Z" level=info msg="[tick 299993336] Simulation ended"
+[GIN] 2026/06/29 - 11:38:30 | 200 | 267.64ms |             ::1 | POST     "/solve"
+time="2026-06-29T11:40:30Z" level=info msg="[tick 299994517] Simulation ended"
+[GIN] 2026/06/29 - 11:40:30 | 200 | 216.56ms |             ::1 | POST     "/solve"
+time="2026-06-29T11:42:30Z" level=info msg="[tick 299995231] Simulation ended"
+[GIN] 2026/06/29 - 11:42:30 | 200 | 172.69ms |             ::1 | POST     "/solve"
+time="2026-06-29T11:44:30Z" level=info msg="[tick 299988139] Simulation ended"
+[GIN] 2026/06/29 - 11:44:30 | 200 | 507.82ms |             ::1 | POST     "/solve"
+time="2026-06-29T11:46:30Z" level=info msg="[tick 299987182] Simulation ended"
+[GIN] 2026/06/29 - 11:46:30 | 200 | 186.11ms |             ::1 | POST     "/solve"

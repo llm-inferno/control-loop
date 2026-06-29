@@ -1,0 +1,43 @@
+2026/06/27 15:16:52 loaded 1 accelerator/model configurations
+2026/06/27 15:16:52 using latency backend: trained-physics
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /solve                    --> main.solveHandler.func1 (3 handlers)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://github.com/gin-gonic/gin/blob/master/docs/doc.md#dont-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :8081
+time="2026-06-27T15:18:51Z" level=info msg="[tick 299989599] Simulation ended"
+[GIN] 2026/06/27 - 15:18:51 | 200 | 387.04ms |             ::1 | POST     "/solve"
+time="2026-06-27T15:20:51Z" level=info msg="[tick 299994828] Simulation ended"
+[GIN] 2026/06/27 - 15:20:51 | 200 | 460.77ms |             ::1 | POST     "/solve"
+time="2026-06-27T15:22:51Z" level=info msg="[tick 299996002] Simulation ended"
+[GIN] 2026/06/27 - 15:22:51 | 200 | 448.82ms |             ::1 | POST     "/solve"
+time="2026-06-27T15:24:51Z" level=info msg="[tick 299998815] Simulation ended"
+[GIN] 2026/06/27 - 15:24:51 | 200 | 462.36ms |             ::1 | POST     "/solve"
+time="2026-06-27T15:26:51Z" level=info msg="[tick 299990204] Simulation ended"
+[GIN] 2026/06/27 - 15:26:51 | 200 | 480.79ms |             ::1 | POST     "/solve"
+time="2026-06-27T15:28:51Z" level=info msg="[tick 299995418] Simulation ended"
+[GIN] 2026/06/27 - 15:28:51 | 200 |  459.6ms |             ::1 | POST     "/solve"
+[GIN] 2026/06/27 - 15:30:51 | 200 | 376.669µs |             ::1 | POST     "/solve"
+time="2026-06-27T15:32:51Z" level=info msg="[tick 299986618] Simulation ended"
+[GIN] 2026/06/27 - 15:32:51 | 200 | 456.41ms |             ::1 | POST     "/solve"
+[GIN] 2026/06/27 - 15:34:51 | 200 | 189.418µs |             ::1 | POST     "/solve"
+time="2026-06-27T15:36:51Z" level=info msg="[tick 299997676] Simulation ended"
+[GIN] 2026/06/27 - 15:36:51 | 200 | 464.77ms |             ::1 | POST     "/solve"
+time="2026-06-27T15:38:51Z" level=info msg="[tick 299985573] Simulation ended"
+[GIN] 2026/06/27 - 15:38:51 | 200 | 566.91ms |             ::1 | POST     "/solve"
+time="2026-06-27T15:40:51Z" level=info msg="[tick 299996222] Simulation ended"
+[GIN] 2026/06/27 - 15:40:51 | 200 |  308.8ms |             ::1 | POST     "/solve"
+time="2026-06-27T15:42:51Z" level=info msg="[tick 299997970] Simulation ended"
+[GIN] 2026/06/27 - 15:42:51 | 200 | 268.55ms |             ::1 | POST     "/solve"
+time="2026-06-27T15:44:51Z" level=info msg="[tick 299994709] Simulation ended"
+[GIN] 2026/06/27 - 15:44:51 | 200 | 165.77ms |             ::1 | POST     "/solve"
+time="2026-06-27T15:46:51Z" level=info msg="[tick 299996025] Simulation ended"
+[GIN] 2026/06/27 - 15:46:51 | 200 | 456.13ms |             ::1 | POST     "/solve"
+time="2026-06-27T15:48:51Z" level=info msg="[tick 299994796] Simulation ended"
+time="2026-06-27T15:48:51Z" level=warning msg="post-simulation: inFlightRequests[instance_0] = 49, expected 48 (StillQueued=0 + StillRunning=48) — may indicate bookkeeping bug or requests in event pipeline at horizon"
+[GIN] 2026/06/27 - 15:48:51 | 200 | 455.55ms |             ::1 | POST     "/solve"
