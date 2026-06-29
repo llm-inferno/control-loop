@@ -17,6 +17,17 @@
       "acc": "H100",
       "accCount": 1,
       "maxBatchSize": 128
+    },
+    {
+      "name": "qwen_2_5_14b",
+      "acc": "H100",
+      "accCount": 1,
+      "maxBatchSize": 128,
+      "perfParms": {
+        "alpha": 10.645377,
+        "beta": 0.041760195,
+        "gamma": 0.000057705090
+      }
     }
   ]
 }
