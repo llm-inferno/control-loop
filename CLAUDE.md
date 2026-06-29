@@ -201,6 +201,14 @@ Both use `configmap-qa-small.yaml` and `inferno-data/qa/` for optimizer/SLO conf
 
 Both use `configmap-blis-small.yaml` (betaCoeffs/alphaCoeffs for trained-physics) and `inferno-data/blis/` for optimizer/SLO config. `INFERNO_WARM_UP_TIMEOUT=0` is set so the optimizer waits for full EKF convergence before running.
 
+**blis-qwen single-model autoscaling workload** (`scripts/blis/kind-deploy-qwen.sh`, the run19 experiment):
+
+| Deployment | Model | Accelerator | Evaluator | Class |
+|---|---|---|---|---|
+| `dep-blis-qwen.yaml` | `qwen_2_5_14b` | H100 | blis/trained-physics | Bronze |
+
+A single managed Deployment that uses the blis simulator to stand in for the real vLLM/H100 server from the `vllm-gpu` set, so the autoscaling loop can be exercised without GPUs. Uses `configmap-blis-qwen.yaml` (KV-calibrated) + the `qwen_2_5_14b` entries in `inferno-data/blis/`, and runs the run18 5× ramp profile (`configmap-load-phases-qwen.yaml`). The deploy script sets **NO_TUNER** (seeded perfParms — the EKF converges right back to the static seed, so a slightly-off seed beats the tuner's wild warm-up transient), M\* search ON, on-demand `/latest` (`SERVERSIM_CONTINUOUS=false`), `pass-through` saturation, capacity H100=8, and a 120 s control period; the controller logs to `/tmp/inferno-cycles.jsonl` because the workdir is read-only. `scripts/blis/save-cycle-log.sh` archives the cycle log + all container logs to `experiments/<RUN>/`. See [`experiments/run19/experiment-report-2026-06-26-run19.md`](experiments/run19/experiment-report-2026-06-26-run19.md).
+
 **vllm-gpu workloads** (`scripts/vllm-gpu/oc-deploy.sh`):
 
 | Deployment | Model | Accelerator | Evaluator | Class |
