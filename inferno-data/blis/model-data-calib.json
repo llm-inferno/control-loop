@@ -1,0 +1,34 @@
+{
+  "models": [
+    {
+      "name": "granite_8b",
+      "acc": "H100",
+      "accCount": 1,
+      "maxBatchSize": 128
+    },
+    {
+      "name": "granite_8b",
+      "acc": "A100",
+      "accCount": 1,
+      "maxBatchSize": 128
+    },
+    {
+      "name": "llama_13b",
+      "acc": "H100",
+      "accCount": 1,
+      "maxBatchSize": 128
+    },
+    {
+      "name": "qwen_2_5_14b",
+      "acc": "H100",
+      "accCount": 1,
+      "maxBatchSize": 128,
+      "_comment": "DELIBERATELY-WRONG seed for the benchmarking-on-the-fly calibration test. The model-data.json seed for this entry (alpha=10.645, beta=0.04176, gamma=5.77e-5) is the run16 real-vLLM fit; calibration against the blis backend actually recovers alpha~12, beta~0.011, gamma~1.5e-4 (see experiments/calibration-blis/report-2026-06-30-calibration.md). This seed is inflated alpha + ~5x-high gamma: positive/feasible (optimizer won't 404) but it over-scales, so the cycle log shows the allocation correct itself when calibration lands and replaces it.",
+      "perfParms": {
+        "alpha": 20.0,
+        "beta": 0.08,
+        "gamma": 0.0003
+      }
+    }
+  ]
+}
