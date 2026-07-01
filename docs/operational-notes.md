@@ -2,7 +2,9 @@
 
 > Operational gotchas, failure modes, and continuous-mode behaviour. Linked from `CLAUDE.md`.
 > Concurrency-search behaviour lives in [`concurrency-control.md`](concurrency-control.md);
-> env-var details in [`env-vars.md`](env-vars.md).
+> env-var details in [`env-vars.md`](env-vars.md). For the end-to-end tuner lifecycle
+> (warm-up phases, EKF vs SWE backends, switching, calibration) see
+> [`model-tuner-usage.md`](model-tuner-usage.md).
 
 **Tuner EKF convergence in synthetic environments**: In test environments where server-sim uses the same alpha/beta/gamma parameters it is simulating, the tuner's EKF will converge immediately to the static file values — there is no discrepancy to correct. EKF divergence from static values only occurs with real LLM servers whose actual behaviour differs from the initial parameter estimates.
 

@@ -1,6 +1,8 @@
 # Environment Variables
 
 > Reference for control-loop environment variables. Linked from `CLAUDE.md`.
+> For how the `TUNER_*` / warm-up / calibration knobs shape the tuner lifecycle, see
+> [`model-tuner-usage.md`](model-tuner-usage.md).
 
 | Variable | Default | Description |
 |---|---|---|

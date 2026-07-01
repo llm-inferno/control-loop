@@ -1,5 +1,9 @@
 # Benchmarking-on-the-fly calibration
 
+> Calibration is one layer of the tuner's operation. For how it fits into the broader tuner
+> lifecycle (warm-up phases, EKF vs SWE backends, and backend switching) see
+> [`model-tuner-usage.md`](model-tuner-usage.md).
+
 ## Why
 
 The model tuner identifies three performance parameters — `α, β, γ` in
