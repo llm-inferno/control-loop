@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"time"
 
@@ -202,6 +203,76 @@ func GETWarmUp() (bool, error) {
 		return false, err
 	}
 	return body.WarmingUp, nil
+}
+
+// GETCalibrationStatus queries the Tuner for per-(model, accelerator) calibration trigger facts.
+func GETCalibrationStatus() ([]CalibrationStatus, error) {
+	endPoint := TunerURL + "/" + CalibrationStatusVerb
+	res, err := http.Get(endPoint)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = res.Body.Close() }()
+	if res.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("tuner /calibration-status failed: %s", res.Status)
+	}
+	var body struct {
+		Statuses []CalibrationStatus `json:"statuses"`
+	}
+	if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
+		return nil, err
+	}
+	return body.Statuses, nil
+}
+
+// GETSweep asks the Collector to run a benchmarking-on-the-fly load sweep against the named server
+// and return the measured operating points as ServerSpecs. The sweep drives several /simulate
+// points sequentially, so this uses a generous client timeout rather than the default.
+func GETSweep(server string) ([]config.ServerSpec, error) {
+	endPoint := CollectorURL + "/" + SweepVerb + "?server=" + url.QueryEscape(server)
+	client := &http.Client{Timeout: 20 * time.Minute}
+	res, err := client.Get(endPoint)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = res.Body.Close() }()
+	if res.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("collector /sweep failed: %s", res.Status)
+	}
+	var specs []config.ServerSpec
+	if err := json.NewDecoder(res.Body).Decode(&specs); err != nil {
+		return nil, err
+	}
+	return specs, nil
+}
+
+// POSTCalibrate sends a batch of swept operating points to the Tuner's /calibrate and returns the
+// calibrated model data.
+func POSTCalibrate(specs []config.ServerSpec) (*config.ModelData, error) {
+	endPoint := TunerURL + "/" + CalibrateVerb
+	byteValue, err := json.Marshal(specs)
+	if err != nil {
+		return nil, err
+	}
+	req, getErr := http.NewRequest("POST", endPoint, bytes.NewBuffer(byteValue))
+	if getErr != nil {
+		return nil, getErr
+	}
+	req.Header.Add("Content-Type", "application/json")
+	client := &http.Client{}
+	res, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = res.Body.Close() }()
+	if res.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("%s", "tuner /calibrate failed: "+res.Status)
+	}
+	modelData := config.ModelData{}
+	if derr := json.NewDecoder(res.Body).Decode(&modelData); derr != nil {
+		return nil, derr
+	}
+	return &modelData, nil
 }
 
 // send optimizer solution to Actuator

@@ -24,6 +24,7 @@ func NewCollector() (collector *Collector, err error) {
 		router: gin.Default(),
 	}
 	collector.router.GET("/collect", collect)
+	collector.router.GET("/"+ctrl.SweepVerb, sweep)
 	return collector, nil
 }
 

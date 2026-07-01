@@ -110,7 +110,7 @@ See [`docs/superpowers/specs/2026-05-29-actuator-vllm-pairing-design.md`](docs/s
 
 ## Environment Variables
 
-The full environment-variable reference (defaults and descriptions) is in [`docs/env-vars.md`](docs/env-vars.md). Notable knobs: `INFERNO_CONTROL_PERIOD`, `INFERNO_CONTROL_DYNAMIC`, `TUNER_HOST` (enables the Tuner), `SERVERSIM_CONTINUOUS` / `SERVERSIM_SATURATION_POLICY` (continuous traffic generator; `SERVERSIM_CONTINUOUS=false` is non-continuous on-demand `/latest` for simulator backends), `DEFAULT_MAX_BATCH_SIZE` (concurrency-search switch — see [`docs/concurrency-control.md`](docs/concurrency-control.md)), and `WATCH_NAMESPACE` (shared-cluster scoping).
+The full environment-variable reference (defaults and descriptions) is in [`docs/env-vars.md`](docs/env-vars.md). Notable knobs: `INFERNO_CONTROL_PERIOD`, `INFERNO_CONTROL_DYNAMIC`, `TUNER_HOST` (enables the Tuner), `SERVERSIM_CONTINUOUS` / `SERVERSIM_SATURATION_POLICY` (continuous traffic generator; `SERVERSIM_CONTINUOUS=false` is non-continuous on-demand `/latest` for simulator backends), `DEFAULT_MAX_BATCH_SIZE` (concurrency-search switch — see [`docs/concurrency-control.md`](docs/concurrency-control.md)), `INFERNO_CALIBRATION_ENABLED` (benchmarking-on-the-fly calibration — see [`docs/calibration.md`](docs/calibration.md)), and `WATCH_NAMESPACE` (shared-cluster scoping).
 
 ## Data Files (in `INFERNO_DATA_PATH`)
 
@@ -129,6 +129,8 @@ The load emulator phase sequence is configured per-experiment via `manifests/{qa
 Operational gotchas and failure modes — Tuner EKF convergence/skips, evaluator 500s, ConfigMap propagation delay, saturated-pod re-simulation, startup delay, zero-perfParms warm-up, EKF identifiability, and the **continuous traffic generator** (`SERVERSIM_CONTINUOUS`) including the causal-coherence check and the vllm-server control-period invariant — are documented in [`docs/operational-notes.md`](docs/operational-notes.md).
 
 Concurrency control — the optimizer's optimal-concurrency `M*` search, the `maxConcurrency` resolution contract, and how the `DEFAULT_MAX_BATCH_SIZE` switch enables/disables the search (plus the four different fields named `maxBatchSize`) — is documented in [`docs/concurrency-control.md`](docs/concurrency-control.md).
+
+Benchmarking-on-the-fly calibration — an optional path (`INFERNO_CALIBRATION_ENABLED=true`) that fixes the tuner's structural unidentifiability (3 params `α/β/γ` from 2 observations at 1 operating point) by deliberately sweeping a handful of load points and fitting them jointly, instead of waiting for live load to passively span the space. The controller triggers it only when the tuner reports a pair `NeedsCalibration` (`GET /calibration-status`: ill-conditioned fit from insufficient natural excitation, not yet calibrated); it then drives a sweep via the collector (`GET /sweep` → server-sim `/simulate`) and POSTs the points to the tuner's `POST /calibrate`. Reuses the tuner's existing `InitEstimator` multi-point fit + condition-number guard. Calibration state is in-memory (re-calibrate on restart). See [`docs/calibration.md`](docs/calibration.md).
 
 ## Visualization
 
