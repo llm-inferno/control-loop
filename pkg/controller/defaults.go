@@ -25,10 +25,10 @@ const (
 	// namespace. Empty/unset means cluster-wide (default; backwards compatible).
 	WatchNamespaceEnvName = "WATCH_NAMESPACE"
 
-	DataPathEnvName          = "INFERNO_DATA_PATH"
+	DataPathEnvName            = "INFERNO_DATA_PATH"
 	DefaultMaxBatchSizeEnvName = "DEFAULT_MAX_BATCH_SIZE"
-	ControlPeriodEnvName  = "INFERNO_CONTROL_PERIOD"
-	ControlDynamicEnvName = "INFERNO_CONTROL_DYNAMIC"
+	ControlPeriodEnvName       = "INFERNO_CONTROL_PERIOD"
+	ControlDynamicEnvName      = "INFERNO_CONTROL_DYNAMIC"
 
 	LoadIntervalEnvName = "INFERNO_LOAD_INTERVAL"
 	LoadAlphaEnvName    = "INFERNO_LOAD_ALPHA"
@@ -38,6 +38,14 @@ const (
 
 	StartupDelayEnvName  = "INFERNO_STARTUP_DELAY"
 	WarmUpTimeoutEnvName = "INFERNO_WARM_UP_TIMEOUT"
+
+	// Benchmarking-on-the-fly calibration. The trigger runs only when
+	// CalibrationEnabledEnvName is truthy AND the tuner reports a pair needs it
+	// (natural warm-up excitation was insufficient and no calibration has succeeded yet).
+	CalibrationEnabledEnvName   = "INFERNO_CALIBRATION_ENABLED"     // "true"/"1" enables the trigger
+	CalibRPMFactorsEnvName      = "INFERNO_CALIB_RPM_FACTORS"       // comma-separated multipliers of nominal RPM
+	CalibPointTimeoutSecEnvName = "INFERNO_CALIB_POINT_TIMEOUT_SEC" // per-sweep-point /simulate timeout
+	CalibPollIntervalSecEnvName = "INFERNO_CALIB_POLL_INTERVAL_SEC" // /simulate/:id poll interval
 )
 
 // Default host and port for each REST server
@@ -67,19 +75,29 @@ const (
 	OptimizerFileName    = "optimizer-data.json"
 
 	// API settings
-	OptimizeVerb = "optimizeOne"
-	ServersVerb  = "getServers"
-	CollectVerb  = "collect"
-	ActuatorVerb = "update"
-	TuneVerb     = "tune"
-	MergeVerb    = "merge"
-	WarmUpVerb   = "warmup"
+	OptimizeVerb          = "optimizeOne"
+	ServersVerb           = "getServers"
+	CollectVerb           = "collect"
+	ActuatorVerb          = "update"
+	TuneVerb              = "tune"
+	MergeVerb             = "merge"
+	WarmUpVerb            = "warmup"
+	CalibrateVerb         = "calibrate"          // tuner: POST batch sweep fit
+	CalibrationStatusVerb = "calibration-status" // tuner: GET per-pair trigger facts
+	SweepVerb             = "sweep"              // collector: GET runs the load sweep for a server
 
 	// others
 	DefaultControlPeriodSeconds int  = 60 // periodicity of control (zero means aperiodic)
 	DefaultControlDynamicMode   bool = false
 	DefaultStartupDelaySec      int  = 0  // seconds to wait after pod start before treating it as ready
 	DefaultWarmUpTimeout        int  = 10 // max consecutive warm-up cycles before proceeding (0 = no timeout)
+
+	// Calibration sweep defaults. Factors are skewed BELOW nominal: on a high-nominal workload
+	// (load already near the single-replica knee) factors >= ~1.5 saturate and get dropped,
+	// starving the fit. Probing below nominal keeps most points unsaturated and usable.
+	DefaultCalibRPMFactors      = "0.25,0.5,0.75,1.0" // multipliers of nominal RPM swept at base token mix
+	DefaultCalibPointTimeoutSec = 120                 // per-point /simulate timeout (blis DES can be slow)
+	DefaultCalibPollIntervalSec = 2                   // /simulate/:id poll interval
 
 	ServerSimPort = 8080 // server-sim sidecar listen port
 

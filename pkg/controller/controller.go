@@ -25,14 +25,14 @@ var controller *Controller
 //   - periodically calls the Optimizer to get servers desired state
 //   - implements desired state through an Actuator
 type Controller struct {
-	State         *State
-	router        *gin.Engine
-	isDynamicMode bool
-	tunerEnabled  bool
-	recorder      *monitor.CycleRecorder
-	cycleNum      int64
-	warmUpCount        int // consecutive cycles where tuner reported warm-up
-	warmUpTimeout      int // max consecutive warm-up cycles before proceeding (0 = no timeout)
+	State               *State
+	router              *gin.Engine
+	isDynamicMode       bool
+	tunerEnabled        bool
+	recorder            *monitor.CycleRecorder
+	cycleNum            int64
+	warmUpCount         int // consecutive cycles where tuner reported warm-up
+	warmUpTimeout       int // max consecutive warm-up cycles before proceeding (0 = no timeout)
 	defaultMaxBatchSize int // DEFAULT_MAX_BATCH_SIZE: pins MaxBatchSize on all server specs when > 0
 }
 
@@ -255,6 +255,12 @@ func (a *Controller) Optimize() error {
 		if _, tuneErr := POSTTune(collectorInfo.ReplicaSpecs); tuneErr != nil {
 			fmt.Printf("%v: tuner /tune warning (continuing with current model data): %s\n",
 				time.Now().Format("15:04:05.000"), tuneErr.Error())
+		}
+		// Benchmarking-on-the-fly: if the tuner reports a pair that natural excitation failed to
+		// identify, sweep a few load points and calibrate it now — before the warm-up/merge gate,
+		// so the identifiable fit clears warm-up and feeds /merge this same cycle.
+		if calibrationEnabled() {
+			a.maybeCalibrate(collectorInfo.Spec)
 		}
 		// Consult /warmup regardless of the /tune result. During the EKF
 		// init-observation collection phase the tuner is up but /tune returns
