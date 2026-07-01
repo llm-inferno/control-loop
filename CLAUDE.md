@@ -126,6 +126,8 @@ The load emulator phase sequence is configured per-experiment via `manifests/{qa
 
 ## Known Behaviours and Operational Notes
 
+Model-tuner usage pattern — how the controller drives the tuner across the cold-start lifecycle (init collection → EKF warm-up → normal operation), the two estimator backends (EKF default, Sliding-Window Nelder-Mead) selected at startup via `TUNER_ESTIMATOR_MODE`, the two one-directional **SWE → EKF** switches (permanent per-pair fallback on poor init fit; one-shot transient excursion on an ill-conditioned window — there is no EKF → SWE switch), and how calibration overlays on it — is documented in [`docs/model-tuner-usage.md`](docs/model-tuner-usage.md).
+
 Operational gotchas and failure modes — Tuner EKF convergence/skips, evaluator 500s, ConfigMap propagation delay, saturated-pod re-simulation, startup delay, zero-perfParms warm-up, EKF identifiability, and the **continuous traffic generator** (`SERVERSIM_CONTINUOUS`) including the causal-coherence check and the vllm-server control-period invariant — are documented in [`docs/operational-notes.md`](docs/operational-notes.md).
 
 Concurrency control — the optimizer's optimal-concurrency `M*` search, the `maxConcurrency` resolution contract, and how the `DEFAULT_MAX_BATCH_SIZE` switch enables/disables the search (plus the four different fields named `maxBatchSize`) — is documented in [`docs/concurrency-control.md`](docs/concurrency-control.md).
