@@ -111,7 +111,7 @@ Implementations: `serversim{}` (today's behavior, moved) and `llmd{}` (new). **S
 
 ### I3. `llmd` Sensor — all-Prometheus, keyed by namespace/pod
 
-`Sense()` first discovers the deployment's running pods the same way `collect()` does today (list pods owned by the deployment's ReplicaSets, filtered to `Running` + past startup delay), then queries Thanos per pod and aggregates to the deployment `config.ServerSpec` exactly as today (throughput-weighted ITL/TTFT, mean occupancy). To avoid a `<deploy>-.*` prefix over-matching a sibling deployment, the selector pins the **exact discovered pod names**: `namespace="<ns>", pod=~"<pod1>|<pod2>|…"` (**not** `job=<deployName>`). Window `<win>` = `INFERNO_PROM_WINDOW` (default `1m`).
+`Sense()` first discovers the deployment's running pods the same way `collect()` does today (list pods owned by the deployment's ReplicaSets, filtered to `Running`), then queries Thanos per pod and aggregates to the deployment `config.ServerSpec` (throughput-weighted ITL/TTFT, mean occupancy — see the *As-built reconciliation* note on presence-aware weighting). To avoid a `<deploy>-.*` prefix over-matching a sibling deployment, the selector pins the **exact discovered pod names**: `namespace="<ns>", pod=~"<pod1>|<pod2>|…"` (**not** `job=<deployName>`). Window `<win>` = `INFERNO_PROMETHEUS_WINDOW` (default `1m`).
 
 | Field | PromQL |
 |---|---|
@@ -120,7 +120,7 @@ Implementations: `serversim{}` (today's behavior, moved) and `llmd{}` (new). **S
 | TTFT (s) | same ratio on `vllm:time_to_first_token_seconds_{sum,count}` |
 | in-tokens/req | `delta(vllm:prompt_tokens_total{…}[<win>]) / delta(vllm:request_success_total{…}[<win>])` |
 | out-tokens/req | `delta(vllm:generation_tokens_total{…}[<win>]) / delta(vllm:request_success_total{…}[<win>])` |
-| occupancy (avgConcurrency) | `avg_over_time(vllm:num_requests_running{…}[<win>])` — **direct gauge, no Little's Law** |
+| occupancy (avgConcurrency) | `avg by(pod)(avg_over_time(vllm:num_requests_running{…}[<win>]))` — **direct gauge, no Little's Law**; `avg by(pod)` collapses any stray label dimension to one value per pod, matching the `sum by(pod)` discipline of the other queries |
 
 - **`ArrivalRate := Throughput`** for llmd: this vLLM exports no arrival counter (only `request_success` = completions), so offered≠completed cannot be sensed. Correct while unsaturated; **documented limitation** — true offered-load sensing needs `vllm:request_arrival_total` (absent).
 - **No coherence gate** (m\* is pinned, so there is no `/latest` convergence to detect).
@@ -151,7 +151,7 @@ Topology: `[external generator] → Gateway → EPP → vLLM pods → Prometheus
 
 ### I7. Config surface (new env)
 
-`INFERNO_BACKEND`, `INFERNO_PROMETHEUS_URL`, `INFERNO_PROMETHEUS_TOKEN_PATH`, `INFERNO_PROMETHEUS_CA_PATH`, `INFERNO_PROMETHEUS_INSECURE`, `INFERNO_PROM_WINDOW` — add to `docs/env-vars.md`.
+`INFERNO_BACKEND`, `INFERNO_PROMETHEUS_URL`, `INFERNO_PROMETHEUS_TOKEN_PATH`, `INFERNO_PROMETHEUS_CA_PATH`, `INFERNO_PROMETHEUS_INSECURE`, `INFERNO_PROMETHEUS_WINDOW` — add to `docs/env-vars.md`.
 
 ### I8. Testing without holding GPUs
 
@@ -198,3 +198,15 @@ A/B against **a fresh, self-owned Qwen3-32B llm-d variant** (not an existing sha
 - Porting inferno into WVA as a scaling engine (path 2).
 - Multi-variant / heterogeneous-accelerator optimization on llm-d.
 - Any change to server-sim (it is not in this loop).
+
+## As-built reconciliation — code review 2026-07-02 (PR #66)
+
+The implementation matches the design above; two review rounds refined the following. This section is the authoritative record of the deltas.
+
+- **Env var renamed** `INFERNO_PROM_WINDOW` → **`INFERNO_PROMETHEUS_WINDOW`** for consistency with the `INFERNO_PROMETHEUS_*` family (I3, I7 updated in place).
+- **Presence-aware aggregation** — the deployment ITL/TTFT are throughput-weighted only over pods that actually reported *that* metric (per-metric weight denominators), and occupancy is averaged only over pods that reported it. vLLM's ITL/TTFT ratios are `0/0`→NaN when a pod completed nothing in the window; such a pod contributes to throughput but is excluded from the latency average, so it no longer deflates the deployment latency the optimizer reads. Per-pod readings are grouped in a single `map[string]podReading` (presence flags per field) rather than four parallel maps.
+- **Occupancy query** is `avg by(pod)(avg_over_time(…))` (not a bare `avg_over_time`), so a pod emitting more than one series yields one deterministic value (I3 table updated).
+- **Prometheus client hardening** (I5): the bearer token is re-read from `INFERNO_PROMETHEUS_TOKEN_PATH` **per request**, so a rotated short-TTL projected SA token does not go stale for the long-lived client. An **explicitly-configured** `INFERNO_PROMETHEUS_TOKEN_PATH`/`INFERNO_PROMETHEUS_CA_PATH` that cannot be read/parsed is a **hard error** (fail fast); the implicit SA defaults degrade gracefully (tokenless / system roots) but log the reason. An empty query result (idle window) is distinguished from a query failure via an `errNoData` sentinel so token-average queries stay silent at cold start but log genuine failures.
+- **Backend seam simplification** — `backend.Sensor.Sense` returns `(ServerSpec, []ServerSpec, error)`; the originally-planned `ok bool` was redundant (it was `false` only alongside a non-nil error) and was removed. The unused `DeploymentUpdate.UID` and the dead `EvaluatorLLMD` label constant (the backend is selected by `INFERNO_BACKEND`, not an evaluator label) were dropped.
+- **Single-variant scale-to-zero is safe** — a transient sense error drops a deployment from the collector `Spec`; with one managed variant this yields an empty `Spec`, which the controller's `len(Spec)==0` guard turns into a whole-cycle abort (replicas untouched). The multi-variant hazard remains the documented non-goal above.
+- **First unit tests** landed with this work (mapping math incl. the missing-latency deflation case, ±Inf/NaN guards, token-rotation refresh, replicas-only patch via fake clientset, `ModeFromEnv`).
