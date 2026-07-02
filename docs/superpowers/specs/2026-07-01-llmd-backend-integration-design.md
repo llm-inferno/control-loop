@@ -3,7 +3,7 @@
 **Date:** 2026-07-01
 **Status:** Approach doc (research exercise; not yet an implementation spec). Open questions **resolved against the live cluster 2026-07-01** — see *Cluster findings* and *Target decision* below.
 **Issue:** [#64](https://github.com/llm-inferno/control-loop/issues/64)
-**Author:** (draft)
+**Author:** tantawi
 
 ## Context
 
@@ -97,7 +97,7 @@ type Sensor interface {   // collector-side
         server config.ServerSpec, replicas []config.ServerSpec, ok bool, err error)
 }
 type Actuator interface { // actuator-side
-    Actuate(ctx context.Context, u DeploymentUpdate, kc kubernetes.Interface) error
+    Actuate(ctx context.Context, kc kubernetes.Interface, u DeploymentUpdate) error
 }
 ```
 
@@ -170,7 +170,7 @@ Topology: `[external generator] → Gateway → EPP → vLLM pods → Prometheus
 
 **E1 — control-loop A/B (the research result).** Same llm-d env + workload; one arm stock WVA, one arm inferno-standalone. Compare SLO attainment, replica count / cost, and reaction time. Both replicas-only (WVA is anyway; inferno m\* pinned) → apples-to-apples.
 
-**E2 — m\* value / model-validation (decoupled from the loop).** One variant, replicas pinned; sweep operating concurrency (closed-loop client concurrency, or a few EPP `maxConcurrency` restart values); show an SLO-optimal m\* exists and inferno's model predicts it. Justifies later investing in dynamic EPP reconfig. **Caveat:** keep the router from shedding (hit the pod directly, or set a high `maxConcurrency`) so client concurrency ≈ server concurrency.
+**E2 — m\* value / model-validation (decoupled from the loop).** One variant, replicas pinned; sweep operating concurrency (closed-loop client concurrency, or a few vLLM `--max-num-seq` restart values — there is no live EPP `maxConcurrency` knob in gaie v1.4.0, see §4); show an SLO-optimal m\* exists and inferno's model predicts it. Justifies later investing in a dynamic concurrency knob (whether via a future EPP plugin or vLLM reconfig). **Caveat:** keep the router from shedding (hit the pod directly, or set `--max-num-seq` high enough) so client concurrency ≈ server concurrency.
 
 ## Cluster findings — confirmed 2026-07-01 (pokprod001)
 
