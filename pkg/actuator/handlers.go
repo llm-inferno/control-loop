@@ -7,15 +7,25 @@ import (
 
 	ctrl "github.com/llm-inferno/control-loop/pkg/controller"
 
+	"github.com/llm-inferno/control-loop/pkg/backend"
 	"github.com/llm-inferno/optimizer-light/pkg/config"
 
 	"github.com/gin-gonic/gin"
-	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 )
 
-// Handlers for REST API calls
+// actuatorImpl is selected once from INFERNO_BACKEND.
+var actuatorImpl backend.Actuator = selectActuator()
+
+func selectActuator() backend.Actuator {
+	if backend.ModeFromEnv() == backend.ModeLLMD {
+		fmt.Println("actuator: using llmd actuator (replicas only)")
+		return newLLMDActuator()
+	}
+	fmt.Println("actuator: using serversim actuator")
+	return newServerSimActuator()
+}
 
 func update(c *gin.Context) {
 	var info ctrl.ServerActuatorInfo
@@ -23,40 +33,13 @@ func update(c *gin.Context) {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "binding error: " + err.Error()})
 		return
 	}
-
-	// Drive updates from the Collector-built serverMap. The set zeroed out is
-	// {serverMap - allocMap}: any managed deployment the Collector saw for
-	// which the Optimizer did not return an allocation gets replicas=0.
-	//
-	// The Actuator does not re-verify that targets carry the
-	// `inferno.server.managed=true` label; the Collector enforces that
-	// invariant when it builds serverMap. This handler trusts its caller —
-	// consistent with the rest of the in-pod control plane, which is bound
-	// to localhost and has no auth middleware. Do not derive patch targets
-	// from any other source without restoring a server-side label gate.
 	updates := ComputeUpdates(info.Spec, info.KubeResource)
-
 	for _, u := range updates {
-		if err := patchDeployment(u.ServerName, u.DeployName, u.Namespace, &u.Allocation); err != nil {
-			// A Deployment can be deleted between Collector /collect and
-			// this /update (~265 ms window in the kind qa run). Skip and
-			// continue so a single transient deletion does not strand the
-			// remaining patches; the next cycle will re-converge.
-			if apierrors.IsNotFound(err) {
-				fmt.Printf("srv=[%s/%s]: deployment gone, skipping\n", u.ServerName, u.Namespace)
-				continue
-			}
+		if err := actuatorImpl.Actuate(context.Background(), KubeClient, u); err != nil {
 			c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "kube client: " + err.Error()})
 			return
 		}
-		if u.Allocation.NumReplicas > 0 {
-			if err := patchPodsAllocation(context.Background(), KubeClient, u.Namespace, u.DeployName,
-				u.Allocation.Accelerator, u.Allocation.MaxBatch); err != nil {
-				fmt.Printf("srv=[%s/%s]: pod allocation patch warning: %v\n", u.ServerName, u.Namespace, err)
-			}
-		}
 	}
-
 	c.IndentedJSON(http.StatusOK, "Done")
 }
 
