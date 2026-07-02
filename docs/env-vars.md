@@ -43,4 +43,10 @@
 | `DEFAULT_MAX_BATCH_SIZE` | unset (search enabled) | Optional escape hatch. When > 0, the controller pins `ServerSpec.MaxBatchSize` on every server, which the optimizer treats as an explicit concurrency **override** — skipping the optimal-concurrency search entirely. Leave unset to let `optimizer-light` v0.8.0 search the optimal concurrency `M*` per (server, accelerator). |
 | `INFERNO_CYCLE_LOG` | `inferno-cycles.jsonl` | Path to JSONL cycle log written by the controller each cycle. Set to `-` to disable. |
 | `WATCH_NAMESPACE` | unset (cluster-wide) | Namespace to scope managed-deployment watches to. Set on shared clusters where another inferno setup uses the same `inferno.server.*` labels in different namespaces. Applies to the Collector, Load Emulator, and Actuator pairing reconciler. The Actuator `/update` handler is implicitly scoped via the Collector-built `serverMap` it receives. |
+| `INFERNO_BACKEND` | `serversim` | Sense/actuate backend for this process: `serversim` (default; server-sim `/latest` + label actuation) or `llmd` (all-Prometheus sense, replicas-only actuate). |
+| `INFERNO_PROMETHEUS_URL` | `http://localhost:9090` | Prometheus/Thanos query endpoint. For OpenShift user-workload metrics use the in-cluster thanos-querier HTTPS URL. |
+| `INFERNO_PROMETHEUS_TOKEN_PATH` | (SA token path) | Bearer-token file for the Prometheus client. Read only if present; defaults to the pod's service-account token. |
+| `INFERNO_PROMETHEUS_CA_PATH` | (SA CA path) | CA bundle trusted for an HTTPS Prometheus endpoint. |
+| `INFERNO_PROMETHEUS_INSECURE` | `false` | `true` skips TLS verification for the Prometheus endpoint. |
+| `INFERNO_PROMETHEUS_WINDOW` | `1m` | PromQL range window for the llmd sensor's rate/avg_over_time queries. |
 | `KUBECONFIG` | `$HOME/.kube/config` | Kubernetes config path |

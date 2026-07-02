@@ -46,6 +46,19 @@ const (
 	CalibRPMFactorsEnvName      = "INFERNO_CALIB_RPM_FACTORS"       // comma-separated multipliers of nominal RPM
 	CalibPointTimeoutSecEnvName = "INFERNO_CALIB_POINT_TIMEOUT_SEC" // per-sweep-point /simulate timeout
 	CalibPollIntervalSecEnvName = "INFERNO_CALIB_POLL_INTERVAL_SEC" // /simulate/:id poll interval
+
+	// BackendEnvName selects the sense/actuate backend for this process:
+	// "serversim" (default) or "llmd". Applies to every managed deployment
+	// the process handles.
+	BackendEnvName = "INFERNO_BACKEND"
+
+	// Prometheus client configuration (used by the collector). When unset the
+	// collector falls back to http://localhost:9090 with no auth (server-sim).
+	PrometheusURLEnvName       = "INFERNO_PROMETHEUS_URL"        // e.g. https://thanos-querier.openshift-monitoring.svc:9091
+	PrometheusTokenPathEnvName = "INFERNO_PROMETHEUS_TOKEN_PATH" // default: SA token path
+	PrometheusCAPathEnvName    = "INFERNO_PROMETHEUS_CA_PATH"    // default: SA CA path
+	PrometheusInsecureEnvName  = "INFERNO_PROMETHEUS_INSECURE"   // "true" => skip TLS verify
+	PrometheusWindowEnvName    = "INFERNO_PROMETHEUS_WINDOW"     // PromQL range window, default "1m"
 )
 
 // Default host and port for each REST server

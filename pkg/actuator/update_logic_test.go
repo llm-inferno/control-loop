@@ -4,6 +4,7 @@ import (
 	"sort"
 	"testing"
 
+	"github.com/llm-inferno/control-loop/pkg/backend"
 	ctrl "github.com/llm-inferno/control-loop/pkg/controller"
 	"github.com/llm-inferno/optimizer-light/pkg/config"
 )
@@ -67,7 +68,7 @@ func TestComputeUpdates_MixedSet(t *testing.T) {
 		t.Fatalf("expected 3 updates (one per serverMap entry), got %d", len(updates))
 	}
 
-	byName := map[string]DeploymentUpdate{}
+	byName := map[string]backend.DeploymentUpdate{}
 	for _, u := range updates {
 		byName[u.ServerName] = u
 	}

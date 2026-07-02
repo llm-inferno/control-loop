@@ -10,6 +10,8 @@ import (
 
 	ctrl "github.com/llm-inferno/control-loop/pkg/controller"
 
+	"github.com/llm-inferno/control-loop/pkg/backend"
+
 	"github.com/gin-gonic/gin"
 	"k8s.io/client-go/kubernetes"
 )
@@ -37,13 +39,17 @@ func NewActuator() (actuator *Actuator, err error) {
 
 	pairingDebug = strings.EqualFold(os.Getenv("INFERNO_PAIRING_LOG_LEVEL"), "debug")
 
-	// Start the pairing reconciler unless disabled.
-	period := pairingTickInterval()
-	if period > 0 {
-		fmt.Printf("actuator: starting pairing reconciler (tick=%s)\n", period)
-		go runReconciler(context.Background(), KubeClient, period)
+	// Pairing is a server-sim/vLLM-server concern; never run it in llmd mode.
+	if backend.ModeFromEnv() == backend.ModeServerSim {
+		period := pairingTickInterval()
+		if period > 0 {
+			fmt.Printf("actuator: starting pairing reconciler (tick=%s)\n", period)
+			go runReconciler(context.Background(), KubeClient, period)
+		} else {
+			fmt.Printf("actuator: pairing reconciler disabled (INFERNO_PAIRING_TICK_SEC=0)\n")
+		}
 	} else {
-		fmt.Printf("actuator: pairing reconciler disabled (INFERNO_PAIRING_TICK_SEC=0)\n")
+		fmt.Println("actuator: pairing reconciler disabled (llmd backend)")
 	}
 	return actuator, nil
 }
